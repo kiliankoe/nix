@@ -4,7 +4,7 @@
     ./hardware-configuration.nix
     ../../modules/nixos/base.nix
     ../../modules/shared/base.nix
-    ../../modules/shared/tmux.nix
+    # ../../modules/shared/tmux.nix
     ../../modules/shared/zsh.nix
     ../../packages/midgard-packages.nix
   ];
