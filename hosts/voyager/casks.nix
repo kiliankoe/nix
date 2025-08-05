@@ -2,7 +2,7 @@
 {
   # Voyager-specific Homebrew casks
   homebrew.casks = [
-    "0-ad"
+    # "0-ad"
     "anki"
     "audacity"
     "balenaetcher"
@@ -17,7 +17,7 @@
     "element"
     "fantastical"
     "firefox"
-    "fmail2"
+    "fmail3"
     "font-jetbrains-mono"
     "font-monaspace"
     "font-sf-pro"
@@ -55,10 +55,12 @@
     "tailscale-app"
     "telegram"
     "todoist-app"
+    "tor-browser"
     "transmission"
     "ungoogled-chromium"
     "utm"
     "visual-studio-code"
+    # "wacom-tablet" # install when necessary
     "windows-app"
     "wireshark-app"
     "xcodes-app"
