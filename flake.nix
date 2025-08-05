@@ -7,7 +7,12 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin }:
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      nix-darwin,
+    }:
     {
       darwinConfigurations = {
         # Build with: darwin-rebuild build --flake .#voyager
@@ -73,6 +78,7 @@
 
       nixosPackages = {
         kepler = self.nixosConfigurations.kepler.pkgs;
+        cubesat = self.nixosConfigurations.cubesat.pkgs;
         midgard = self.nixosConfigurations.midgard.pkgs;
       };
     };
