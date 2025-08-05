@@ -2,8 +2,6 @@
 
 My consolidated Nix configuration for macOS and NixOS systems, including custom Docker services.
 
-## Layout
-
 ```
 nix/
 ├── flake.nix
