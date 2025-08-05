@@ -40,6 +40,12 @@
         source ~/dev/dotfiles/private
       fi
 
+      # Load host-specific secrets
+      SECRETS_FILE="$HOME/.config/secrets/$(hostname)-env"
+      if [[ -f "$SECRETS_FILE" ]]; then
+        source "$SECRETS_FILE"
+      fi
+
       # Load deno environment if it exists (will work for any user)
       if [[ -f "$HOME/.deno/env" ]]; then
         source "$HOME/.deno/env"
