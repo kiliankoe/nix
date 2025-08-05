@@ -41,6 +41,14 @@
             ./hosts/mariner
           ];
         };
+
+        # Build with: nixos-rebuild build --flake .#midgard
+        midgard = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/midgard
+          ];
+        };
       };
 
       # Expose package sets for convenience
@@ -51,6 +59,7 @@
       
       nixosPackages = {
         mariner = self.nixosConfigurations.mariner.pkgs;
+        midgard = self.nixosConfigurations.midgard.pkgs;
       };
     };
 }

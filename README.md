@@ -8,27 +8,30 @@ This configuration follows a modular structure that separates shared components 
 
 ```
 nix/
-├── flake.nix                    # Main flake with all system outputs
-├── hosts/                       # Host-specific configurations
-│   ├── voyager/                 # Private Mac (macOS + Homebrew)
-│   ├── sojourner/               # Work Mac (macOS, minimal)
-│   └── mariner/                 # Home server (NixOS)
-├── modules/                     # Reusable configuration modules
-│   ├── darwin/                  # macOS-specific modules
-│   │   ├── base.nix             # Common macOS settings
-│   │   └── homebrew.nix         # Homebrew configuration
-│   ├── nixos/                   # NixOS-specific modules
-│   │   ├── forgejo-service.nix  # Forgejo Git hosting service
-│   │   ├── mato-service.nix     # Mato webhook service
-│   │   └── watchtower-service.nix # Container auto-updater
-│   └── shared/                  # Cross-platform modules
-│       ├── dev-tools.nix        # Common development tools
-│       ├── tmux.nix             # Shared tmux configuration
-│       └── zsh.nix              # Cross-platform zsh setup
-└── packages/                    # Host-specific package lists
-    ├── voyager-packages.nix     # Personal tools & security packages
-    ├── sojourner-packages.nix   # Work-focused packages
-    └── mariner-packages.nix     # Server packages
+├── flake.nix                        # Main flake with all system outputs
+├── hosts/                           # Host-specific configurations
+│   ├── voyager/                     # Private Mac (macOS + Homebrew)
+│   ├── sojourner/                   # Work Mac (macOS, minimal)
+│   ├── mariner/                     # Home server (NixOS, headless)
+│   └── midgard/                     # Desktop workstation (NixOS)
+├── modules/                         # Reusable configuration modules
+│   ├── darwin/                      # macOS-specific modules
+│   │   ├── base.nix                 # Common macOS settings
+│   │   └── homebrew.nix             # Homebrew configuration
+│   ├── nixos/                       # NixOS-specific modules
+│   │   ├── base.nix                 # Shared NixOS configuration
+│   │   ├── forgejo-service.nix      # Forgejo Git hosting service
+│   │   ├── mato-service.nix         # Mato webhook service
+│   │   └── watchtower-service.nix   # Container auto-updater
+│   └── shared/                      # Cross-platform modules
+│       ├── base.nix                 # Common modules for all platforms
+│       ├── tmux.nix                 # Shared tmux configuration
+│       └── zsh.nix                  # Cross-platform zsh setup
+└── packages/                        # Host-specific package lists
+    ├── voyager-packages.nix         # Personal tools & security packages
+    ├── sojourner-packages.nix       # Work-focused packages
+    ├── mariner-packages.nix         # Server packages
+    └── midgard-packages.nix         # Desktop workstation packages
 ```
 
 ## Host Profiles
@@ -41,7 +44,7 @@ nix/
 
 ### Sojourner (Work Mac)
 - **Platform**: macOS (aarch64-darwin)
-- **Features**: Minimal configuration, no Homebrew
+- **Features**: Focused on work setup
 - **Use Case**: Professional development work
 - **Packages**: Work-focused dev tools, containerization, cloud tools
 
@@ -51,6 +54,12 @@ nix/
 - **Use Case**: Home server, self-hosting, automation (SSH access only)
 - **Packages**: Minimal server essentials
 - **Services**: Forgejo (Git hosting), Mato (personal automation tooling), Watchtower (container updates)
+
+### Midgard (Desktop Workstation)
+- **Platform**: NixOS (x86_64-linux) - Desktop
+- **Features**: KDE Plasma 6 desktop environment, audio, printing
+- **Use Case**: Desktop workstation, development, productivity
+- **Packages**: Desktop applications, development tools
 
 ## Key Design Principles
 
@@ -73,11 +82,14 @@ nh darwin switch -H voyager .
 nh darwin switch -H sojourner .
 
 # NixOS systems
-nixos-rebuild build --flake .#mariner
+nixos-rebuild build --flake .#mariner        # Headless server
+nixos-rebuild build --flake .#midgard        # Desktop workstation
 sudo nixos-rebuild switch --flake .#mariner
+sudo nixos-rebuild switch --flake .#midgard
 
 # Alternative with nh
 nh os switch -H mariner .
+nh os switch -H midgard .
 ```
 
 ## Secrets Management
@@ -96,6 +108,7 @@ Then create files named after each hostname:
 - `~/.config/secrets/voyager-env` - Personal Mac secrets
 - `~/.config/secrets/sojourner-env` - Work Mac secrets
 - `~/.config/secrets/mariner-env` - Server secrets
+- `~/.config/secrets/midgard-env` - Desktop workstation secrets
 
 ### Usage
 
