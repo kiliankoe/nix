@@ -47,9 +47,6 @@
   services.tailscale.enable = true;
   virtualisation.docker.enable = true;
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
   # System version
   system.stateVersion = "24.11";
 }

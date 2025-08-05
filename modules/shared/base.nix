@@ -1,5 +1,7 @@
 { pkgs, ... }:
 {
+  nixpkgs.config.allowUnfree = true;
+  
   environment.systemPackages = with pkgs; [
     # Nix stuff
     nh

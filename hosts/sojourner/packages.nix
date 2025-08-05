@@ -27,6 +27,4 @@
     tailscale
     yq
   ];
-
-  nixpkgs.config.allowUnfree = true;
 }

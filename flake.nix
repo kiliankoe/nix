@@ -64,7 +64,7 @@
         voyager = self.darwinConfigurations.voyager.pkgs;
         sojourner = self.darwinConfigurations.sojourner.pkgs;
       };
-      
+
       nixosPackages = {
         mariner = self.nixosConfigurations.mariner.pkgs;
         midgard = self.nixosConfigurations.midgard.pkgs;
