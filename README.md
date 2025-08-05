@@ -80,20 +80,20 @@ Connect via SSH and use standard systemd commands to control services:
 
 ```bash
 # Start/stop/restart services
-sudo systemctl start docker-compose-$serviceName
-sudo systemctl stop docker-compose-$serviceName
-sudo systemctl restart docker-compose-$serviceName
+sudo systemctl start $servicename
+sudo systemctl stop $servicename
+sudo systemctl restart $servicename
 
 # Check service status
-sudo systemctl status docker-compose-$serviceName
+sudo systemctl status $servicename
 
 # View service logs
-journalctl -u docker-compose-$serviceName -f
-journalctl -u docker-compose-$serviceName --since "1 hour ago"
+journalctl -u $servicename -f
+journalctl -u $servicename --since "1 hour ago"
 
 # Enable/disable auto-start
-sudo systemctl enable docker-compose-$serviceName
-sudo systemctl disable docker-compose-$serviceName
+sudo systemctl enable $servicename
+sudo systemctl disable $servicename
 ```
 
 ### Service Secrets
@@ -126,7 +126,7 @@ in
 {
   environment.etc."docker-compose/service/docker-compose.yml".source = composeFile;
 
-  systemd.services.docker-compose-service = {
+  systemd.services.servicename = {
     description = "Docker Compose service for Service";
     after = [ "docker.service" ];
     requires = [ "docker.service" ];
