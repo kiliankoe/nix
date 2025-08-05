@@ -12,6 +12,8 @@
     bat
     btop
     bun
+    claude-code
+    codex
     fd
     git
     gping
