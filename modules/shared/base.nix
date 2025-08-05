@@ -1,10 +1,15 @@
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
+    # Nix stuff
+    nh
+    nixfmt
+
     # Core development tools
     atuin
     bat
     btop
+    bun
     fd
     git
     gping
@@ -12,8 +17,10 @@
     hyperfine
     jq
     lazygit
+    mitmproxy
+    mitmproxy2swagger
     neofetch
-    ripgrep
+    ripgrep-all
     tealdeer
     tokei
     tree
@@ -22,9 +29,10 @@
     # Programming languages and tools
     go
     nodejs_24
+    rustup
     uv
 
-    # Terminal utilities
+    # Utilities
     ddate
     heh
     lucky-commit

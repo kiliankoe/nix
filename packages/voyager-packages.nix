@@ -1,7 +1,6 @@
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
-    dedup-darwin
     exercism
     ffmpeg_7
     gobuster

@@ -22,8 +22,6 @@
     nixpkgs-fmt
     npm-check
     pnpm
-    ripgrep-all
-    rustup
     smug
     switchaudio-osx
     tailscale
