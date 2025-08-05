@@ -18,18 +18,16 @@
     tokei
     tree
     vim
-    
+
     # Programming languages and tools
     go
     nodejs_24
     uv
-    
+
     # Terminal utilities
     ddate
     heh
     lucky-commit
-    mas
-    terminal-notifier
     yt-dlp
   ];
 }

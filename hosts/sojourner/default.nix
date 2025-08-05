@@ -2,6 +2,7 @@
 {
   imports = [
     ../../modules/darwin/base.nix
+    ../../modules/darwin/shared-packages.nix
     ../../modules/shared/dev-tools.nix
     ../../modules/shared/tmux.nix
     ../../modules/shared/zsh.nix

@@ -2,6 +2,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ../../modules/nixos/base.nix
     ../../modules/shared/dev-tools.nix
     ../../modules/shared/zsh.nix
     ../../modules/nixos/forgejo-service.nix
@@ -10,13 +11,8 @@
     ../../packages/mariner-packages.nix
   ];
 
-  # Bootloader
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-
   # Networking
   networking.hostName = "mariner";
-  networking.networkmanager.enable = true;
 
   # Disable power management (server)
   powerManagement.enable = false;
@@ -63,58 +59,16 @@
     }
   ];
 
-  # Time zone and locale
-  time.timeZone = "Europe/Berlin";
-  i18n.defaultLocale = "en_US.UTF-8";
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "de_DE.UTF-8";
-    LC_IDENTIFICATION = "de_DE.UTF-8";
-    LC_MEASUREMENT = "de_DE.UTF-8";
-    LC_MONETARY = "de_DE.UTF-8";
-    LC_NAME = "de_DE.UTF-8";
-    LC_NUMERIC = "de_DE.UTF-8";
-    LC_PAPER = "de_DE.UTF-8";
-    LC_TELEPHONE = "de_DE.UTF-8";
-    LC_TIME = "de_DE.UTF-8";
-  };
 
 
-  # User configuration
-  users.users.kilian = {
-    isNormalUser = true;
-    description = "Kilian";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
-  };
-
-  # Sudo configuration
-  security.sudo.extraRules = [
-    {
-      users = [ "kilian" ];
-      commands = [
-        {
-          command = "ALL";
-          options = [ "NOPASSWD" ];
-        }
-      ];
-    }
-  ];
-
-  # Services
-  services.openssh.enable = true;
-  services.tailscale.enable = true;
-  virtualisation.docker.enable = true;
+  # Services (headless server - base module provides SSH, Tailscale, Docker)
 
   # Cron job
   services.cron = {
     enable = true;
     systemCronJobs = [
-      "0 4 * * 1      kilian    sudo rsync -av --progress html /mnt/tailscale/kiliankoe.github/marvin/backups/nextcloud/"
+      # "0 4 * * 1      kilian    sudo rsync -av --progress html /mnt/tailscale/kiliankoe.github/marvin/backups/nextcloud/"
     ];
   };
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  # System version
-  system.stateVersion = "24.11";
 }
