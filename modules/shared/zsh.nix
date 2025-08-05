@@ -3,8 +3,7 @@
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    enableSyntaxHighlighting = true;
-    
+
     # Common shell initialization across all platforms
     shellInit = ''
       # report time a command took if it's longer than n seconds
@@ -29,7 +28,7 @@
       COMPLETION_WAITING_DOTS="true"
 
       zstyle ':omz:update' mode reminder
-      
+
       # Load Oh My Zsh if it exists
       if [[ -f $ZSH/oh-my-zsh.sh ]]; then
         source $ZSH/oh-my-zsh.sh
@@ -60,17 +59,20 @@
       fi
     '';
   } // lib.optionalAttrs pkgs.stdenv.isDarwin {
-    # macOS-specific options using nix-darwin features
-    enableAutosuggestions = true; # nix-darwin style
+    # macOS-specific options
+    enableAutosuggestions = true;
+    enableSyntaxHighlighting = true;
     enableFzfHistory = lib.mkDefault true;
     enableFzfGit = lib.mkDefault true;
-    
+
     # macOS-specific environment variables
     variables = {
       ICLOUD_DRIVE = "$HOME/Library/Mobile Documents/com~apple~CloudDocs";
     };
   } // lib.optionalAttrs pkgs.stdenv.isLinux {
     # NixOS-specific options
+    syntaxHighlighting.enable = true;
+
     shellAliases = {
       hello = "echo 'hello world'";
       df = "df -H";
@@ -91,16 +93,16 @@
       zshconfig = "code ~/dev/dotfiles/zshrc";
       zshreload = "source ~/dev/dotfiles/zshrc";
     };
-    
+
     histSize = 20000;
     setOptions = [
       "HIST_EXPIRE_DUPS_FIRST"
       "HIST_IGNORE_DUPS"
       "HIST_IGNORE_SPACE"
-      "HIST_SAVE_NO_DUPS" 
+      "HIST_SAVE_NO_DUPS"
       "SHARE_HISTORY"
     ];
-    
+
     # Enable autosuggestions through NixOS module system
     autosuggestions.enable = true;
   };
