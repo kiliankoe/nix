@@ -5,25 +5,33 @@
   environment.systemPackages = with pkgs; [
     # nix stuff
     nh
+
+    nil
+    nixd
     nixfmt
 
     # languages, package managers, etc.
     bun
     go
+    ni
     nodejs_24
     rustup
     uv
 
     # tools
+    _1password-cli
     atuin
     bat
+    biome
     btop
     claude-code
     codex
     ddate
     docker
     docker-compose
+    eza
     fd
+    gemini-cli
     git
     gping
     heh

@@ -1,16 +1,17 @@
 { pkgs, ... }:
 {
   imports = [
-    ../../modules/darwin/base.nix
-    ../../modules/darwin/homebrew.nix
-    ../../modules/darwin/packages.nix
     ../../modules/shared/base.nix
     ../../modules/shared/tmux.nix
     ../../modules/shared/zsh.nix
+
+    ../../modules/darwin/base.nix
+    ../../modules/darwin/packages.nix
+    ../../modules/darwin/homebrew.nix
+
     ./packages.nix
-    ./casks.nix
+    ./homebrew.nix
   ];
 
-  system.primaryUser = "kilian";
   nixpkgs.hostPlatform = "aarch64-darwin";
 }

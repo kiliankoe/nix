@@ -1,29 +1,14 @@
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
-    _1password-cli
-    biome
-    claude-code
-    codex
     delta
     devbox
     devenv
     direnv
     emcee
-    eza
-    gemini-cli
-    git-vanity-hash
     k9s
     kubectl
-    llm
-    ni
-    nil
-    nixd
     npm-check
     pnpm
-    smug
-    switchaudio-osx
-    tailscale
-    yq
   ];
 }
