@@ -82,14 +82,20 @@ nh darwin switch -H voyager .
 nh darwin switch -H sojourner .
 
 # NixOS systems
-nixos-rebuild build --flake .#mariner        # Headless server
-nixos-rebuild build --flake .#midgard        # Desktop workstation
+nixos-rebuild build --flake .#mariner
+nixos-rebuild build --flake .#midgard
 sudo nixos-rebuild switch --flake .#mariner
 sudo nixos-rebuild switch --flake .#midgard
 
 # Alternative with nh
 nh os switch -H mariner .
 nh os switch -H midgard .
+
+# Or just build without switching
+nh darwin build -H voyager .
+nh darwin build -H sojourner .
+nh os build -H mariner .
+nh os build -H midgard .
 ```
 
 ## Secrets Management
