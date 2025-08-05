@@ -88,7 +88,7 @@ export DATABASE_URL="postgresql://..."
 ## Docker Services
 
 Mariner runs several Docker Compose services managed through Nix. Each service is defined as a separate module and managed via systemd.
-It uses inline docker-compose files for each service to allow for more complex stacks, straight docker container configs wouldn't cut it.
+It uses inline compose files to allow for independent compose networks.
 
 See `services/` for service definitions.
 
