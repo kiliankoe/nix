@@ -6,7 +6,7 @@
     ../../modules/shared/base.nix
     ../../modules/shared/tmux.nix
     ../../modules/shared/zsh.nix
-    ../../packages/sojourner-packages.nix
+    ./packages.nix
   ];
 
   # Sojourner doesn't use Homebrew (work machine)

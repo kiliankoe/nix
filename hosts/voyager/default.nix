@@ -7,7 +7,7 @@
     ../../modules/shared/base.nix
     ../../modules/shared/tmux.nix
     ../../modules/shared/zsh.nix
-    ../../packages/voyager-packages.nix
+    ./packages.nix
   ];
 
   # Voyager-specific Homebrew casks

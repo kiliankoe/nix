@@ -9,7 +9,7 @@
     ../../modules/nixos/forgejo-service.nix
     ../../modules/nixos/mato-service.nix
     ../../modules/nixos/watchtower-service.nix
-    ../../packages/mariner-packages.nix
+    ./packages.nix
   ];
 
   # Networking

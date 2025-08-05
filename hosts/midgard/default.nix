@@ -6,7 +6,7 @@
     ../../modules/shared/base.nix
     # ../../modules/shared/tmux.nix
     ../../modules/shared/zsh.nix
-    ../../packages/midgard-packages.nix
+    ./packages.nix
   ];
 
   # Networking
