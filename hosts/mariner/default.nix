@@ -78,36 +78,12 @@
     LC_TIME = "de_DE.UTF-8";
   };
 
-  # Desktop environment
-  services.xserver.enable = true;
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
-  # Audio
-  hardware.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
-
-  # Mouse settings
-  services.libinput.mouse.naturalScrolling = true;
 
   # User configuration
   users.users.kilian = {
     isNormalUser = true;
     description = "Kilian";
     extraGroups = [ "networkmanager" "wheel" "docker" ];
-    packages = with pkgs; [
-      kdePackages.kate
-    ];
   };
 
   # Sudo configuration
@@ -123,15 +99,7 @@
     }
   ];
 
-  # Auto-login
-  services.displayManager = {
-    autoLogin.enable = true;
-    autoLogin.user = "kilian";
-  };
-
   # Services
-  programs.firefox.enable = true;
-  services.printing.enable = true;
   services.openssh.enable = true;
   services.tailscale.enable = true;
   virtualisation.docker.enable = true;

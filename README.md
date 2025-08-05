@@ -46,9 +46,9 @@ nix/
 - **Packages**: Work-focused dev tools, containerization, cloud tools
 
 ### Mariner (Home Server)
-- **Platform**: NixOS (x86_64-linux)
-- **Features**: Server optimizations, Docker, Tailscale integration, Docker Compose services
-- **Use Case**: Home server, self-hosting, automation
+- **Platform**: NixOS (x86_64-linux) - Headless
+- **Features**: Headless server configuration, Docker, Tailscale integration, Docker Compose services
+- **Use Case**: Home server, self-hosting, automation (SSH access only)
 - **Packages**: Minimal server essentials
 - **Services**: Forgejo (Git hosting), Mato (personal automation tooling), Watchtower (container updates)
 
@@ -119,7 +119,7 @@ Secrets are automatically loaded when you open a new shell session and are avail
 
 ## Docker Services (Mariner Only)
 
-The Mariner server runs several Docker Compose services managed through Nix. Each service is defined as a separate module and managed via systemd.
+The Mariner headless server runs several Docker Compose services managed through Nix. Each service is defined as a separate module and managed via systemd. Access the server via SSH for management.
 
 ### Current Services
 
@@ -129,7 +129,7 @@ The Mariner server runs several Docker Compose services managed through Nix. Eac
 
 ### Service Management
 
-Use standard systemd commands to control services:
+Connect via SSH and use standard systemd commands to control services:
 
 ```bash
 # Start/stop/restart services
