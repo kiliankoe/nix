@@ -9,6 +9,7 @@
     devbox
     devenv
     direnv
+    emcee
     eza
     gemini-cli
     git-vanity-hash
@@ -24,6 +25,7 @@
     ripgrep-all
     rustup
     smug
+    switchaudio-osx
     tailscale
     yq
   ];
