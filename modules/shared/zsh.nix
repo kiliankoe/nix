@@ -1,10 +1,28 @@
 { pkgs, lib, ... }:
+let
+  commonAliases = {
+    df = "df -H";
+    du = "du -ch";
+    lg = "lazygit";
+    rsync = "rsync --progress";
+    tmp = "cd $TMPDIR";
+    tree = "tree -C";
+    l = "ls -lAhG";
+    ls = "ls -G";
+    lf = "/bin/ls -rt | tail -n1";
+    ".." = "cd ..";
+    "..." = "cd ../../";
+    "...." = "cd ../../../";
+    "....." = "cd ../../../../";
+    dockerpwd = "docker run --rm -it -v $(PWD):/src";
+    zshreload = "source ~/dev/dotfiles/zshrc";
+  };
+in
 {
   programs.zsh = {
     enable = true;
     enableCompletion = true;
 
-    # Common shell initialization across all platforms
     shellInit = ''
       # report time a command took if it's longer than n seconds
       REPORTTIME=5
@@ -71,28 +89,10 @@
     };
   } // lib.optionalAttrs pkgs.stdenv.isLinux {
     # NixOS-specific options
+    autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
 
-    shellAliases = {
-      hello = "echo 'hello world'";
-      df = "df -H";
-      du = "du -ch";
-      lg = "lazygit";
-      rsync = "rsync --progress";
-      tmp = "cd $TMPDIR";
-      tree = "tree -C";
-      l = "ls -lAhG";
-      ls = "ls -G";
-      lsd = "ls -Gal | grep ^d";
-      lf = "/bin/ls -rt | tail -n1";
-      ".." = "cd ..";
-      "..." = "cd ../../";
-      "...." = "cd ../../../";
-      "....." = "cd ../../../../";
-      dockerpwd = "docker run --rm -it -v $(PWD):/src";
-      zshconfig = "code ~/dev/dotfiles/zshrc";
-      zshreload = "source ~/dev/dotfiles/zshrc";
-    };
+    shellAliases = commonAliases;
 
     histSize = 20000;
     setOptions = [
@@ -102,31 +102,9 @@
       "HIST_SAVE_NO_DUPS"
       "SHARE_HISTORY"
     ];
-
-    # Enable autosuggestions through NixOS module system
-    autosuggestions.enable = true;
   };
 
   # Add shell aliases for macOS too, but through a different mechanism
   # since nix-darwin doesn't have shellAliases option
-  environment.shellAliases = lib.mkIf pkgs.stdenv.isDarwin {
-    hello = "echo 'hello world'";
-    df = "df -H";
-    du = "du -ch";
-    lg = "lazygit";
-    rsync = "rsync --progress";
-    tmp = "cd $TMPDIR";
-    tree = "tree -C";
-    l = "ls -lAhG";
-    ls = "ls -G";
-    lsd = "ls -Gal | grep ^d";
-    lf = "/bin/ls -rt | tail -n1";
-    ".." = "cd ..";
-    "..." = "cd ../../";
-    "...." = "cd ../../../";
-    "....." = "cd ../../../../";
-    dockerpwd = "docker run --rm -it -v $(PWD):/src";
-    zshconfig = "code ~/dev/dotfiles/zshrc";
-    zshreload = "source ~/dev/dotfiles/zshrc";
-  };
+  environment.shellAliases = lib.mkIf pkgs.stdenv.isDarwin commonAliases;
 }
