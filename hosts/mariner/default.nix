@@ -4,6 +4,9 @@
     ./hardware-configuration.nix
     ../../modules/shared/dev-tools.nix
     ../../modules/shared/zsh.nix
+    ../../modules/nixos/forgejo-service.nix
+    ../../modules/nixos/mato-service.nix
+    ../../modules/nixos/watchtower-service.nix
     ../../packages/mariner-packages.nix
   ];
 

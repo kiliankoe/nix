@@ -17,6 +17,10 @@ nix/
 │   ├── darwin/                  # macOS-specific modules
 │   │   ├── base.nix             # Common macOS settings
 │   │   └── homebrew.nix         # Homebrew configuration
+│   ├── nixos/                   # NixOS-specific modules
+│   │   ├── forgejo-service.nix  # Forgejo Git hosting service
+│   │   ├── mato-service.nix     # Mato webhook service
+│   │   └── watchtower-service.nix # Container auto-updater
 │   └── shared/                  # Cross-platform modules
 │       ├── dev-tools.nix        # Common development tools
 │       ├── tmux.nix             # Shared tmux configuration
@@ -43,9 +47,10 @@ nix/
 
 ### Mariner (Home Server)
 - **Platform**: NixOS (x86_64-linux)
-- **Features**: Server optimizations, Docker, Tailscale integration
+- **Features**: Server optimizations, Docker, Tailscale integration, Docker Compose services
 - **Use Case**: Home server, self-hosting, automation
 - **Packages**: Minimal server essentials
+- **Services**: Forgejo (Git hosting), Mato (personal automation tooling), Watchtower (container updates)
 
 ## Key Design Principles
 
@@ -89,7 +94,7 @@ mkdir -p ~/.config/secrets/
 
 Then create files named after each hostname:
 - `~/.config/secrets/voyager-env` - Personal Mac secrets
-- `~/.config/secrets/sojourner-env` - Work Mac secrets  
+- `~/.config/secrets/sojourner-env` - Work Mac secrets
 - `~/.config/secrets/mariner-env` - Server secrets
 
 ### Usage
@@ -111,6 +116,104 @@ Secrets are automatically loaded when you open a new shell session and are avail
 - SSH keys should remain in `~/.ssh/` (not managed by Nix)
 - Never commit secrets directly to the repository
 - Each host loads only its own secrets file
+
+## Docker Services (Mariner Only)
+
+The Mariner server runs several Docker Compose services managed through Nix. Each service is defined as a separate module and managed via systemd.
+
+### Current Services
+
+- **Forgejo**: Self-hosted Git service with PostgreSQL database and automated backups
+- **Mato**: Custom webhook service for automation
+- **Watchtower**: Automatic container updates for labeled containers
+
+### Service Management
+
+Use standard systemd commands to control services:
+
+```bash
+# Start/stop/restart services
+sudo systemctl start docker-compose-forgejo
+sudo systemctl stop docker-compose-mato
+sudo systemctl restart docker-compose-watchtower
+
+# Check service status
+sudo systemctl status docker-compose-forgejo
+
+# View service logs
+journalctl -u docker-compose-forgejo -f
+journalctl -u docker-compose-mato --since "1 hour ago"
+
+# Enable/disable auto-start
+sudo systemctl enable docker-compose-watchtower
+sudo systemctl disable docker-compose-mato
+```
+
+### Service Secrets
+
+Each service that requires secrets expects a corresponding environment file:
+
+```bash
+# Required secret files (create as needed)
+~/.config/secrets/forgejo.env    # Database credentials, backup settings
+~/.config/secrets/mato.env       # Service configuration
+# watchtower requires no secrets
+```
+
+Example `forgejo.env`:
+```bash
+POSTGRES_USER=forgejo
+POSTGRES_PASSWORD=your_secure_password
+POSTGRES_DB=forgejo
+```
+
+### Adding New Docker Services
+
+1. **Create service module**: `modules/nixos/new-service.nix`
+2. **Define Docker Compose config**: Embed the compose file using `pkgs.writeText`
+3. **Add systemd service**: Configure start/stop/reload commands
+4. **Handle secrets**: Create tmpfiles rule for `.env` symlink if needed
+5. **Import in host**: Add module to `hosts/mariner/default.nix`
+
+Example service module structure:
+```nix
+{ config, pkgs, ... }:
+let
+  composeFile = pkgs.writeText "service-compose.yml" ''
+    services:
+      app:
+        image: your/image:latest
+        # ... compose configuration
+  '';
+in
+{
+  environment.etc."docker-compose/service/docker-compose.yml".source = composeFile;
+
+  systemd.services.docker-compose-service = {
+    description = "Docker Compose service for Service";
+    after = [ "docker.service" ];
+    requires = [ "docker.service" ];
+    wantedBy = [ "multi-user.target" ];
+
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      WorkingDirectory = "/etc/docker-compose/service";
+      ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
+      ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
+      ExecReload = "${pkgs.docker-compose}/bin/docker-compose up -d --force-recreate";
+      TimeoutStartSec = 0;
+      User = "root";
+    };
+  };
+
+  # Add secrets symlink if needed
+  systemd.tmpfiles.rules = [
+    "d /etc/docker-compose/service 0755 root root -"
+    "L+ /etc/docker-compose/service/.env - - - - /home/kilian/.config/secrets/service.env"
+  ];
+}
+```
 
 ## Adding New Hosts
 
