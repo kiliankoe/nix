@@ -19,7 +19,6 @@
     ni
     nil
     nixd
-    nixpkgs-fmt
     npm-check
     pnpm
     smug

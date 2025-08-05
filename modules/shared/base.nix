@@ -1,45 +1,46 @@
 { pkgs, ... }:
 {
   nixpkgs.config.allowUnfree = true;
-  
+
   environment.systemPackages = with pkgs; [
-    # Nix stuff
+    # nix stuff
     nh
     nixfmt
 
-    # Core development tools
-    atuin
-    bat
-    btop
+    # languages, package managers, etc.
     bun
-    claude-code
-    codex
-    fd
-    git
-    gping
-    helix
-    hyperfine
-    jq
-    lazygit
-    mitmproxy
-    mitmproxy2swagger
-    neofetch
-    ripgrep-all
-    tealdeer
-    tokei
-    tree
-    vim
-
-    # Programming languages and tools
     go
     nodejs_24
     rustup
     uv
 
-    # Utilities
+    # tools
+    atuin
+    bat
+    btop
+    claude-code
+    codex
     ddate
+    docker
+    docker-compose
+    fd
+    git
+    gping
     heh
+    helix
+    hyperfine
+    jq
+    lazygit
     lucky-commit
+    mitmproxy
+    mitmproxy2swagger
+    neofetch
+    ripgrep-all
+    tealdeer
+    tmux
+    tokei
+    tree
+    vim
     yt-dlp
   ];
 }

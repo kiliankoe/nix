@@ -11,7 +11,6 @@
     nh
     nil
     nixd
-    nixpkgs-fmt
     ripgrep-all
     subfinder
   ];
