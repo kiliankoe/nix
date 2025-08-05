@@ -101,7 +101,7 @@ sudo systemctl disable $servicename
 Each service that requires secrets (db credentials, backup settings, etc.) expects a corresponding environment file:
 
 ```bash
-~/.config/secrets/$serviceName.env
+~/.config/secrets/$servicename.env
 ```
 
 ### Adding New Docker Services
@@ -185,5 +185,5 @@ nix build .#nixosConfigurations.kepler-iso.config.system.build.isoImage
 6. **Reboot and activate services**:
    ```bash
    # After reboot, start your Docker services
-   sudo systemctl start docker-compose-$serviceName
+   sudo systemctl start docker-compose-$servicename
    ```
