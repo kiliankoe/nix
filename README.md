@@ -14,6 +14,8 @@ nix/
 │   ├── sojourner/                   # Work Mac (macOS, minimal)
 │   ├── mariner/                     # Home server (NixOS, headless)
 │   └── midgard/                     # Desktop workstation (NixOS)
+├── iso/                             # Custom ISO configurations
+│   └── mariner-iso.nix              # Mariner installation ISO
 ├── modules/                         # Reusable configuration modules
 │   ├── darwin/                      # macOS-specific modules
 │   │   ├── base.nix                 # Common macOS settings
@@ -96,6 +98,9 @@ nh darwin build -H voyager .
 nh darwin build -H sojourner .
 nh os build -H mariner .
 nh os build -H midgard .
+
+# Build custom installation ISO
+nix build .#nixosConfigurations.mariner-iso.config.system.build.isoImage
 ```
 
 ## Secrets Management
@@ -233,6 +238,63 @@ in
   ];
 }
 ```
+
+## Custom Installation ISO
+
+This configuration includes a custom NixOS installation ISO for Mariner that contains your complete system configuration pre-installed.
+
+### Building the ISO
+
+```bash
+# Build custom Mariner installation ISO (large download, takes time)
+nix build .#nixosConfigurations.mariner-iso.config.system.build.isoImage
+
+# ISO will be available at:
+# ./result/iso/nixos-*.iso
+```
+
+### What's Included
+
+The custom ISO contains:
+- **Complete Mariner configuration** - All packages, services, and settings
+- **Docker Compose services** - Forgejo, Mato, Watchtower (ready to activate)
+- **Development tools** - Your entire development environment
+- **SSH access** - Pre-configured for remote installation (user: kilian, password: nixos)
+- **Installation tools** - Standard NixOS installer plus your preferred tools
+
+### Installation Process
+
+1. **Boot from the custom ISO** - Your system environment is already available
+2. **Partition and format drives** - Use standard NixOS installation tools (parted, cryptsetup, etc.)
+3. **Generate hardware configuration**:
+   ```bash
+   nixos-generate-config --root /mnt
+   ```
+4. **Copy your flake configuration**:
+   ```bash
+   # Clone your repo or copy configuration
+   git clone <your-repo> /mnt/etc/nixos
+   ```
+5. **Install with your configuration**:
+   ```bash
+   nixos-install --flake /mnt/etc/nixos#mariner
+   ```
+6. **Reboot and activate services**:
+   ```bash
+   # After reboot, start your Docker services
+   sudo systemctl start docker-compose-forgejo
+   sudo systemctl start docker-compose-mato
+   sudo systemctl start docker-compose-watchtower
+   ```
+
+### Benefits
+
+- **Pre-configured environment** - Skip post-installation setup
+- **Reproducible deployments** - Same configuration every time
+- **Remote installation** - SSH into the live environment
+- **All dependencies included** - No need to download packages during installation
+
+**Note**: The ISO will be several GB in size as it includes all your packages and Docker images.
 
 ## Adding New Hosts
 

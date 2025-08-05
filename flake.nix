@@ -49,6 +49,14 @@
             ./hosts/midgard
           ];
         };
+
+        # Build ISO with: nix build .#nixosConfigurations.mariner-iso.config.system.build.isoImage
+        mariner-iso = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./iso/mariner-iso.nix
+          ];
+        };
       };
 
       # Expose package sets for convenience
