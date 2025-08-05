@@ -16,17 +16,10 @@ nix/
 
 ## Hosts
 
-### Voyager (Private Mac)
-- **Platform**: macOS (aarch64-darwin)
-
-### Sojourner (Work Mac)
-- **Platform**: macOS (aarch64-darwin)
-
-### Mariner (Home Server)
-- **Platform**: NixOS (x86_64-linux) - Headless
-
-### Midgard (Desktop Workstation)
-- **Platform**: NixOS (x86_64-linux) - Desktop
+- **Voyager**: macOS (aarch64-darwin)
+- **Sojourner**: macOS (aarch64-darwin)
+- **Kepler**: NixOS (x86_64-linux, headless)
+- **Midgard**: NixOS (x86_64-linux, desktop)
 
 ## Usage
 
@@ -40,23 +33,23 @@ nh darwin switch -H voyager .
 nh darwin switch -H sojourner .
 
 # NixOS systems
-nixos-rebuild build --flake .#mariner
+nixos-rebuild build --flake .#kepler
 nixos-rebuild build --flake .#midgard
-sudo nixos-rebuild switch --flake .#mariner
+sudo nixos-rebuild switch --flake .#kepler
 sudo nixos-rebuild switch --flake .#midgard
 
 # Alternative with nh
-nh os switch -H mariner .
+nh os switch -H kepler .
 nh os switch -H midgard .
 
 # Or just build without switching
 nh darwin build -H voyager .
 nh darwin build -H sojourner .
-nh os build -H mariner .
+nh os build -H kepler .
 nh os build -H midgard .
 
 # Build custom installation ISO
-nix build .#nixosConfigurations.mariner-iso.config.system.build.isoImage
+nix build .#nixosConfigurations.kepler-iso.config.system.build.isoImage
 ```
 
 ## Secrets
@@ -85,7 +78,7 @@ export DATABASE_URL="postgresql://..."
 
 ## Docker Services
 
-Mariner runs several Docker Compose services managed through Nix. Each service is defined as a separate module and managed via systemd.
+Kepler runs several Docker Compose services managed through Nix. Each service is defined as a separate module and managed via systemd.
 It uses inline compose files to allow for independent compose networks.
 
 See `services/` for service definitions.
@@ -126,7 +119,7 @@ Each service that requires secrets (db credentials, backup settings, etc.) expec
 2. **Define Docker Compose config**: Embed the compose file using `pkgs.writeText`
 3. **Add systemd service**: Configure start/stop/reload commands
 4. **Handle secrets**: Create tmpfiles rule for `.env` symlink if needed
-5. **Import in host**: Add module to `hosts/mariner/default.nix`
+5. **Import in host**: Add module to `hosts/kepler/default.nix`
 
 Example service module structure:
 ```nix
@@ -170,12 +163,12 @@ in
 
 ## Custom Installation ISO
 
-This configuration includes a custom NixOS installation ISO for Mariner with the complete system environment pre-configured.
+This configuration includes a custom NixOS installation ISO for kepler with the complete system environment pre-configured.
 
 ### Building the ISO
 
 ```bash
-nix build .#nixosConfigurations.mariner-iso.config.system.build.isoImage
+nix build .#nixosConfigurations.kepler-iso.config.system.build.isoImage
 
 # ISO will be available at:
 # ./result/iso/nixos-*.iso
@@ -196,7 +189,7 @@ nix build .#nixosConfigurations.mariner-iso.config.system.build.isoImage
    ```
 5. **Install with your configuration**:
    ```bash
-   nixos-install --flake /mnt/etc/nixos#mariner
+   nixos-install --flake /mnt/etc/nixos#kepler
    ```
 6. **Reboot and activate services**:
    ```bash

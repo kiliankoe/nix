@@ -13,7 +13,7 @@
   ];
 
   # Networking
-  networking.hostName = "mariner";
+  networking.hostName = "kepler";
 
   # Disable power management (server)
   powerManagement.enable = false;

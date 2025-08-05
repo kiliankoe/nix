@@ -34,11 +34,11 @@
 
       # NixOS configurations
       nixosConfigurations = {
-        # Build with: nixos-rebuild build --flake .#mariner
-        mariner = nixpkgs.lib.nixosSystem {
+        # Build with: nixos-rebuild build --flake .#kepler
+        kepler = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
-            ./hosts/mariner
+            ./hosts/kepler
           ];
         };
 
@@ -50,11 +50,11 @@
           ];
         };
 
-        # Build ISO with: nix build .#nixosConfigurations.mariner-iso.config.system.build.isoImage
-        mariner-iso = nixpkgs.lib.nixosSystem {
+        # Build ISO with: nix build .#nixosConfigurations.kepler-iso.config.system.build.isoImage
+        kepler-iso = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
-            ./iso/mariner-iso.nix
+            ./iso/kepler-iso.nix
           ];
         };
       };
@@ -66,7 +66,7 @@
       };
 
       nixosPackages = {
-        mariner = self.nixosConfigurations.mariner.pkgs;
+        kepler = self.nixosConfigurations.kepler.pkgs;
         midgard = self.nixosConfigurations.midgard.pkgs;
       };
     };

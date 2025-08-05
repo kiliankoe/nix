@@ -4,18 +4,18 @@
     # Include the default NixOS ISO modules
     "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
 
-    # Include your Mariner configuration (but skip hardware-configuration.nix)
+    # Include your kepler configuration (but skip hardware-configuration.nix)
     ../modules/nixos/base.nix
     ../modules/shared/base.nix
     ../modules/shared/zsh.nix
     ../services/forgejo.nix
     ../services/mato.nix
     ../services/watchtower.nix
-    ../hosts/mariner/packages.nix
+    ../hosts/kepler/packages.nix
   ];
 
   # ISO-specific settings
-  networking.hostName = "mariner-installer";
+  networking.hostName = "kepler-installer";
 
   # Include your services but don't auto-start them
   systemd.services = {

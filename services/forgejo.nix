@@ -79,7 +79,7 @@ let
     # Backup destination
     SSH_HOST_NAME=marvin
     SSH_PORT=43593
-    SSH_REMOTE_PATH=/volume1/Backups/mariner/forgejo
+    SSH_REMOTE_PATH=/volume1/Backups/kepler/forgejo
     SSH_USER=kilian
     SSH_IDENTITY_FILE="/root/.ssh/id_ed25519"
   '';
