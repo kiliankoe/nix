@@ -2,14 +2,26 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/nixos/base.nix
+
     ../../modules/shared/base.nix
     # ../../modules/shared/tmux.nix
     ../../modules/shared/zsh.nix
-    ../../services/forgejo.nix
-    ../../services/mato.nix
-    ../../services/watchtower.nix
+
+    ../../modules/nixos/base.nix
+
     ./packages.nix
+
+    ../../services/changedetection.nix
+    ../../services/factorio.nix
+    ../../services/forgejo.nix
+    ../../services/freshrss.nix
+    ../../services/lehmuese-ics.nix
+    ../../services/linkding.nix
+    ../../services/mato.nix
+    ../../services/paperless.nix
+    ../../services/swiftdebot.nix
+    ../../services/watchtower.nix
+    ../../services/wbbash.nix
   ];
 
   # Networking

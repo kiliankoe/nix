@@ -5,7 +5,6 @@
   environment.systemPackages = with pkgs; [
     # nix stuff
     nh
-
     nil
     nixd
     nixfmt
