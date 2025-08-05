@@ -19,6 +19,7 @@ nix/
 - **Voyager**: macOS (aarch64-darwin)
 - **Sojourner**: macOS (aarch64-darwin)
 - **Kepler**: NixOS (x86_64-linux, headless)
+- **Cubesat**: NixOS (x86_64-linux, headless)
 - **Midgard**: NixOS (x86_64-linux, desktop)
 
 ## Usage
@@ -26,27 +27,17 @@ nix/
 ```bash
 # macOS systems (nix-darwin)
 darwin-rebuild build --flake .#voyager
-darwin-rebuild build --flake .#sojourner
-
+darwin-rebuild switch --flake .#voyager
 # Alternative with nh
+nh darwin build -H voyager .
 nh darwin switch -H voyager .
-nh darwin switch -H sojourner .
 
 # NixOS systems
 nixos-rebuild build --flake .#kepler
-nixos-rebuild build --flake .#midgard
 sudo nixos-rebuild switch --flake .#kepler
-sudo nixos-rebuild switch --flake .#midgard
-
 # Alternative with nh
-nh os switch -H kepler .
-nh os switch -H midgard .
-
-# Or just build without switching
-nh darwin build -H voyager .
-nh darwin build -H sojourner .
 nh os build -H kepler .
-nh os build -H midgard .
+nh os switch -H kepler .
 
 # Build custom installation ISO
 nix build .#nixosConfigurations.kepler-iso.config.system.build.isoImage

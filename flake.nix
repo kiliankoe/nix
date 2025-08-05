@@ -9,7 +9,6 @@
 
   outputs = inputs@{ self, nixpkgs, nix-darwin }:
     {
-      # macOS configurations
       darwinConfigurations = {
         # Build with: darwin-rebuild build --flake .#voyager
         voyager = nix-darwin.lib.darwinSystem {
@@ -32,13 +31,20 @@
         };
       };
 
-      # NixOS configurations
       nixosConfigurations = {
         # Build with: nixos-rebuild build --flake .#kepler
         kepler = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
             ./hosts/kepler
+          ];
+        };
+
+        # Build with: nixos-rebuild build --flake .#cubesat
+        cubesat = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/cubesat
           ];
         };
 
