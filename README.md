@@ -8,24 +8,18 @@ This configuration follows a modular structure that separates shared components 
 
 ```
 nix/
-├── flake.nix                            # Main flake with all system outputs
+├── flake.nix
 ├── hosts/                               # Host-specific configurations
-│   └── midgard/                         # Desktop workstation (NixOS)
-├── iso/                                 # Custom ISO configurations
+├── iso/
 │   └── mariner-iso.nix                  # Mariner installation ISO
-├── modules/                             # Reusable configuration modules
-│   ├── darwin/                          # macOS-specific modules
-│   │   ├── base.nix
-│   │   └── homebrew.nix
-│   ├── nixos/                           # NixOS-specific modules
-│   │   ├── base.nix                     # Shared NixOS configuration
-│   │   ├── forgejo-service.nix          # Forgejo Git hosting service
-│   │   ├── mato-service.nix             # Mato webhook service
-│   │   └── watchtower-service.nix       # Container auto-updater
-│   └── shared/                          # Cross-platform modules
-│       ├── base.nix                     # Common modules for all platforms
-│       ├── tmux.nix                     # Shared tmux configuration
-│       └── zsh.nix                      # Cross-platform zsh setup
+└── modules/
+    ├── darwin/                          # macOS-specific modules
+    │   ├── base.nix
+    │   └── homebrew.nix
+    ├── nixos/                           # NixOS-specific modules
+    │   ├── base.nix
+    │   └── services/                    # Docker Compose service definitions
+    └── shared/                          # Cross-platform modules
 ```
 
 ## Host Profiles
