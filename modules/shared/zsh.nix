@@ -40,7 +40,7 @@
       fi
 
       # Load host-specific secrets
-      SECRETS_FILE="$HOME/.config/secrets/$(hostname)-env"
+      SECRETS_FILE="$HOME/.config/secrets/env"
       if [[ -f "$SECRETS_FILE" ]]; then
         source "$SECRETS_FILE"
       fi

@@ -8,9 +8,9 @@
     ../modules/nixos/base.nix
     ../modules/shared/base.nix
     ../modules/shared/zsh.nix
-    ../modules/nixos/services/forgejo.nix
-    ../modules/nixos/services/mato.nix
-    ../modules/nixos/services/watchtower.nix
+    ../services/forgejo.nix
+    ../services/mato.nix
+    ../services/watchtower.nix
     ../hosts/mariner/packages.nix
   ];
 

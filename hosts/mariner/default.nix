@@ -6,9 +6,9 @@
     ../../modules/shared/base.nix
     # ../../modules/shared/tmux.nix
     ../../modules/shared/zsh.nix
-    ../../modules/nixos/services/forgejo.nix
-    ../../modules/nixos/services/mato.nix
-    ../../modules/nixos/services/watchtower.nix
+    ../../services/forgejo.nix
+    ../../services/mato.nix
+    ../../services/watchtower.nix
     ./packages.nix
   ];
 
@@ -60,11 +60,6 @@
     }
   ];
 
-
-
-  # Services (headless server - base module provides SSH, Tailscale, Docker)
-
-  # Cron job
   services.cron = {
     enable = true;
     systemCronJobs = [
