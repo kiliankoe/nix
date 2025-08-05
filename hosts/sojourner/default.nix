@@ -86,6 +86,5 @@
   #   ];
   # };
 
-  # Sojourner-specific system configuration
   nixpkgs.hostPlatform = "aarch64-darwin";
 }
