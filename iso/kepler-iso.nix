@@ -1,4 +1,10 @@
-{ config, pkgs, lib, modulesPath, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  modulesPath,
+  ...
+}:
 {
   imports = [
     # Include the default NixOS ISO modules
@@ -19,9 +25,9 @@
 
   # Include your services but don't auto-start them
   systemd.services = {
-    docker-compose-forgejo.wantedBy = lib.mkForce [];
-    docker-compose-mato.wantedBy = lib.mkForce [];
-    docker-compose-watchtower.wantedBy = lib.mkForce [];
+    forgejo.wantedBy = lib.mkForce [ ];
+    mato.wantedBy = lib.mkForce [ ];
+    watchtower.wantedBy = lib.mkForce [ ];
   };
 
   # Disable power management for the ISO

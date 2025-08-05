@@ -91,8 +91,7 @@ in
     "docker-compose/forgejo/backup.env".source = backupEnvFile;
   };
 
-  # Systemd service for Forgejo stack
-  systemd.services.docker-compose-forgejo = {
+  systemd.services.forgejo = {
     description = "Docker Compose service for Forgejo";
     after = [ "docker.service" ];
     requires = [ "docker.service" ];

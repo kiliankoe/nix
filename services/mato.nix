@@ -32,8 +32,7 @@ in
   # Copy compose file to system
   environment.etc."docker-compose/mato/docker-compose.yml".source = composeFile;
 
-  # Systemd service for Mato
-  systemd.services.docker-compose-mato = {
+  systemd.services.mato = {
     description = "Docker Compose service for Mato";
     after = [ "docker.service" ];
     requires = [ "docker.service" ];

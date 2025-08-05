@@ -19,8 +19,7 @@ in
   # Copy compose file to system
   environment.etc."docker-compose/watchtower/docker-compose.yml".source = composeFile;
 
-  # Systemd service for Watchtower
-  systemd.services.docker-compose-watchtower = {
+  systemd.services.watchtower = {
     description = "Docker Compose service for Watchtower";
     after = [ "docker.service" ];
     requires = [ "docker.service" ];
