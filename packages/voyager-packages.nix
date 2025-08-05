@@ -1,7 +1,6 @@
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
-    # Voyager-specific packages
     dedup-darwin
     exercism
     ffmpeg_7

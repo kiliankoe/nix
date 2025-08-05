@@ -1,7 +1,6 @@
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
-    # Sojourner-specific packages (work-related)
     _1password-cli
     biome
     claude-code
@@ -28,6 +27,6 @@
     tailscale
     yq
   ];
-  
+
   nixpkgs.config.allowUnfree = true;
 }
