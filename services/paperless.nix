@@ -39,7 +39,7 @@ let
           - PAPERLESS_DBHOST=db
           - USERMAP_UID=1000
           - USERMAP_GID=1000
-          - PAPERLESS_TIME_ZONE=Europe/Berlin
+          - PAPERLESS_TIME_ZONE=${config.time.timeZone}
           - PAPERLESS_OCR_LANGUAGE=deu
         env_file:
           - paperless.env

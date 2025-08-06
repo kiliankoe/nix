@@ -8,7 +8,7 @@ let
         image: ghcr.io/kiliankoe/mato:latest
         restart: unless-stopped
         environment:
-          - TIMEZONE=Europe/Berlin
+          - TIMEZONE=${config.time.timeZone}
           - DB_PATH=/data/db.json
         env_file:
           - mato.env

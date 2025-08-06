@@ -19,8 +19,7 @@ let
           - freshrss-data:/var/www/FreshRSS/data
           - freshrss-extensions:/var/www/FreshRSS/extensions
         environment:
-          # TODO: Pass this via environment below and use system timezone
-          - TZ=Europe/Berlin
+          - TZ=${config.time.timeZone}
           - CRON_MIN=13,43
         ports:
           - '8383:80'

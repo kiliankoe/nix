@@ -16,9 +16,9 @@ let
         security_opt:
           - "no-new-privileges:true"
         environment:
+          - TZ=${config.time.timeZone}
           - PLAYWRIGHT_DRIVER_URL=ws://sockpuppetbrowser:3000
           - FETCH_WORKERS=10
-          - TZ=Europe/Berlin
         depends_on:
           sockpuppetbrowser:
             condition: service_started
