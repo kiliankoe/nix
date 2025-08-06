@@ -26,7 +26,11 @@
   users.users.kilian = {
     isNormalUser = true;
     description = "Kilian";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "docker"
+    ];
   };
 
   # Sudo configuration

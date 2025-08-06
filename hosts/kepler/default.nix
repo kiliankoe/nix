@@ -6,6 +6,7 @@
     ../../modules/shared/base.nix
     # ../../modules/shared/tmux.nix
     ../../modules/shared/zsh.nix
+    ../../modules/shared/sops-env.nix
 
     ../../modules/nixos/base.nix
 
@@ -26,6 +27,27 @@
 
   # Networking
   networking.hostName = "kepler";
+
+  # Service secrets
+  sops.secrets = {
+    "linkding/superuser_name" = { };
+    "linkding/superuser_password" = { };
+    "paperless/secret_key" = { };
+    "freshrss/rssbridge_auth_user" = { };
+    "freshrss/rssbridge_auth_hash" = { };
+    "swiftdebot/discord_token" = { };
+    "swiftdebot/discord_app_id" = { };
+    "swiftdebot/discord_logs_webhook_url" = { };
+    "swiftdebot/kagi_api_token" = { };
+    "swiftdebot/openai_api_token" = { };
+    "wbbash/nextauth_secret" = { };
+    "wbbash/email_server_host" = { };
+    "wbbash/email_server_port" = { };
+    "wbbash/email_server_user" = { };
+    "wbbash/email_server_password" = { };
+    "wbbash/email_from" = { };
+    "lehmuese_ics/url" = { };
+  };
 
   # Disable power management (server)
   powerManagement.enable = false;

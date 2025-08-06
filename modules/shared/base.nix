@@ -19,6 +19,7 @@
 
     # tools
     _1password-cli
+    age
     atuin
     bat
     biome
@@ -43,6 +44,7 @@
     mitmproxy2swagger
     neofetch
     ripgrep-all
+    sops
     tealdeer
     tmux
     tokei

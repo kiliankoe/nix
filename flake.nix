@@ -5,6 +5,8 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -12,6 +14,7 @@
       self,
       nixpkgs,
       nix-darwin,
+      sops-nix,
     }:
     {
       darwinConfigurations = {
@@ -19,6 +22,7 @@
         voyager = nix-darwin.lib.darwinSystem {
           modules = [
             ./hosts/voyager
+            sops-nix.darwinModules.sops
             {
               system.configurationRevision = self.rev or self.dirtyRev or null;
             }
@@ -29,6 +33,7 @@
         sojourner = nix-darwin.lib.darwinSystem {
           modules = [
             ./hosts/sojourner
+            sops-nix.darwinModules.sops
             {
               system.configurationRevision = self.rev or self.dirtyRev or null;
             }
@@ -42,6 +47,7 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/kepler
+            sops-nix.nixosModules.sops
           ];
         };
 

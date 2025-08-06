@@ -63,6 +63,11 @@ in
         source "$SECRETS_FILE"
       fi
 
+      # Load sops-managed environment variables
+      if [[ -f "/etc/sops-env.sh" ]]; then
+        source "/etc/sops-env.sh"
+      fi
+
       # Load deno environment if it exists (will work for any user)
       if [[ -f "$HOME/.deno/env" ]]; then
         source "$HOME/.deno/env"
@@ -76,7 +81,8 @@ in
         eval "$(atuin init zsh --disable-up-arrow)"
       fi
     '';
-  } // lib.optionalAttrs pkgs.stdenv.isDarwin {
+  }
+  // lib.optionalAttrs pkgs.stdenv.isDarwin {
     # macOS-specific options
     enableAutosuggestions = true;
     enableSyntaxHighlighting = true;
@@ -86,8 +92,11 @@ in
     # macOS-specific environment variables
     variables = {
       ICLOUD_DRIVE = "$HOME/Library/Mobile Documents/com~apple~CloudDocs";
+      # TODO: Move this into 1pw?
+      SOPS_AGE_KEY_FILE = "$HOME/.config/age/key.txt";
     };
-  } // lib.optionalAttrs pkgs.stdenv.isLinux {
+  }
+  // lib.optionalAttrs pkgs.stdenv.isLinux {
     # NixOS-specific options
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;

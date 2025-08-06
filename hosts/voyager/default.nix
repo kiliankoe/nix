@@ -4,6 +4,7 @@
     ../../modules/shared/base.nix
     ../../modules/shared/tmux.nix
     ../../modules/shared/zsh.nix
+    ../../modules/shared/sops-env.nix
 
     ../../modules/darwin/base.nix
     ../../modules/darwin/packages.nix
