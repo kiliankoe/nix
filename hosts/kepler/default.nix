@@ -40,6 +40,10 @@
     "swiftdebot/discord_logs_webhook_url" = { };
     "swiftdebot/kagi_api_token" = { };
     "swiftdebot/openai_api_token" = { };
+    "wbbash/miniqdb_name" = { };
+    "wbbash/allowed_domains" = { };
+    "wbbash/nothing_to_see_here_text" = { };
+    "wbbash/login_button_text" = { };
     "wbbash/nextauth_secret" = { };
     "wbbash/email_server_host" = { };
     "wbbash/email_server_port" = { };
