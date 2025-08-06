@@ -11,6 +11,7 @@ nix/
 │   ├── darwin/       # macOS-specific modules
 │   ├── nixos/        # NixOS-specific modules
 │   └── shared/       # Cross-platform modules
+├── secrets/          # Encrypted secrets (managed by sops-nix)
 └── services/         # Docker Compose service definitions
 ```
 
@@ -45,52 +46,38 @@ nix build .#nixosConfigurations.kepler-iso.config.system.build.isoImage
 
 ## Secrets Management
 
-This configuration uses **sops-nix** for encrypted secrets management. Secrets are stored encrypted in `secrets.yaml` and automatically decrypted at system build time.
+This configuration uses **sops-nix** for encrypted secrets management. Secrets are stored encrypted in `secrets/secrets.yaml` and automatically decrypted at system build time.
 
 ### Setup
 
-1. **Install required tools**:
-   ```bash
-   # Install sops and age
-   nix-shell -p sops age
-   ```
-
-2. **Set up age key** (already done if migrating):
-   ```bash
-   mkdir -p ~/.config/age
-   # Copy your age private key to ~/.config/age/key.txt
-   ```
-
-3. **Secrets are automatically available** as environment variables through shell configuration.
+```bash
+mkdir -p ~/.config/sops
+# Copy your age private key to ~/.config/sops/age.key
+```
 
 ### Managing Secrets
 
 **Edit encrypted secrets**:
 ```bash
-# Set age key location (or add to shell profile)
-export SOPS_AGE_KEY_FILE=~/.config/sops/age.key
-
 # Edit secrets (decrypts, opens editor, re-encrypts on save)
-sops secrets.yaml
+sops secrets/secrets.yaml
 ```
 
 **View secrets**:
 ```bash
 # Decrypt to stdout
-sops -d secrets.yaml
+sops -d secrets/secrets.yaml
 ```
 
 ### Legacy Environment Files
 
-For additional host-specific secrets not managed by sops, you can still use:
+For additional host-specific secrets not managed by sops:
 
 ```bash
 # ~/.config/secrets/env
 export GITHUB_TOKEN="ghp_..."
 export DATABASE_URL="postgresql://..."
 ```
-
-Both sops-managed and legacy environment files are loaded automatically.
 
 ## Docker Services
 
@@ -100,8 +87,6 @@ It uses inline compose files to allow for independent compose networks.
 See `services/` for service definitions.
 
 ### Service Management
-
-Connect via SSH and use standard systemd commands to control services:
 
 ```bash
 # Start/stop/restart services
@@ -123,13 +108,7 @@ sudo systemctl disable $servicename
 
 ### Service Secrets
 
-Service secrets are managed through **sops-nix** and automatically injected into Docker Compose services. Secrets are:
-
-- **Encrypted** in `secrets.yaml` (safe to commit to git)
-- **Automatically decrypted** at system build time  
-- **Injected** into service containers via environment files
-
-No manual secret file management required!
+Service secrets are managed through **sops-nix** and automatically injected into Docker Compose services.
 
 ### Adding New Docker Services
 
@@ -137,57 +116,8 @@ No manual secret file management required!
 2. **Define Docker Compose config**: Embed the compose file using `pkgs.writeText`
 3. **Add systemd service**: Configure start/stop/reload commands
 4. **Handle secrets**: Create sops secrets and environment file if needed
-5. **Add secret definitions**: Add to `hosts/kepler/default.nix` sops.secrets
-6. **Import in host**: Add module to `hosts/kepler/default.nix`
-
-Example service module structure:
-```nix
-{ config, pkgs, ... }:
-let
-  # Environment file with sops secrets (if needed)
-  envFile = pkgs.writeText "service.env" ''
-    SECRET_KEY=${builtins.readFile config.sops.secrets."service/secret_key".path}
-  '';
-
-  composeFile = pkgs.writeText "service-compose.yml" ''
-    services:
-      app:
-        image: your/image:latest
-        env_file:
-          - .env  # If secrets needed
-        environment:
-          - NON_SECRET_VAR=value
-  '';
-in
-{
-  environment.etc = {
-    "docker-compose/service/docker-compose.yml".source = composeFile;
-    "docker-compose/service/.env".source = envFile;  # If secrets needed
-  };
-
-  systemd.services.service = {
-    description = "Docker Compose service for Service";
-    after = [ "docker.service" ];
-    requires = [ "docker.service" ];
-    wantedBy = [ "multi-user.target" ];
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      WorkingDirectory = "/etc/docker-compose/service";
-      ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
-      ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
-      ExecReload = "${pkgs.docker-compose}/bin/docker-compose up -d --force-recreate";
-      TimeoutStartSec = 0;
-      User = "root";
-    };
-  };
-
-  systemd.tmpfiles.rules = [
-    "d /etc/docker-compose/service 0755 root root -"
-  ];
-}
-```
+5. **Add secret definitions**: Add to `hosts/$host/default.nix` sops.secrets
+6. **Import in host**: Add module to `hosts/$host/default.nix`
 
 ## Custom Installation ISO
 
