@@ -1,6 +1,6 @@
 # Nix Configs
 
-My consolidated Nix configuration for macOS and NixOS systems, including custom Docker services.
+My consolidated Nix configuration for macOS and NixOS systems, including a few services.
 
 ```
 nix/
@@ -44,32 +44,27 @@ nh os switch -H kepler .
 nix build .#nixosConfigurations.kepler-iso.config.system.build.isoImage
 ```
 
-## Secrets Management
+## Secrets
 
-This configuration uses **sops-nix** for encrypted secrets management. Secrets are stored encrypted in `secrets/secrets.yaml` and automatically decrypted at system build time.
+Secrets are stored encrypted in `secrets/secrets.yaml` and automatically decrypted using sops-nix.
 
 ### Setup
 
-```bash
-mkdir -p ~/.config/sops
-# Copy your age private key to ~/.config/sops/age.key
-```
+Key is stored in `~/.config/sops/age.key`, make sure that exists.
 
 ### Managing Secrets
 
-**Edit encrypted secrets**:
+**Edit secrets**
 ```bash
-# Edit secrets (decrypts, opens editor, re-encrypts on save)
 sops secrets/secrets.yaml
 ```
 
-**View secrets**:
+**Decrypt to stdout**
 ```bash
-# Decrypt to stdout
 sops -d secrets/secrets.yaml
 ```
 
-### Legacy Environment Files
+### Secrets in Environment Files
 
 For additional host-specific secrets not managed by sops:
 
@@ -81,10 +76,8 @@ export DATABASE_URL="postgresql://..."
 
 ## Docker Services
 
-Kepler runs several Docker Compose services managed through Nix. Each service is defined as a separate module and managed via systemd.
+Some hosts run docker compose services managed through Nix. Each service is defined as a separate module and managed via systemd.
 It uses inline compose files to allow for independent compose networks.
-
-See `services/` for service definitions.
 
 ### Service Management
 
@@ -110,18 +103,15 @@ sudo systemctl disable $servicename
 
 Service secrets are managed through **sops-nix** and automatically injected into Docker Compose services.
 
-### Adding New Docker Services
+### Backups
 
-1. **Create service module**: `services/new-service.nix`
-2. **Define Docker Compose config**: Embed the compose file using `pkgs.writeText`
-3. **Add systemd service**: Configure start/stop/reload commands
-4. **Handle secrets**: Create sops secrets and environment file if needed
-5. **Add secret definitions**: Add to `hosts/$host/default.nix` sops.secrets
-6. **Import in host**: Add module to `hosts/$host/default.nix`
+Ensure the `volumesToBackup` attribute is set where applicable. This will automatically backup the listed docker volumes.
 
 ## Custom Installation ISO
 
 This configuration includes a custom NixOS installation ISO for kepler with the complete system environment pre-configured.
+
+This is as of yet untested lol
 
 ### Building the ISO
 
@@ -134,23 +124,21 @@ nix build .#nixosConfigurations.kepler-iso.config.system.build.isoImage
 
 ### Installation Process
 
-1. **Boot from the custom ISO** - Your system environment is already available
-2. **Partition and format drives** - Use standard NixOS installation tools (parted, cryptsetup, etc.)
-3. **Generate hardware configuration**:
+1. Boot from the custom ISO
+2. Partition and format drives
+3. Generate hardware configuration:
    ```bash
    nixos-generate-config --root /mnt
    ```
-4. **Copy your flake configuration**:
+4. Clone or copy flake configuration:
    ```bash
-   # Clone your repo or copy configuration
    git clone <your-repo> /mnt/etc/nixos
    ```
-5. **Install with your configuration**:
+5. Install with configuration:
    ```bash
    nixos-install --flake /mnt/etc/nixos#kepler
    ```
-6. **Reboot and activate services**:
+6. Reboot and start services:
    ```bash
-   # After reboot, start your Docker services
-   sudo systemctl start docker-compose-$servicename
+   sudo systemctl start $servicename
    ```
