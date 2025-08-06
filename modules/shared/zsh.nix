@@ -92,8 +92,8 @@ in
     # macOS-specific environment variables
     variables = {
       ICLOUD_DRIVE = "$HOME/Library/Mobile Documents/com~apple~CloudDocs";
-      # TODO: Move this into 1pw?
-      SOPS_AGE_KEY_FILE = "$HOME/.config/age/key.txt";
+      # TODO: Read this from op?
+      SOPS_AGE_KEY_FILE = "$HOME/.config/sops/age.key";
     };
   }
   // lib.optionalAttrs pkgs.stdenv.isLinux {

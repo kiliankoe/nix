@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 {
-  sops.age.keyFile = "$HOME/.config/age/key.txt";
+  sops.age.keyFile = "$HOME/.config/sops/age.key";
   sops.defaultSopsFile = ../../secrets.yaml;
 
   # Common secret definitions

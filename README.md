@@ -68,7 +68,7 @@ This configuration uses **sops-nix** for encrypted secrets management. Secrets a
 **Edit encrypted secrets**:
 ```bash
 # Set age key location (or add to shell profile)
-export SOPS_AGE_KEY_FILE=~/.config/age/key.txt
+export SOPS_AGE_KEY_FILE=~/.config/sops/age.key
 
 # Edit secrets (decrypts, opens editor, re-encrypts on save)
 sops secrets.yaml
