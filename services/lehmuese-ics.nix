@@ -8,8 +8,8 @@ let
         container_name: lehmuese-ics
         image: lehmuese-ics:latest # TODO: Publish on ghcr.io
         restart: unless-stopped
-        environment:
-          - URL=${builtins.readFile config.sops.secrets."lehmuese_ics/url".path}
+        env_file:
+          - lehmuese-ics.env
         volumes:
           - lehmuese-ics-db:/app/db.sqlite
         ports:
@@ -22,4 +22,11 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "lehmuese-ics";
   composeFile = composeFile;
+  environment = {
+    lehmuese-ics = {
+      URL = {
+        secretFile = config.sops.secrets."lehmuese_ics/url".path;
+      };
+    };
+  };
 }

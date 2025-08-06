@@ -41,7 +41,8 @@ let
           - USERMAP_GID=1000
           - PAPERLESS_TIME_ZONE=Europe/Berlin
           - PAPERLESS_OCR_LANGUAGE=deu
-          - PAPERLESS_SECRET_KEY=${builtins.readFile config.sops.secrets."paperless/secret_key".path}
+        env_file:
+          - paperless.env
         ports:
           - '8382:8000'
 
@@ -57,4 +58,11 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "paperless";
   composeFile = composeFile;
+  environment = {
+    paperless = {
+      PAPERLESS_SECRET_KEY = {
+        secretFile = config.sops.secrets."paperless/secret_key".path;
+      };
+    };
+  };
 }

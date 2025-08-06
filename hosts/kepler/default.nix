@@ -47,6 +47,12 @@
     "wbbash/email_server_password" = { };
     "wbbash/email_from" = { };
     "lehmuese_ics/url" = { };
+    "mato/my_email" = { };
+    "mato/smtp_host" = { };
+    "mato/smtp_from" = { };
+    "mato/smtp_user" = { };
+    "mato/smtp_pass" = { };
+    "mato/catfact_slack_webhook" = { };
   };
 
   # Disable power management (server)

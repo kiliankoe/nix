@@ -16,10 +16,8 @@ let
           - LD_HOST_DATA_DIR=./data
           - LD_DISABLE_BACKGROUND_TASKS=False
           - LD_DISABLE_URL_VALIDATION=False
-          - LD_SUPERUSER_NAME=${builtins.readFile config.sops.secrets."linkding/superuser_name".path}
-          - LD_SUPERUSER_PASSWORD=${
-            builtins.readFile config.sops.secrets."linkding/superuser_password".path
-          }
+        env_file:
+          - linkding.env
         ports:
           - '8381:9090'
 
@@ -30,4 +28,14 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "linkding";
   composeFile = composeFile;
+  environment = {
+    linkding = {
+      LD_SUPERUSER_NAME = {
+        secretFile = config.sops.secrets."linkding/superuser_name".path;
+      };
+      LD_SUPERUSER_PASSWORD = {
+        secretFile = config.sops.secrets."linkding/superuser_password".path;
+      };
+    };
+  };
 }

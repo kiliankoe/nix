@@ -19,6 +19,7 @@ let
           - freshrss-data:/var/www/FreshRSS/data
           - freshrss-extensions:/var/www/FreshRSS/extensions
         environment:
+          # TODO: Pass this via environment below and use system timezone
           - TZ=Europe/Berlin
           - CRON_MIN=13,43
         ports:
@@ -35,14 +36,8 @@ let
             max-size: 10m
         volumes:
           - rss-bridge-config:/config
-        environment:
-          # TODO: Replace with pangolin as soon as that supports basic auth
-          - RSSBRIDGE_AUTH_USER=${
-            builtins.readFile config.sops.secrets."freshrss/rssbridge_auth_user".path
-          }
-          - RSSBRIDGE_AUTH_HASH=${
-            builtins.readFile config.sops.secrets."freshrss/rssbridge_auth_hash".path
-          }
+        env_file:
+          - rss-bridge.env
         ports:
           - '8384:80'
 
@@ -55,4 +50,14 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "freshrss";
   composeFile = composeFile;
+  environment = {
+    rss-bridge = {
+      RSSBRIDGE_AUTH_USER = {
+        secretFile = config.sops.secrets."freshrss/rssbridge_auth_user".path;
+      };
+      RSSBRIDGE_AUTH_HASH = {
+        secretFile = config.sops.secrets."freshrss/rssbridge_auth_hash".path;
+      };
+    };
+  };
 }
