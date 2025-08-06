@@ -47,49 +47,19 @@ let
         labels:
           - docker-volume-backup.stop-during-backup=true
 
-      backup:
-        image: offen/docker-volume-backup:v2
-        restart: always
-        env_file: ./backup.env
-        volumes:
-          - /home/kilian/.ssh/id_ed25519:/root/.ssh/id_ed25519:ro
-          - /var/run/docker.sock:/var/run/docker.sock:ro
-          - forgejo-data:/backup/forgejo:ro
-          - forgejo-postgresql-data:/backup/forgejo-postgres:ro
-
     volumes:
       forgejo-data:
       forgejo-postgresql-data:
   '';
 
-  backupEnvFile = pkgs.writeText "forgejo-backup.env" ''
-    # https://offen.github.io/docker-volume-backup/reference/
-
-    BACKUP_CRON_EXPRESSION=0 4 * * *
-
-    # BACKUP_RETENTION_DAYS=90
-    # BACKUP_PRUNING_PREFIX=
-
-    # NOTIFICATION_LEVEL="error"
-    # NOTIFICATION_URLS="smtp://username:password@host:587/?fromAddress=sender@example.com&toAddresses=recipient@example.com"
-
-    # Additional local file storage
-    # BACKUP_ARCHIVE="/archive"
-
-    # Backup destination
-    SSH_HOST_NAME=marvin
-    SSH_PORT=43593
-    SSH_REMOTE_PATH=/volume1/Backups/kepler/forgejo
-    SSH_USER=kilian
-    SSH_IDENTITY_FILE="/root/.ssh/id_ed25519"
-  '';
 in
 dockerService.mkDockerComposeService {
   serviceName = "forgejo";
   composeFile = composeFile;
-  extraFiles = {
-    "docker-compose/forgejo/backup.env".source = backupEnvFile;
-  };
+  volumesToBackup = [
+    "forgejo-data"
+    "forgejo-postgresql-data"
+  ];
   environment = {
     db = {
       POSTGRES_DB = "forgejo";
