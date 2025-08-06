@@ -13,8 +13,6 @@ let
         restart: unless-stopped
         volumes:
           - paperless-postgres-data:/var/lib/postgresql/data
-        env_file:
-          - .env
         healthcheck:
           test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
           interval: 5s
@@ -41,7 +39,7 @@ let
           - USERMAP_GID=1000
           - PAPERLESS_TIME_ZONE=Europe/Berlin
           - PAPERLESS_OCR_LANGUAGE=deu
-        env_file: .env
+          - PAPERLESS_SECRET_KEY=${builtins.readFile config.sops.secrets."paperless/secret_key".path}
         ports:
           - '8382:8000'
 
@@ -83,9 +81,8 @@ in
     };
   };
 
-  # Create secrets symlink for .env file
+  # Create directory for compose files
   systemd.tmpfiles.rules = [
     "d /etc/docker-compose/paperless 0755 root root -"
-    "L+ /etc/docker-compose/paperless/.env - - - - /home/kilian/.config/secrets/paperless.env"
   ];
 }

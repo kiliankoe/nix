@@ -46,9 +46,8 @@ in
     };
   };
 
-  # Create secrets symlink for .env file
+  # Create directory for compose files
   systemd.tmpfiles.rules = [
     "d /etc/docker-compose/uptime-kuma 0755 root root -"
-    "L+ /etc/docker-compose/uptime-kuma/.env - - - - /home/kilian/.config/secrets/uptime-kuma.env"
   ];
 }

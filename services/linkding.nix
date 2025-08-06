@@ -14,8 +14,10 @@ let
           - LD_HOST_DATA_DIR=./data
           - LD_DISABLE_BACKGROUND_TASKS=False
           - LD_DISABLE_URL_VALIDATION=False
-        env_file:
-          - .env
+          - LD_SUPERUSER_NAME=${builtins.readFile config.sops.secrets."linkding/superuser_name".path}
+          - LD_SUPERUSER_PASSWORD=${
+            builtins.readFile config.sops.secrets."linkding/superuser_password".path
+          }
         ports:
           - '8381:9090'
 
@@ -52,9 +54,8 @@ in
     };
   };
 
-  # Create secrets symlink for .env file
+  # Create directory for compose files
   systemd.tmpfiles.rules = [
     "d /etc/docker-compose/linkding 0755 root root -"
-    "L+ /etc/docker-compose/linkding/.env - - - - /home/kilian/.config/secrets/linkding.env"
   ];
 }

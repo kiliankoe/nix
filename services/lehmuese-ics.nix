@@ -6,8 +6,8 @@ let
         container_name: lehmuese-ics
         image: lehmuese-ics:latest # TODO: Publish on ghcr.io
         restart: unless-stopped
-        env_file:
-          - .env
+        environment:
+          - URL=${builtins.readFile config.sops.secrets."lehmuese_ics/url".path}
         volumes:
           - lehmuese-ics-db:/app/db.sqlite
         ports:
@@ -46,9 +46,8 @@ in
     };
   };
 
-  # Create secrets symlink for .env file
+  # Create directory for compose files
   systemd.tmpfiles.rules = [
     "d /etc/docker-compose/lehmuese-ics 0755 root root -"
-    "L+ /etc/docker-compose/lehmuese-ics/.env - - - - /home/kilian/.config/secrets/lehmuese-ics.env"
   ];
 }

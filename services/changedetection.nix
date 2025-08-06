@@ -17,8 +17,6 @@ let
           - PLAYWRIGHT_DRIVER_URL=ws://sockpuppetbrowser:3000
           - FETCH_WORKERS=10
           - TZ=Europe/Berlin
-        env_file:
-          - .env
         depends_on:
           sockpuppetbrowser:
             condition: service_started
@@ -71,9 +69,8 @@ in
     };
   };
 
-  # Create secrets symlink for .env file
+  # Create directory for compose files
   systemd.tmpfiles.rules = [
     "d /etc/docker-compose/changedetection 0755 root root -"
-    "L+ /etc/docker-compose/changedetection/.env - - - - /home/kilian/.config/secrets/changedetection.env"
   ];
 }

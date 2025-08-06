@@ -43,29 +43,54 @@ nh os switch -H kepler .
 nix build .#nixosConfigurations.kepler-iso.config.system.build.isoImage
 ```
 
-## Secrets
+## Secrets Management
 
-This configuration supports host-specific secrets through external environment files that are kept outside the git repository.
+This configuration uses **sops-nix** for encrypted secrets management. Secrets are stored encrypted in `secrets.yaml` and automatically decrypted at system build time.
 
 ### Setup
 
-Secrets are loaded automatically through the zsh configuration. Create host-specific environment files:
+1. **Install required tools**:
+   ```bash
+   # Install sops and age
+   nix-shell -p sops age
+   ```
 
+2. **Set up age key** (already done if migrating):
+   ```bash
+   mkdir -p ~/.config/age
+   # Copy your age private key to ~/.config/age/key.txt
+   ```
+
+3. **Secrets are automatically available** as environment variables through shell configuration.
+
+### Managing Secrets
+
+**Edit encrypted secrets**:
 ```bash
-mkdir -p ~/.config/secrets/
-touch ~/.config/secrets/env
+# Set age key location (or add to shell profile)
+export SOPS_AGE_KEY_FILE=~/.config/age/key.txt
+
+# Edit secrets (decrypts, opens editor, re-encrypts on save)
+sops secrets.yaml
 ```
 
-### Usage
+**View secrets**:
+```bash
+# Decrypt to stdout
+sops -d secrets.yaml
+```
 
-Add your secrets to the appropriate file:
+### Legacy Environment Files
+
+For additional host-specific secrets not managed by sops, you can still use:
 
 ```bash
 # ~/.config/secrets/env
-export OPENAI_API_KEY="sk-..."
 export GITHUB_TOKEN="ghp_..."
 export DATABASE_URL="postgresql://..."
 ```
+
+Both sops-managed and legacy environment files are loaded automatically.
 
 ## Docker Services
 
@@ -98,35 +123,49 @@ sudo systemctl disable $servicename
 
 ### Service Secrets
 
-Each service that requires secrets (db credentials, backup settings, etc.) expects a corresponding environment file:
+Service secrets are managed through **sops-nix** and automatically injected into Docker Compose services. Secrets are:
 
-```bash
-~/.config/secrets/$servicename.env
-```
+- **Encrypted** in `secrets.yaml` (safe to commit to git)
+- **Automatically decrypted** at system build time  
+- **Injected** into service containers via environment files
+
+No manual secret file management required!
 
 ### Adding New Docker Services
 
 1. **Create service module**: `services/new-service.nix`
 2. **Define Docker Compose config**: Embed the compose file using `pkgs.writeText`
 3. **Add systemd service**: Configure start/stop/reload commands
-4. **Handle secrets**: Create tmpfiles rule for `.env` symlink if needed
-5. **Import in host**: Add module to `hosts/kepler/default.nix`
+4. **Handle secrets**: Create sops secrets and environment file if needed
+5. **Add secret definitions**: Add to `hosts/kepler/default.nix` sops.secrets
+6. **Import in host**: Add module to `hosts/kepler/default.nix`
 
 Example service module structure:
 ```nix
 { config, pkgs, ... }:
 let
+  # Environment file with sops secrets (if needed)
+  envFile = pkgs.writeText "service.env" ''
+    SECRET_KEY=${builtins.readFile config.sops.secrets."service/secret_key".path}
+  '';
+
   composeFile = pkgs.writeText "service-compose.yml" ''
     services:
       app:
         image: your/image:latest
-        # ... compose configuration
+        env_file:
+          - .env  # If secrets needed
+        environment:
+          - NON_SECRET_VAR=value
   '';
 in
 {
-  environment.etc."docker-compose/service/docker-compose.yml".source = composeFile;
+  environment.etc = {
+    "docker-compose/service/docker-compose.yml".source = composeFile;
+    "docker-compose/service/.env".source = envFile;  # If secrets needed
+  };
 
-  systemd.services.servicename = {
+  systemd.services.service = {
     description = "Docker Compose service for Service";
     after = [ "docker.service" ];
     requires = [ "docker.service" ];
@@ -144,10 +183,8 @@ in
     };
   };
 
-  # Add secrets symlink if needed
   systemd.tmpfiles.rules = [
     "d /etc/docker-compose/service 0755 root root -"
-    "L+ /etc/docker-compose/service/.env - - - - /home/kilian/.config/secrets/service.env"
   ];
 }
 ```

@@ -8,8 +8,14 @@ let
         restart: unless-stopped
         environment:
           - DATABASE_URL=file:/db.sqlite
-        env_file:
-          - .env
+          - NEXTAUTH_SECRET=${builtins.readFile config.sops.secrets."wbbash/nextauth_secret".path}
+          - EMAIL_SERVER_HOST=${builtins.readFile config.sops.secrets."wbbash/email_server_host".path}
+          - EMAIL_SERVER_PORT=${builtins.readFile config.sops.secrets."wbbash/email_server_port".path}
+          - EMAIL_SERVER_USER=${builtins.readFile config.sops.secrets."wbbash/email_server_user".path}
+          - EMAIL_SERVER_PASSWORD=${
+            builtins.readFile config.sops.secrets."wbbash/email_server_password".path
+          }
+          - EMAIL_FROM=${builtins.readFile config.sops.secrets."wbbash/email_from".path}
         volumes:
           - wbbash-db:/db.sqlite
         ports:
@@ -48,9 +54,8 @@ in
     };
   };
 
-  # Create secrets symlink for .env file
+  # Create directory for compose files
   systemd.tmpfiles.rules = [
     "d /etc/docker-compose/wbbash 0755 root root -"
-    "L+ /etc/docker-compose/wbbash/.env - - - - /home/kilian/.config/secrets/wbbash.env"
   ];
 }

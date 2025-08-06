@@ -6,8 +6,14 @@ let
         image: ghcr.io/swiftde/swiftdebot:latest
         container_name: swiftdebot
         restart: unless-stopped
-        env_file:
-          - .env
+        environment:
+          - DISCORD_TOKEN=${builtins.readFile config.sops.secrets."swiftdebot/discord_token".path}
+          - DISCORD_APP_ID=${builtins.readFile config.sops.secrets."swiftdebot/discord_app_id".path}
+          - DISCORD_LOGS_WEBHOOK_URL=${
+            builtins.readFile config.sops.secrets."swiftdebot/discord_logs_webhook_url".path
+          }
+          - KAGI_API_TOKEN=${builtins.readFile config.sops.secrets."swiftdebot/kagi_api_token".path}
+          - OPENAI_API_TOKEN=${builtins.readFile config.sops.secrets."swiftdebot/openai_api_token".path}
   '';
 in
 {
@@ -39,9 +45,8 @@ in
     };
   };
 
-  # Create secrets symlink for .env file
+  # Create directory for compose files
   systemd.tmpfiles.rules = [
     "d /etc/docker-compose/swiftdebot 0755 root root -"
-    "L+ /etc/docker-compose/swiftdebot/.env - - - - /home/kilian/.config/secrets/swiftdebot.env"
   ];
 }

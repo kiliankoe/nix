@@ -19,8 +19,6 @@ let
         environment:
           - TZ=Europe/Berlin
           - CRON_MIN=13,43
-        env_file:
-          - .env
         ports:
           - '8383:80'
 
@@ -35,8 +33,13 @@ let
             max-size: 10m
         volumes:
           - rss-bridge-config:/config
-        env_file:
-          - .env
+        environment:
+          - RSSBRIDGE_AUTH_USER=${
+            builtins.readFile config.sops.secrets."freshrss/rssbridge_auth_user".path
+          }
+          - RSSBRIDGE_AUTH_HASH=${
+            builtins.readFile config.sops.secrets."freshrss/rssbridge_auth_hash".path
+          }
         ports:
           - '8384:80'
 
@@ -75,9 +78,8 @@ in
     };
   };
 
-  # Create secrets symlink for .env file
+  # Create directory for compose files
   systemd.tmpfiles.rules = [
     "d /etc/docker-compose/freshrss 0755 root root -"
-    "L+ /etc/docker-compose/freshrss/.env - - - - /home/kilian/.config/secrets/freshrss.env"
   ];
 }

@@ -14,9 +14,8 @@ let
           - factorio-data:/factorio
         environment:
           - GENERATE_NEW_SAVE=true
+          - SAVE_NAME=Benjamilius
           - DLC_SPACE_AGE=true
-        env_file:
-          - .env
 
     volumes:
       factorio-data:
@@ -51,9 +50,8 @@ in
     };
   };
 
-  # Create secrets symlink for .env file
+  # Create directory for compose files
   systemd.tmpfiles.rules = [
     "d /etc/docker-compose/factorio 0755 root root -"
-    "L+ /etc/docker-compose/factorio/.env - - - - /home/kilian/.config/secrets/factorio.env"
   ];
 }
