@@ -51,6 +51,6 @@
   services.tailscale.enable = true;
   virtualisation.docker.enable = true;
 
-  # System version
+  # Used for backwards compatibility, don't touch.
   system.stateVersion = "24.11";
 }
