@@ -1,5 +1,7 @@
 { config, pkgs, ... }:
 let
+  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
+
   composeFile = pkgs.writeText "paperless-compose.yml" ''
     services:
       broker:
@@ -52,37 +54,7 @@ let
       paperless-consume:
   '';
 in
-{
-  # Copy compose files to system
-  environment.etc = {
-    "docker-compose/paperless/docker-compose.yml".source = composeFile;
-  };
-
-  systemd.services.paperless = {
-    description = "Docker Compose service for Paperless";
-    after = [ "docker.service" ];
-    requires = [ "docker.service" ];
-    wantedBy = [ "multi-user.target" ];
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      WorkingDirectory = "/etc/docker-compose/paperless";
-      ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
-      ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
-      ExecReload = "${pkgs.docker-compose}/bin/docker-compose up -d --force-recreate";
-      TimeoutStartSec = 0;
-      User = "root";
-    };
-
-    unitConfig = {
-      StartLimitBurst = 3;
-      StartLimitIntervalSec = 60;
-    };
-  };
-
-  # Create directory for compose files
-  systemd.tmpfiles.rules = [
-    "d /etc/docker-compose/paperless 0755 root root -"
-  ];
+dockerService.mkDockerComposeService {
+  serviceName = "paperless";
+  composeFile = composeFile;
 }

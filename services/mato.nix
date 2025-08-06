@@ -1,5 +1,7 @@
 { config, pkgs, ... }:
 let
+  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
+
   composeFile = pkgs.writeText "mato-compose.yml" ''
     services:
       app:
@@ -28,36 +30,7 @@ let
       mato-data:
   '';
 in
-{
-  # Copy compose file to system
-  environment.etc."docker-compose/mato/docker-compose.yml".source = composeFile;
-
-  systemd.services.mato = {
-    description = "Docker Compose service for Mato";
-    after = [ "docker.service" ];
-    requires = [ "docker.service" ];
-    wantedBy = [ "multi-user.target" ];
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      WorkingDirectory = "/etc/docker-compose/mato";
-      ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
-      ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
-      ExecReload = "${pkgs.docker-compose}/bin/docker-compose up -d --force-recreate";
-      TimeoutStartSec = 0;
-      User = "root";
-    };
-
-    unitConfig = {
-      StartLimitBurst = 3;
-      StartLimitIntervalSec = 60;
-    };
-  };
-
-  # Create secrets symlink for .env file
-  systemd.tmpfiles.rules = [
-    "d /etc/docker-compose/mato 0755 root root -"
-    "L+ /etc/docker-compose/mato/.env - - - - /home/kilian/.config/secrets/mato.env"
-  ];
+dockerService.mkDockerComposeService {
+  serviceName = "mato";
+  composeFile = composeFile;
 }

@@ -1,9 +1,11 @@
 { config, pkgs, ... }:
 let
+  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
+
   composeFile = pkgs.writeText "changedetection-compose.yml" ''
     services:
       changedetection:
-        image: ghcr.io/dgtlmoon/changedetection.io
+        image: ghcr.io/dgtlmoon/changedetection.io:latest
         container_name: changedetection
         hostname: changedetection
         volumes:
@@ -40,37 +42,7 @@ let
       changedetection-data:
   '';
 in
-{
-  # Copy compose files to system
-  environment.etc = {
-    "docker-compose/changedetection/docker-compose.yml".source = composeFile;
-  };
-
-  systemd.services.changedetection = {
-    description = "Docker Compose service for Changedetection.io";
-    after = [ "docker.service" ];
-    requires = [ "docker.service" ];
-    wantedBy = [ "multi-user.target" ];
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      WorkingDirectory = "/etc/docker-compose/changedetection";
-      ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
-      ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
-      ExecReload = "${pkgs.docker-compose}/bin/docker-compose up -d --force-recreate";
-      TimeoutStartSec = 0;
-      User = "root";
-    };
-
-    unitConfig = {
-      StartLimitBurst = 3;
-      StartLimitIntervalSec = 60;
-    };
-  };
-
-  # Create directory for compose files
-  systemd.tmpfiles.rules = [
-    "d /etc/docker-compose/changedetection 0755 root root -"
-  ];
+dockerService.mkDockerComposeService {
+  serviceName = "changedetection";
+  composeFile = composeFile;
 }

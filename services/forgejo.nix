@@ -1,5 +1,7 @@
 { config, pkgs, ... }:
 let
+  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
+  
   composeFile = pkgs.writeText "forgejo-compose.yml" ''
     services:
       app:
@@ -84,39 +86,10 @@ let
     SSH_IDENTITY_FILE="/root/.ssh/id_ed25519"
   '';
 in
-{
-  # Copy compose files to system
-  environment.etc = {
-    "docker-compose/forgejo/docker-compose.yml".source = composeFile;
+dockerService.mkDockerComposeService {
+  serviceName = "forgejo";
+  composeFile = composeFile;
+  extraFiles = {
     "docker-compose/forgejo/backup.env".source = backupEnvFile;
   };
-
-  systemd.services.forgejo = {
-    description = "Docker Compose service for Forgejo";
-    after = [ "docker.service" ];
-    requires = [ "docker.service" ];
-    wantedBy = [ "multi-user.target" ];
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      WorkingDirectory = "/etc/docker-compose/forgejo";
-      ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
-      ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
-      ExecReload = "${pkgs.docker-compose}/bin/docker-compose up -d --force-recreate";
-      TimeoutStartSec = 0;
-      User = "root";
-    };
-
-    unitConfig = {
-      StartLimitBurst = 3;
-      StartLimitIntervalSec = 60;
-    };
-  };
-
-  # Create secrets symlink for .env file
-  systemd.tmpfiles.rules = [
-    "d /etc/docker-compose/forgejo 0755 root root -"
-    "L+ /etc/docker-compose/forgejo/.env - - - - /home/kilian/.config/secrets/forgejo.env"
-  ];
 }

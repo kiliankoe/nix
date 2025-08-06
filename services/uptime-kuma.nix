@@ -1,5 +1,7 @@
 { config, pkgs, ... }:
 let
+  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
+
   composeFile = pkgs.writeText "uptime-kuma-compose.yml" ''
     services:
       uptime-kuma:
@@ -17,37 +19,7 @@ let
       uptime-kuma-data:
   '';
 in
-{
-  # Copy compose files to system
-  environment.etc = {
-    "docker-compose/uptime-kuma/docker-compose.yml".source = composeFile;
-  };
-
-  systemd.services.uptime-kuma = {
-    description = "Docker Compose service for Uptime Kuma";
-    after = [ "docker.service" ];
-    requires = [ "docker.service" ];
-    wantedBy = [ "multi-user.target" ];
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      WorkingDirectory = "/etc/docker-compose/uptime-kuma";
-      ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
-      ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
-      ExecReload = "${pkgs.docker-compose}/bin/docker-compose up -d --force-recreate";
-      TimeoutStartSec = 0;
-      User = "root";
-    };
-
-    unitConfig = {
-      StartLimitBurst = 3;
-      StartLimitIntervalSec = 60;
-    };
-  };
-
-  # Create directory for compose files
-  systemd.tmpfiles.rules = [
-    "d /etc/docker-compose/uptime-kuma 0755 root root -"
-  ];
+dockerService.mkDockerComposeService {
+  serviceName = "uptime-kuma";
+  composeFile = composeFile;
 }

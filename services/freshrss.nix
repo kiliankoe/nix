@@ -1,5 +1,7 @@
 { config, pkgs, ... }:
 let
+  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
+
   composeFile = pkgs.writeText "freshrss-compose.yml" ''
     services:
       freshrss:
@@ -34,6 +36,7 @@ let
         volumes:
           - rss-bridge-config:/config
         environment:
+          # TODO: Replace with pangolin as soon as that supports basic auth
           - RSSBRIDGE_AUTH_USER=${
             builtins.readFile config.sops.secrets."freshrss/rssbridge_auth_user".path
           }
@@ -49,37 +52,7 @@ let
       rss-bridge-config:
   '';
 in
-{
-  # Copy compose files to system
-  environment.etc = {
-    "docker-compose/freshrss/docker-compose.yml".source = composeFile;
-  };
-
-  systemd.services.freshrss = {
-    description = "Docker Compose service for FreshRSS";
-    after = [ "docker.service" ];
-    requires = [ "docker.service" ];
-    wantedBy = [ "multi-user.target" ];
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      WorkingDirectory = "/etc/docker-compose/freshrss";
-      ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
-      ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
-      ExecReload = "${pkgs.docker-compose}/bin/docker-compose up -d --force-recreate";
-      TimeoutStartSec = 0;
-      User = "root";
-    };
-
-    unitConfig = {
-      StartLimitBurst = 3;
-      StartLimitIntervalSec = 60;
-    };
-  };
-
-  # Create directory for compose files
-  systemd.tmpfiles.rules = [
-    "d /etc/docker-compose/freshrss 0755 root root -"
-  ];
+dockerService.mkDockerComposeService {
+  serviceName = "freshrss";
+  composeFile = composeFile;
 }

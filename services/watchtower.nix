@@ -1,5 +1,7 @@
 { config, pkgs, ... }:
 let
+  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
+
   composeFile = pkgs.writeText "watchtower-compose.yml" ''
     services:
       watchtower:
@@ -15,35 +17,7 @@ let
     #   - "com.centurylinklabs.watchtower.enable=true"
   '';
 in
-{
-  # Copy compose file to system
-  environment.etc."docker-compose/watchtower/docker-compose.yml".source = composeFile;
-
-  systemd.services.watchtower = {
-    description = "Docker Compose service for Watchtower";
-    after = [ "docker.service" ];
-    requires = [ "docker.service" ];
-    wantedBy = [ "multi-user.target" ];
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      WorkingDirectory = "/etc/docker-compose/watchtower";
-      ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
-      ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
-      ExecReload = "${pkgs.docker-compose}/bin/docker-compose up -d --force-recreate";
-      TimeoutStartSec = 0;
-      User = "root";
-    };
-
-    unitConfig = {
-      StartLimitBurst = 3;
-      StartLimitIntervalSec = 60;
-    };
-  };
-
-  # Create directory (no secrets needed for watchtower)
-  systemd.tmpfiles.rules = [
-    "d /etc/docker-compose/watchtower 0755 root root -"
-  ];
+dockerService.mkDockerComposeService {
+  serviceName = "watchtower";
+  composeFile = composeFile;
 }

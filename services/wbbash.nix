@@ -1,5 +1,7 @@
 { config, pkgs, ... }:
 let
+  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
+
   composeFile = pkgs.writeText "wbbash-compose.yml" ''
     services:
       wbbash:
@@ -33,37 +35,7 @@ let
       wbbash-db:
   '';
 in
-{
-  # Copy compose files to system
-  environment.etc = {
-    "docker-compose/wbbash/docker-compose.yml".source = composeFile;
-  };
-
-  systemd.services.wbbash = {
-    description = "Docker Compose service for WBBash";
-    after = [ "docker.service" ];
-    requires = [ "docker.service" ];
-    wantedBy = [ "multi-user.target" ];
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      WorkingDirectory = "/etc/docker-compose/wbbash";
-      ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
-      ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
-      ExecReload = "${pkgs.docker-compose}/bin/docker-compose up -d --force-recreate";
-      TimeoutStartSec = 0;
-      User = "root";
-    };
-
-    unitConfig = {
-      StartLimitBurst = 3;
-      StartLimitIntervalSec = 60;
-    };
-  };
-
-  # Create directory for compose files
-  systemd.tmpfiles.rules = [
-    "d /etc/docker-compose/wbbash 0755 root root -"
-  ];
+dockerService.mkDockerComposeService {
+  serviceName = "wbbash";
+  composeFile = composeFile;
 }
