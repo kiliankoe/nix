@@ -57,6 +57,9 @@
     "mato/smtp_user" = { };
     "mato/smtp_pass" = { };
     "mato/catfact_slack_webhook" = { };
+    "forgejo/postgres_password" = { };
+    "forgejo/root_url" = { };
+    "forgejo/ssh_port" = { };
   };
 
   # Disable power management (server)

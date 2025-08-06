@@ -1,14 +1,14 @@
 { config, pkgs, ... }:
 let
   dockerService = import ../lib/docker-service.nix { inherit pkgs; };
-  
+
   composeFile = pkgs.writeText "forgejo-compose.yml" ''
     services:
       app:
         image: 'codeberg.org/forgejo/forgejo:8'
         restart: unless-stopped
         env_file:
-          - .env
+          - app.env
         environment:
           - USER_UID=1000
           - USER_GID=1000
@@ -38,11 +38,9 @@ let
         volumes:
           - 'forgejo-postgresql-data:/var/lib/postgresql/data'
         env_file:
-          - .env
+          - db.env
         healthcheck:
-          test:
-            - CMD-SHELL
-            - 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}'
+          test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
           interval: 5s
           timeout: 20s
           retries: 10
@@ -91,5 +89,30 @@ dockerService.mkDockerComposeService {
   composeFile = composeFile;
   extraFiles = {
     "docker-compose/forgejo/backup.env".source = backupEnvFile;
+  };
+  environment = {
+    db = {
+      POSTGRES_DB = "forgejo";
+      POSTGRES_USER = "forgejo";
+      POSTGRES_PASSWORD = {
+        secretFile = config.sops.secrets."forgejo/postgres_password".path;
+      };
+    };
+    app = {
+      FORGEJO__server__ROOT_URL = {
+        secretFile = config.sops.secrets."forgejo/root_url".path;
+      };
+      FORGEJO__server__SSH_PORT = {
+        secretFile = config.sops.secrets."forgejo/ssh_port".path;
+      };
+      FORGEJO__server__DEFAULT_UI_LOCATION = "Europe/Berlin";
+      FORGEJO__database__DB_TYPE = "postgres";
+      FORGEJO__database__HOST = "db";
+      FORGEJO__database__NAME = "forgejo";
+      FORGEJO__database__USER = "forgejo";
+      FORGEJO__database__PASSWD = {
+        secretFile = config.sops.secrets."forgejo/postgres_password".path;
+      };
+    };
   };
 }
