@@ -64,8 +64,8 @@ in
       fi
 
       # Load sops-managed environment variables
-      if [[ -f "/etc/sops-env.sh" ]]; then
-        source "/etc/sops-env.sh"
+      if [[ -f "$HOME/.config/sops/env.sh" ]]; then
+        source "$HOME/.config/sops/env.sh"
       fi
 
       # Load deno environment if it exists (will work for any user)
