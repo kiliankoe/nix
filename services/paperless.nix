@@ -1,68 +1,45 @@
 { config, pkgs, ... }:
-let
-  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
+{
+  services.paperless = {
+    enable = true;
 
-  composeFile = pkgs.writeText "paperless-compose.yml" ''
-    services:
-      broker:
-        image: docker.io/library/redis:8
-        restart: unless-stopped
-        volumes:
-          - paperless-redis-data:/data
+    port = 8382;
+    address = "0.0.0.0";
 
-      db:
-        image: docker.io/library/postgres:17
-        restart: unless-stopped
-        volumes:
-          - paperless-postgres-data:/var/lib/postgresql/data
-        healthcheck:
-          test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-          interval: 5s
-          timeout: 20s
-          retries: 10
+    dataDir = "/var/lib/paperless";
+    consumptionDir = "/var/lib/paperless/consume";
+    mediaDir = "/var/lib/paperless/media";
 
-      webserver:
-        image: ghcr.io/paperless-ngx/paperless-ngx:latest
-        restart: unless-stopped
-        depends_on:
-          db:
-            condition: service_healthy
-          broker:
-            condition: service_started
-        volumes:
-          - paperless-data:/usr/src/paperless/data
-          - paperless-media:/usr/src/paperless/media
-          - paperless-export:/usr/src/paperless/export
-          - paperless-consume:/usr/src/paperless/consume
-        environment:
-          - PAPERLESS_REDIS=redis://broker:6379
-          - PAPERLESS_DBHOST=db
-          - USERMAP_UID=1000
-          - USERMAP_GID=1000
-          - PAPERLESS_TIME_ZONE=${config.time.timeZone}
-          - PAPERLESS_OCR_LANGUAGE=deu
-        env_file:
-          - paperless.env
-        ports:
-          - '8382:8000'
+    passwordFile = config.sops.secrets."paperless/secret_key".path;
 
-    volumes:
-      paperless-data:
-      paperless-media:
-      paperless-postgres-data:
-      paperless-redis-data:
-      paperless-export:
-      paperless-consume:
-  '';
-in
-dockerService.mkDockerComposeService {
-  serviceName = "paperless";
-  composeFile = composeFile;
-  environment = {
-    paperless = {
-      PAPERLESS_SECRET_KEY = {
-        secretFile = config.sops.secrets."paperless/secret_key".path;
-      };
+    settings = {
+      PAPERLESS_OCR_LANGUAGE = "deu";
+      PAPERLESS_TIME_ZONE = config.time.timeZone;
+      PAPERLESS_ADMIN_USER = "admin";
+      PAPERLESS_URL = "http://localhost:8382";
+
+      PAPERLESS_REDIS = "redis://localhost:6379";
+
+      PAPERLESS_DBENGINE = "postgresql";
+      PAPERLESS_DBNAME = "paperless";
+      PAPERLESS_DBUSER = "paperless";
+      PAPERLESS_DBHOST = "localhost";
+      PAPERLESS_DBPORT = 5432;
     };
   };
+
+  # PostgreSQL is configured globally in the host configuration
+
+  services.redis.servers.paperless = {
+    enable = true;
+    port = 6379;
+  };
+
+  systemd.tmpfiles.rules = [
+    "d /var/lib/paperless/consume 0755 paperless paperless -"
+    "d /var/lib/paperless/media 0755 paperless paperless -"
+    "d /var/lib/paperless/export 0755 paperless paperless -"
+  ];
+
+  networking.firewall.allowedTCPPorts = [ 8382 ];
 }

@@ -14,10 +14,13 @@
     ../../services/factorio.nix
     ../../services/forgejo.nix
     ../../services/freshrss.nix
+    ../../services/paperless.nix
+    ../../services/uptime-kuma.nix
+
+    # Docker-based services
     ../../services/lehmuese-ics.nix
     ../../services/linkding.nix
     ../../services/mato.nix
-    ../../services/paperless.nix
     ../../services/swiftdebot.nix
     ../../services/watchtower.nix
     ../../services/wbbash.nix
@@ -25,38 +28,60 @@
 
   networking.hostName = "kepler";
 
-  # Service secrets
+  # db shared by multiple services
+  services.postgresql = {
+    enable = true;
+    package = pkgs.postgresql_16;
+
+    # Ensure all required databases and users exist
+    ensureDatabases = [
+      "forgejo"
+      "freshrss"
+      "paperless"
+    ];
+    ensureUsers = [
+      {
+        name = "forgejo";
+        ensureDBOwnership = true;
+      }
+      {
+        name = "freshrss";
+        ensureDBOwnership = true;
+      }
+      {
+        name = "paperless";
+        ensureDBOwnership = true;
+      }
+    ];
+  };
+
   sops.secrets = {
+    "forgejo/postgres_password" = { };
+    "lehmuese_ics/url" = { };
     "linkding/superuser_name" = { };
     "linkding/superuser_password" = { };
+    "mato/catfact_slack_webhook" = { };
+    "mato/my_email" = { };
+    "mato/smtp_from" = { };
+    "mato/smtp_host" = { };
+    "mato/smtp_pass" = { };
+    "mato/smtp_user" = { };
     "paperless/secret_key" = { };
-    "freshrss/rssbridge_auth_user" = { };
-    "freshrss/rssbridge_auth_hash" = { };
-    "swiftdebot/discord_token" = { };
     "swiftdebot/discord_app_id" = { };
     "swiftdebot/discord_logs_webhook_url" = { };
+    "swiftdebot/discord_token" = { };
     "swiftdebot/kagi_api_token" = { };
     "swiftdebot/openai_api_token" = { };
-    "wbbash/miniqdb_name" = { };
     "wbbash/allowed_domains" = { };
-    "wbbash/nothing_to_see_here_text" = { };
-    "wbbash/login_button_text" = { };
-    "wbbash/nextauth_secret" = { };
+    "wbbash/email_from" = { };
     "wbbash/email_server_host" = { };
+    "wbbash/email_server_password" = { };
     "wbbash/email_server_port" = { };
     "wbbash/email_server_user" = { };
-    "wbbash/email_server_password" = { };
-    "wbbash/email_from" = { };
-    "lehmuese_ics/url" = { };
-    "mato/my_email" = { };
-    "mato/smtp_host" = { };
-    "mato/smtp_from" = { };
-    "mato/smtp_user" = { };
-    "mato/smtp_pass" = { };
-    "mato/catfact_slack_webhook" = { };
-    "forgejo/postgres_password" = { };
-    "forgejo/root_url" = { };
-    "forgejo/ssh_port" = { };
+    "wbbash/login_button_text" = { };
+    "wbbash/miniqdb_name" = { };
+    "wbbash/nextauth_secret" = { };
+    "wbbash/nothing_to_see_here_text" = { };
   };
 
   # Disable power management (server)

@@ -12,7 +12,7 @@ nix/
 │   ├── nixos/        # NixOS-specific modules
 │   └── shared/       # Cross-platform modules
 ├── secrets/          # Encrypted secrets (managed by sops-nix)
-└── services/         # Docker Compose service definitions
+└── services/         # Server service definitions
 ```
 
 ## Hosts
@@ -71,10 +71,9 @@ export GITHUB_TOKEN="ghp_..."
 export DATABASE_URL="postgresql://..."
 ```
 
-## Docker Services
+## Services
 
-Some hosts run docker compose services managed through Nix. Each service is defined as a separate module and managed via systemd.
-It uses inline compose files to allow for independent compose networks.
+Services are defined as native NixOS or docker services. Not everything has been migrated to native yet.
 
 ### Service Management
 
@@ -98,8 +97,4 @@ sudo systemctl disable $servicename
 
 ### Service Secrets
 
-Service secrets are managed through **sops-nix** and automatically injected into Docker Compose services.
-
-### Backups
-
-Ensure the `volumesToBackup` attribute is set where applicable. This will automatically backup the listed docker volumes.
+Service secrets are managed through sops-nix.

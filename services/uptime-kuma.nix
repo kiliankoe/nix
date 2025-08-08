@@ -1,25 +1,14 @@
 { config, pkgs, ... }:
-let
-  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
+{
+  services.uptime-kuma = {
+    enable = true;
 
-  composeFile = pkgs.writeText "uptime-kuma-compose.yml" ''
-    services:
-      uptime-kuma:
-        image: louislam/uptime-kuma:latest
-        container_name: uptime-kuma
-        restart: unless-stopped
-        security_opt:
-          - "no-new-privileges:true"
-        volumes:
-          - uptime-kuma-data:/app/data
-        ports:
-          - '8385:3001'
+    settings = {
+      PORT = "3001";
+      HOST = "0.0.0.0";
+      # Data will be stored in /var/lib/uptime-kuma
+    };
+  };
 
-    volumes:
-      uptime-kuma-data:
-  '';
-in
-dockerService.mkDockerComposeService {
-  serviceName = "uptime-kuma";
-  composeFile = composeFile;
+  networking.firewall.allowedTCPPorts = [ 3001 ];
 }
