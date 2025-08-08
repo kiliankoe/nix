@@ -35,10 +35,10 @@ jobs:
           fetch-depth: 0
 
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v12
+        uses: DeterminateSystems/nix-installer-action@v19
 
       - name: Enable fast caches
-        uses: DeterminateSystems/magic-nix-cache-action@v8
+        uses: DeterminateSystems/magic-nix-cache-action@v13
 
       - name: Show Nix version
         run: nix --version && nix show-config | grep -E 'experimental-features|access-tokens'
@@ -64,10 +64,10 @@ jobs:
           fetch-depth: 0
 
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v12
+        uses: DeterminateSystems/nix-installer-action@v19
 
       - name: Enable fast caches
-        uses: DeterminateSystems/magic-nix-cache-action@v8
+        uses: DeterminateSystems/magic-nix-cache-action@v13
 
       - name: Show Nix version
         run: nix --version && nix show-config | grep -E 'experimental-features|access-tokens'
