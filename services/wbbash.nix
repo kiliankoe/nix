@@ -35,7 +35,7 @@ dockerService.mkDockerComposeService {
       NEXT_PUBLIC_NOTHING_TO_SEE_HERE_BUTTON_TEXT = {
         secretFile = config.sops.secrets."wbbash/nothing_to_see_here_text".path;
       };
-      LOGIN_BUTTON_TEXT = {
+      NEXT_PUBLIC_LOGIN_BUTTON_TEXT = {
         secretFile = config.sops.secrets."wbbash/login_button_text".path;
       };
       NEXTAUTH_SECRET = {
