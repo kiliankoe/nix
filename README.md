@@ -7,7 +7,6 @@ nix/
 ├── flake.nix
 ├── hosts/            # Host-specific configs
 ├── home/             # Home Manager user configs
-├── iso/              # Custom NixOS installation ISO
 ├── modules/
 │   ├── darwin/       # macOS-specific modules
 │   ├── nixos/        # NixOS-specific modules
@@ -107,39 +106,3 @@ Service secrets are managed through **sops-nix** and automatically injected into
 ### Backups
 
 Ensure the `volumesToBackup` attribute is set where applicable. This will automatically backup the listed docker volumes.
-
-## Custom Installation ISO
-
-This configuration includes a custom NixOS installation ISO for kepler with the complete system environment pre-configured.
-
-This is as of yet untested lol
-
-### Building the ISO
-
-```bash
-nix build .#nixosConfigurations.kepler-iso.config.system.build.isoImage
-
-# ISO will be available at:
-# ./result/iso/nixos-*.iso
-```
-
-### Installation Process
-
-1. Boot from the custom ISO
-2. Partition and format drives
-3. Generate hardware configuration:
-   ```bash
-   nixos-generate-config --root /mnt
-   ```
-4. Clone or copy flake configuration:
-   ```bash
-   git clone <your-repo> /mnt/etc/nixos
-   ```
-5. Install with configuration:
-   ```bash
-   nixos-install --flake /mnt/etc/nixos#kepler
-   ```
-6. Reboot and start services:
-   ```bash
-   sudo systemctl start $servicename
-   ```
