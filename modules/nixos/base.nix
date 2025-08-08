@@ -1,10 +1,8 @@
 { pkgs, ... }:
 {
-  # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Networking
   networking.networkmanager.enable = true;
 
   # Time zone and locale
@@ -22,7 +20,6 @@
     LC_TIME = "de_DE.UTF-8";
   };
 
-  # User configuration
   users.users.kilian = {
     isNormalUser = true;
     description = "Kilian";
@@ -33,7 +30,13 @@
     ];
   };
 
-  # Sudo configuration
+  home-manager.users.kilian = {
+    imports = [
+      ../../home/common.nix
+      ../../home/nixos.nix
+    ];
+  };
+
   security.sudo.extraRules = [
     {
       users = [ "kilian" ];

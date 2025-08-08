@@ -2,8 +2,6 @@
 {
   imports = [
     ../../modules/shared/base.nix
-    ../../modules/shared/tmux.nix
-    ../../modules/shared/zsh.nix
     ../../modules/shared/sops.nix
 
     ../../modules/darwin/base.nix

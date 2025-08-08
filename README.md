@@ -5,7 +5,8 @@ My consolidated Nix configuration for macOS and NixOS systems, including a few s
 ```
 nix/
 ├── flake.nix
-├── hosts/            # Host-specific configurations
+├── hosts/            # Host-specific configs
+├── home/             # Home Manager user configs
 ├── iso/              # Custom NixOS installation ISO
 ├── modules/
 │   ├── darwin/       # macOS-specific modules

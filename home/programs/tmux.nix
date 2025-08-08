@@ -1,19 +1,17 @@
-{ pkgs, config, ... }:
+{ config, pkgs, ... }:
 {
   programs.tmux = {
     enable = true;
-    enableMouse = true;
-    extraConfig = ''
-      # C-b is definitely *super easy* to reach...
-      set-option -g prefix C-a
+    mouse = true;
+    prefix = "C-a";
+    baseIndex = 1;
+    escapeTime = 0;
 
+    extraConfig = ''
       set -g default-terminal "screen-256color"
       setw -g aggressive-resize on
 
-      set -g base-index 1
       set -g renumber-windows on
-
-      set -s escape-time 0
 
       set -g status-bg magenta
       set -g status-fg black
@@ -34,7 +32,7 @@
       bind-key S-Left swap-window -t -1 -d
       bind-key S-Right swap-window -t +1 -d
 
-      bind r source-file /etc/tmux.conf \; display-message "Reloaded config..."
+      bind r source-file "$HOME/.config/tmux/tmux.conf" \; display-message "Reloaded config..."
 
       # Remap window navigation to vim bindings
       unbind-key j

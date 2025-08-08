@@ -2,8 +2,6 @@
 {
   imports = [
     ../../modules/shared/base.nix
-    ../../modules/shared/tmux.nix
-    ../../modules/shared/zsh.nix
     ../../modules/shared/sops.nix
 
     ../../modules/darwin/base.nix
@@ -15,4 +13,10 @@
   ];
 
   nixpkgs.hostPlatform = "aarch64-darwin";
+
+  home-manager.users.kilian = {
+    programs.git = {
+      userEmail = "kilian.koeltzsch@wandelbots.com";
+    };
+  };
 }

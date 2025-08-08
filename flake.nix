@@ -5,6 +5,8 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -14,6 +16,7 @@
       self,
       nixpkgs,
       nix-darwin,
+      home-manager,
       sops-nix,
     }:
     {
@@ -23,8 +26,11 @@
           modules = [
             ./hosts/voyager
             sops-nix.darwinModules.sops
+            home-manager.darwinModules.home-manager
             {
               system.configurationRevision = self.rev or self.dirtyRev or null;
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
             }
           ];
         };
@@ -34,8 +40,11 @@
           modules = [
             ./hosts/sojourner
             sops-nix.darwinModules.sops
+            home-manager.darwinModules.home-manager
             {
               system.configurationRevision = self.rev or self.dirtyRev or null;
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
             }
           ];
         };
@@ -48,6 +57,11 @@
           modules = [
             ./hosts/kepler
             sops-nix.nixosModules.sops
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+            }
           ];
         };
 
@@ -56,6 +70,11 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/cubesat
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+            }
           ];
         };
 
@@ -64,6 +83,11 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/midgard
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+            }
           ];
         };
 

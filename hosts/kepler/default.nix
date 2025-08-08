@@ -4,8 +4,6 @@
     ./hardware-configuration.nix
 
     ../../modules/shared/base.nix
-    # ../../modules/shared/tmux.nix
-    ../../modules/shared/zsh.nix
     ../../modules/shared/sops.nix
 
     ../../modules/nixos/base.nix
@@ -25,7 +23,6 @@
     ../../services/wbbash.nix
   ];
 
-  # Networking
   networking.hostName = "kepler";
 
   # Service secrets
