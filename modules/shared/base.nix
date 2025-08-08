@@ -25,7 +25,7 @@
     biome
     btop
     claude-code
-    codex
+    # codex # currently installed via homebrew to keep it more up-to-date
     ddate
     docker
     docker-compose

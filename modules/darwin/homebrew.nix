@@ -16,6 +16,7 @@
     brews = [
       "gh"
       "swift-outdated"
+      "codex"
     ];
     casks = [
       "1password"
