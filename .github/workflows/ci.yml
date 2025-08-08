@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Ensure flakes and nix-command are enabled for all nix invocations
+  NIX_CONFIG: |
+    experimental-features = nix-command flakes
+    # Use GitHub token to avoid API rate limits when fetching flake inputs
+    access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  nixos-builds:
+    name: Build NixOS configs (${{ matrix.host }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        host: [ kepler, cubesat, midgard ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v12
+
+      - name: Enable fast caches
+        uses: DeterminateSystems/magic-nix-cache-action@v8
+
+      - name: Show Nix version
+        run: nix --version && nix show-config | grep -E 'experimental-features|access-tokens'
+
+      - name: Build ${{ matrix.host }}
+        run: |
+          set -euxo pipefail
+          nix build --accept-flake-config --print-build-logs \
+            .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel
+
+  darwin-builds:
+    name: Build macOS configs (${{ matrix.host }})
+    # Use Apple Silicon runners to match aarch64-darwin target
+    runs-on: macos-14
+    strategy:
+      fail-fast: false
+      matrix:
+        host: [ voyager, sojourner ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v12
+
+      - name: Enable fast caches
+        uses: DeterminateSystems/magic-nix-cache-action@v8
+
+      - name: Show Nix version
+        run: nix --version && nix show-config | grep -E 'experimental-features|access-tokens'
+
+      - name: Build ${{ matrix.host }}
+        run: |
+          set -euxo pipefail
+          # Build the darwin system derivation without activating it
+          nix build --accept-flake-config --print-build-logs \
+            .#darwinConfigurations.${{ matrix.host }}.system
