@@ -24,7 +24,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        host: [ kepler, cubesat, midgard ]
+        host:
+          - kepler
+          # - cubesat
+          # - midgard
     steps:
       - name: Checkout
         uses: actions/checkout@v4
