@@ -39,9 +39,6 @@ sudo nixos-rebuild switch --flake .#kepler
 # Alternative with nh
 nh os build -H kepler .
 nh os switch -H kepler .
-
-# Build custom installation ISO
-nix build .#nixosConfigurations.kepler-iso.config.system.build.isoImage
 ```
 
 ## Secrets
