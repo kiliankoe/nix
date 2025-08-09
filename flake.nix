@@ -93,18 +93,6 @@
         };
       };
 
-      # Expose package sets for convenience
-      darwinPackages = {
-        voyager = self.darwinConfigurations.voyager.pkgs;
-        sojourner = self.darwinConfigurations.sojourner.pkgs;
-      };
-
-      nixosPackages = {
-        kepler = self.nixosConfigurations.kepler.pkgs;
-        cubesat = self.nixosConfigurations.cubesat.pkgs;
-        # midgard = self.nixosConfigurations.midgard.pkgs;
-      };
-
       # Lightweight checks for CI: evaluate all configs and build Linux toplevels
       checks =
         let
