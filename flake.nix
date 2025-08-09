@@ -66,38 +66,30 @@
         };
 
         # Build with: nixos-rebuild build --flake .#cubesat
-        cubesat = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            ./hosts/cubesat
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-            }
-          ];
-        };
+        # cubesat = nixpkgs.lib.nixosSystem {
+        #   system = "x86_64-linux";
+        #   modules = [
+        #     ./hosts/cubesat
+        #     home-manager.nixosModules.home-manager
+        #     {
+        #       home-manager.useGlobalPkgs = true;
+        #       home-manager.useUserPackages = true;
+        #     }
+        #   ];
+        # };
 
         # Build with: nixos-rebuild build --flake .#midgard
-        midgard = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            ./hosts/midgard
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-            }
-          ];
-        };
-
-        # Build ISO with: nix build .#nixosConfigurations.kepler-iso.config.system.build.isoImage
-        kepler-iso = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            ./iso/kepler-iso.nix
-          ];
-        };
+        # midgard = nixpkgs.lib.nixosSystem {
+        #   system = "x86_64-linux";
+        #   modules = [
+        #     ./hosts/midgard
+        #     home-manager.nixosModules.home-manager
+        #     {
+        #       home-manager.useGlobalPkgs = true;
+        #       home-manager.useUserPackages = true;
+        #     }
+        #   ];
+        # };
       };
 
       # Expose package sets for convenience
@@ -108,8 +100,8 @@
 
       nixosPackages = {
         kepler = self.nixosConfigurations.kepler.pkgs;
-        cubesat = self.nixosConfigurations.cubesat.pkgs;
-        midgard = self.nixosConfigurations.midgard.pkgs;
+        # cubesat = self.nixosConfigurations.cubesat.pkgs;
+        # midgard = self.nixosConfigurations.midgard.pkgs;
       };
 
       # Lightweight checks for CI: evaluate all configs and build Linux toplevels
