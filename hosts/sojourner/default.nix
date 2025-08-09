@@ -1,7 +1,8 @@
 { pkgs, ... }:
 {
   imports = [
-    ../../modules/shared/base.nix
+    ../../modules/shared/common.nix
+    ../../modules/shared/packages.nix
     ../../modules/shared/sops.nix
 
     ../../modules/darwin/base.nix

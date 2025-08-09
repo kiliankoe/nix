@@ -66,30 +66,31 @@
         };
 
         # Build with: nixos-rebuild build --flake .#cubesat
-        # cubesat = nixpkgs.lib.nixosSystem {
-        #   system = "x86_64-linux";
-        #   modules = [
-        #     ./hosts/cubesat
-        #     home-manager.nixosModules.home-manager
-        #     {
-        #       home-manager.useGlobalPkgs = true;
-        #       home-manager.useUserPackages = true;
-        #     }
-        #   ];
-        # };
+        cubesat = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/cubesat
+            sops-nix.nixosModules.sops
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+            }
+          ];
+        };
 
         # Build with: nixos-rebuild build --flake .#midgard
-        # midgard = nixpkgs.lib.nixosSystem {
-        #   system = "x86_64-linux";
-        #   modules = [
-        #     ./hosts/midgard
-        #     home-manager.nixosModules.home-manager
-        #     {
-        #       home-manager.useGlobalPkgs = true;
-        #       home-manager.useUserPackages = true;
-        #     }
-        #   ];
-        # };
+        midgard = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/midgard
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+            }
+          ];
+        };
       };
 
       # Expose package sets for convenience
@@ -100,7 +101,7 @@
 
       nixosPackages = {
         kepler = self.nixosConfigurations.kepler.pkgs;
-        # cubesat = self.nixosConfigurations.cubesat.pkgs;
+        cubesat = self.nixosConfigurations.cubesat.pkgs;
         # midgard = self.nixosConfigurations.midgard.pkgs;
       };
 
@@ -127,18 +128,18 @@
             nixos-kepler-eval = pkgs.runCommand "nixos-kepler-eval" { } ''
               echo ${self.nixosConfigurations.kepler.config.system.build.toplevel.drvPath} > $out
             '';
-            # nixos-cubesat-eval = pkgs.runCommand "nixos-cubesat-eval" { } ''
-            #   echo ${self.nixosConfigurations.cubesat.config.system.build.toplevel.drvPath} > $out
-            # '';
-            # nixos-midgard-eval = pkgs.runCommand "nixos-midgard-eval" { } ''
-            #   echo ${self.nixosConfigurations.midgard.config.system.build.toplevel.drvPath} > $out
-            # '';
+            nixos-cubesat-eval = pkgs.runCommand "nixos-cubesat-eval" { } ''
+              echo ${self.nixosConfigurations.cubesat.config.system.build.toplevel.drvPath} > $out
+            '';
+            nixos-midgard-eval = pkgs.runCommand "nixos-midgard-eval" { } ''
+              echo ${self.nixosConfigurations.midgard.config.system.build.toplevel.drvPath} > $out
+            '';
 
             # Optional: actually build Linux systems as part of flake checks
             # Comment these out if builds become too heavy for CI
             nixos-kepler-build = self.nixosConfigurations.kepler.config.system.build.toplevel;
-            # nixos-cubesat-build = self.nixosConfigurations.cubesat.config.system.build.toplevel;
-            # nixos-midgard-build = self.nixosConfigurations.midgard.config.system.build.toplevel;
+            nixos-cubesat-build = self.nixosConfigurations.cubesat.config.system.build.toplevel;
+            nixos-midgard-build = self.nixosConfigurations.midgard.config.system.build.toplevel;
           }
         );
     };

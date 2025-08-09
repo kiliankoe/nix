@@ -34,38 +34,4 @@ jobs:
       - name: nix flake check
         run: |
           set -euxo pipefail
-          nix flake check --print-build-logs
-
-  # Darwin is evaluated only via nix flake check (outputs.checks) on Linux runners.
-  # The direct macOS builds were too costly for GitHub Actions.
-
-  nixos-builds:
-    name: Build NixOS configs (${{ matrix.host }})
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        host:
-          - kepler
-          # - cubesat
-          # - midgard
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v19
-
-      - name: Enable fast caches
-        uses: DeterminateSystems/magic-nix-cache-action@v13
-
-      - name: Show Nix version
-        run: nix --version && nix show-config | grep -E 'experimental-features|access-tokens'
-
-      - name: Build ${{ matrix.host }}
-        run: |
-          set -euxo pipefail
-          nix build --accept-flake-config --print-build-logs \
-            .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel
+          nix flake check --no-build

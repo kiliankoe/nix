@@ -3,7 +3,8 @@
   imports = [
     ./hardware-configuration.nix
 
-    ../../modules/shared/base.nix
+    ../../modules/shared/common.nix
+    ../../modules/shared/packages.nix
     ../../modules/shared/sops.nix
 
     ../../modules/nixos/base.nix

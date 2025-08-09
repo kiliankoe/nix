@@ -1,8 +1,5 @@
 { pkgs, ... }:
 {
-  imports = [ ./k.nix ];
-
-  nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
     # nix stuff
