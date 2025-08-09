@@ -10,6 +10,7 @@
     consumptionDir = "/var/lib/paperless/consume";
     mediaDir = "/var/lib/paperless/media";
 
+    # TODO: passwordFile vs secretKey?
     passwordFile = config.sops.secrets."paperless/secret_key".path;
 
     settings = {
