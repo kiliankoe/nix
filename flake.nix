@@ -9,6 +9,10 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    ssh-keys = {
+      url = "https://github.com/kiliankoe.keys";
+      flake = false;
+    };
   };
 
   outputs =
@@ -18,6 +22,7 @@
       nix-darwin,
       home-manager,
       sops-nix,
+      ssh-keys,
     }:
     {
       darwinConfigurations = {
@@ -54,6 +59,7 @@
         # Build with: nixos-rebuild build --flake .#kepler
         kepler = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
           modules = [
             ./hosts/kepler
             sops-nix.nixosModules.sops
@@ -68,6 +74,7 @@
         # Build with: nixos-rebuild build --flake .#cubesat
         cubesat = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
           modules = [
             ./hosts/cubesat
             sops-nix.nixosModules.sops
@@ -82,6 +89,7 @@
         # Build with: nixos-rebuild build --flake .#gaia
         gaia = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
           modules = [
             ./hosts/gaia
             home-manager.nixosModules.home-manager

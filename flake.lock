@@ -61,7 +61,8 @@
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs",
-        "sops-nix": "sops-nix"
+        "sops-nix": "sops-nix",
+        "ssh-keys": "ssh-keys"
       }
     },
     "sops-nix": {
@@ -82,6 +83,18 @@
         "owner": "Mic92",
         "repo": "sops-nix",
         "type": "github"
+      }
+    },
+    "ssh-keys": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-Ujcu5kIiJA3V9oauruM3QF7L6TuXS6Pmxk1kEmazO4g=",
+        "type": "file",
+        "url": "https://github.com/kiliankoe.keys"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/kiliankoe.keys"
       }
     }
   },
