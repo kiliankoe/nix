@@ -8,7 +8,6 @@
       createDatabase = true;
       user = "forgejo";
       name = "forgejo";
-      passwordFile = config.sops.secrets."forgejo/postgres_password".path;
     };
 
     settings = {

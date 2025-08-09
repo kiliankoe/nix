@@ -11,7 +11,6 @@
       port = null; # Use default PostgreSQL port
       user = "freshrss";
       name = "freshrss";
-      passFile = pkgs.writeText "freshrss-db-pass" "freshrss"; # Simple password for local setup
     };
 
     defaultUser = "admin";

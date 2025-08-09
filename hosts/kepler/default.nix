@@ -57,7 +57,6 @@
   };
 
   sops.secrets = {
-    "forgejo/postgres_password" = { };
     "lehmuese_ics/url" = { };
     "linkding/superuser_name" = { };
     "linkding/superuser_password" = { };
