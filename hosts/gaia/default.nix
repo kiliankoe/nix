@@ -8,7 +8,7 @@
     ./packages.nix
   ];
 
-  networking.hostName = "midgard";
+  networking.hostName = "gaia";
 
   # Desktop environment
   services.xserver.enable = true;

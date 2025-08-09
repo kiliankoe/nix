@@ -21,7 +21,7 @@ nix/
 - **Sojourner**: macOS (aarch64-darwin)
 - **Kepler**: NixOS (x86_64-linux, headless)
 - **Cubesat**: NixOS (x86_64-linux, headless)
-- **Midgard**: NixOS (x86_64-linux, desktop)
+- **Gaia**: NixOS (x86_64-linux, desktop)
 
 ## Usage
 

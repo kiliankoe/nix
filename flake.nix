@@ -79,11 +79,11 @@
           ];
         };
 
-        # Build with: nixos-rebuild build --flake .#midgard
-        midgard = nixpkgs.lib.nixosSystem {
+        # Build with: nixos-rebuild build --flake .#gaia
+        gaia = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
-            ./hosts/midgard
+            ./hosts/gaia
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;

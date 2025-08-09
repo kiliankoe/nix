@@ -56,5 +56,5 @@ jobs:
           set -euxo pipefail
           nix eval '.#nixosConfigurations.kepler.config.system.build.toplevel.outPath' >/dev/null
           nix eval '.#nixosConfigurations.cubesat.config.system.build.toplevel.outPath' >/dev/null
-          nix eval '.#nixosConfigurations.midgard.config.system.build.toplevel.outPath' >/dev/null
+          nix eval '.#nixosConfigurations.gaia.config.system.build.toplevel.outPath' >/dev/null
           echo "NixOS configurations evaluated successfully"
