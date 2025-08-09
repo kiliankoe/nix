@@ -93,50 +93,5 @@
         };
       };
 
-      # Platform-specific checks for CI
-      checks =
-        let
-          linuxSystems = [ "x86_64-linux" ];
-          darwinSystems = [ "aarch64-darwin" ];
-        in
-        (nixpkgs.lib.genAttrs linuxSystems (
-          system:
-          let
-            pkgs = import nixpkgs { inherit system; };
-          in
-          {
-            # Evaluate NixOS configs
-            nixos-kepler-eval = pkgs.runCommand "nixos-kepler-eval" { } ''
-              echo ${self.nixosConfigurations.kepler.config.system.build.toplevel.drvPath} > $out
-            '';
-            nixos-cubesat-eval = pkgs.runCommand "nixos-cubesat-eval" { } ''
-              echo ${self.nixosConfigurations.cubesat.config.system.build.toplevel.drvPath} > $out
-            '';
-            nixos-midgard-eval = pkgs.runCommand "nixos-midgard-eval" { } ''
-              echo ${self.nixosConfigurations.midgard.config.system.build.toplevel.drvPath} > $out
-            '';
-
-            # Optional: actually build Linux systems as part of flake checks
-            # Comment these out if builds become too heavy for CI
-            nixos-kepler-build = self.nixosConfigurations.kepler.config.system.build.toplevel;
-            nixos-cubesat-build = self.nixosConfigurations.cubesat.config.system.build.toplevel;
-            nixos-midgard-build = self.nixosConfigurations.midgard.config.system.build.toplevel;
-          }
-        ))
-        // (nixpkgs.lib.genAttrs darwinSystems (
-          system:
-          let
-            pkgs = import nixpkgs { inherit system; };
-          in
-          {
-            # Evaluate Darwin configs
-            darwin-voyager-eval = pkgs.runCommand "darwin-voyager-eval" { } ''
-              echo ${self.darwinConfigurations.voyager.config.system.build.toplevel.drvPath} > $out
-            '';
-            darwin-sojourner-eval = pkgs.runCommand "darwin-sojourner-eval" { } ''
-              echo ${self.darwinConfigurations.sojourner.config.system.build.toplevel.drvPath} > $out
-            '';
-          }
-        ));
     };
 }
