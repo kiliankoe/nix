@@ -13,8 +13,8 @@
 
     settings = {
       server = {
-        HTTP_PORT = 8378;
-        SSH_PORT = 22222;
+        HTTP_PORT = config.k.ports.forgejo_http;
+        SSH_PORT = config.k.ports.forgejo_ssh;
         DOMAIN = "localhost";
         ROOT_URL = "https://git.kilko.de";
       };
@@ -32,7 +32,7 @@
   # PostgreSQL is configured globally in the host configuration
 
   networking.firewall.allowedTCPPorts = [
-    8378
-    22222
+    config.k.ports.forgejo_http
+    config.k.ports.forgejo_ssh
   ];
 }

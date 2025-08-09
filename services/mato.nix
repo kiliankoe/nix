@@ -15,7 +15,7 @@ let
         volumes:
           - mato-data:/data
         ports:
-          - '12123:5050'
+          - '${toString config.k.ports.mato_http}:5050'
         healthcheck:
           test:
             - CMD

@@ -19,7 +19,7 @@ let
         env_file:
           - linkding.env
         ports:
-          - '8381:9090'
+          - '${toString config.k.ports.linkding_http}:9090'
 
     volumes:
       linkding-data:

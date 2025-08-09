@@ -3,7 +3,7 @@
   services.freshrss = {
     enable = true;
 
-    baseUrl = "http://localhost:8380";
+    baseUrl = "http://localhost:${toString config.k.ports.freshrss_http}";
 
     database = {
       type = "pgsql";
@@ -39,19 +39,19 @@
     virtualHosts.freshrss.listen = [
       {
         addr = "0.0.0.0";
-        port = 8380;
+        port = config.k.ports.freshrss_http;
       }
     ];
     virtualHosts.rssbridge.listen = [
       {
         addr = "0.0.0.0";
-        port = 8384;
+        port = config.k.ports.rssbridge_http;
       }
     ];
   };
 
   networking.firewall.allowedTCPPorts = [
-    8380
-    8384
+    config.k.ports.freshrss_http
+    config.k.ports.rssbridge_http
   ];
 }

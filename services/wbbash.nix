@@ -15,7 +15,7 @@ let
         volumes:
           - wbbash-db:/db.sqlite
         ports:
-          - '8386:3000'
+          - '${toString config.k.ports.wbbash_http}:3000'
 
     volumes:
       wbbash-db:

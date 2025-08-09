@@ -3,7 +3,7 @@
   services.paperless = {
     enable = true;
 
-    port = 8382;
+    port = config.k.ports.paperless_http;
     address = "0.0.0.0";
 
     dataDir = "/var/lib/paperless";
@@ -16,7 +16,7 @@
       PAPERLESS_OCR_LANGUAGE = "deu";
       PAPERLESS_TIME_ZONE = config.time.timeZone;
       PAPERLESS_ADMIN_USER = "admin";
-      PAPERLESS_URL = "http://localhost:8382";
+      PAPERLESS_URL = "http://localhost:${toString config.k.ports.paperless_http}";
 
       PAPERLESS_REDIS = "redis://localhost:6379";
 
@@ -41,5 +41,5 @@
     "d /var/lib/paperless/export 0755 paperless paperless -"
   ];
 
-  networking.firewall.allowedTCPPorts = [ 8382 ];
+  networking.firewall.allowedTCPPorts = [ config.k.ports.paperless_http ];
 }

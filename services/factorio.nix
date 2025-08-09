@@ -3,7 +3,7 @@
   services.factorio = {
     enable = true;
 
-    port = 34197;
+    port = config.k.ports.factorio_udp;
     bind = "0.0.0.0";
 
     game-name = "Benjamilius";
@@ -21,5 +21,5 @@
     };
   };
 
-  networking.firewall.allowedUDPPorts = [ 34197 ];
+  networking.firewall.allowedUDPPorts = [ config.k.ports.factorio_udp ];
 }

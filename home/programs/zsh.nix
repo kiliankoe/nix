@@ -73,12 +73,6 @@
         source ~/dev/dotfiles/private
       fi
 
-      # Load host-specific secrets
-      SECRETS_FILE="$HOME/.config/secrets/env"
-      if [[ -f "$SECRETS_FILE" ]]; then
-        source "$SECRETS_FILE"
-      fi
-
       # Load sops-managed environment variables
       if [[ -f "$HOME/.config/sops/env.sh" ]]; then
         source "$HOME/.config/sops/env.sh"

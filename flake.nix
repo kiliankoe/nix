@@ -111,5 +111,43 @@
         cubesat = self.nixosConfigurations.cubesat.pkgs;
         midgard = self.nixosConfigurations.midgard.pkgs;
       };
+
+      # Lightweight checks for CI: evaluate all configs and build Linux toplevels
+      checks =
+        let
+          systems = [ "x86_64-linux" ];
+        in
+        nixpkgs.lib.genAttrs systems (
+          system:
+          let
+            pkgs = import nixpkgs { inherit system; };
+          in
+          {
+            # Evaluate Darwin configs without building (works on Linux runners)
+            darwin-voyager-eval = pkgs.runCommand "darwin-voyager-eval" { } ''
+              echo ${self.darwinConfigurations.voyager.config.system.build.toplevel.drvPath} > $out
+            '';
+            darwin-sojourner-eval = pkgs.runCommand "darwin-sojourner-eval" { } ''
+              echo ${self.darwinConfigurations.sojourner.config.system.build.toplevel.drvPath} > $out
+            '';
+
+            # Evaluate NixOS configs
+            nixos-kepler-eval = pkgs.runCommand "nixos-kepler-eval" { } ''
+              echo ${self.nixosConfigurations.kepler.config.system.build.toplevel.drvPath} > $out
+            '';
+            # nixos-cubesat-eval = pkgs.runCommand "nixos-cubesat-eval" { } ''
+            #   echo ${self.nixosConfigurations.cubesat.config.system.build.toplevel.drvPath} > $out
+            # '';
+            # nixos-midgard-eval = pkgs.runCommand "nixos-midgard-eval" { } ''
+            #   echo ${self.nixosConfigurations.midgard.config.system.build.toplevel.drvPath} > $out
+            # '';
+
+            # Optional: actually build Linux systems as part of flake checks
+            # Comment these out if builds become too heavy for CI
+            nixos-kepler-build = self.nixosConfigurations.kepler.config.system.build.toplevel;
+            # nixos-cubesat-build = self.nixosConfigurations.cubesat.config.system.build.toplevel;
+            # nixos-midgard-build = self.nixosConfigurations.midgard.config.system.build.toplevel;
+          }
+        );
     };
 }

@@ -61,16 +61,6 @@ sops secrets/secrets.yaml
 sops -d secrets/secrets.yaml
 ```
 
-### Secrets in Environment Files
-
-For additional host-specific secrets not managed by sops:
-
-```bash
-# ~/.config/secrets/env
-export GITHUB_TOKEN="ghp_..."
-export DATABASE_URL="postgresql://..."
-```
-
 ## Services
 
 Services are defined as native NixOS or docker services. Not everything has been migrated to native yet.

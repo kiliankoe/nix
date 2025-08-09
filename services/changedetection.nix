@@ -2,7 +2,7 @@
 {
   services.changedetection-io = {
     enable = true;
-    port = 5000;
+    port = config.k.ports.changedetection;
     listenAddress = "0.0.0.0";
 
     playwrightSupport = true;
@@ -15,5 +15,5 @@
     '';
   };
 
-  networking.firewall.allowedTCPPorts = [ 5000 ];
+  networking.firewall.allowedTCPPorts = [ config.k.ports.changedetection ];
 }

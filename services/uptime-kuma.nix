@@ -4,11 +4,11 @@
     enable = true;
 
     settings = {
-      PORT = "3001";
+      PORT = toString config.k.ports.uptime_kuma;
       HOST = "0.0.0.0";
       # Data will be stored in /var/lib/uptime-kuma
     };
   };
 
-  networking.firewall.allowedTCPPorts = [ 3001 ];
+  networking.firewall.allowedTCPPorts = [ config.k.ports.uptime_kuma ];
 }
