@@ -137,6 +137,7 @@
 
   system.primaryUser = "kilian";
 
+  home-manager.backupFileExtension = "backup";
   home-manager.users.kilian = {
     imports = [
       ../../home/common.nix
