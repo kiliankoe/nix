@@ -68,11 +68,6 @@
     };
 
     initContent = ''
-      # Load private dotfiles if they exist
-      if [[ -f ~/dev/dotfiles/private ]]; then
-        source ~/dev/dotfiles/private
-      fi
-
       # Load sops-managed environment variables
       if [[ -f "$HOME/.config/sops/env.sh" ]]; then
         source "$HOME/.config/sops/env.sh"

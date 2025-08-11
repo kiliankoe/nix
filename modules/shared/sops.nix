@@ -6,7 +6,7 @@
 
   # Common secret definitions
   sops.secrets = {
-    "env/openai_api_key" = { };
+    "env/homebrew_github_api_token" = { };
   };
 
   # Create a script to export secrets, sourced in zsh.nix
@@ -14,8 +14,8 @@
         echo "Creating sops environment script..."
         mkdir -p "$HOME/.config/sops"
         cat > "$HOME/.config/sops/env.sh" << 'EOF'
-    export OPENAI_API_KEY="$(cat ${
-      config.sops.secrets."env/openai_api_key".path
+    export HOMEBREW_GITHUB_API_TOKEN="$(cat ${
+      config.sops.secrets."env/homebrew_github_api_token".path
     } 2>/dev/null || echo "")"
     EOF
         chmod 644 "$HOME/.config/sops/env.sh"
