@@ -61,6 +61,7 @@
         # "fzf"
       ];
       extraConfig = ''
+        ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
         COMPLETION_WAITING_DOTS="true"
         DEFAULT_USER="kilian"
         zstyle ':omz:update' mode reminder
