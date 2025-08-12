@@ -4,7 +4,6 @@
     enable = true;
     onActivation = {
       autoUpdate = true;
-      cleanup = "zap";
     };
     taps = [
       "homebrew/bundle"
