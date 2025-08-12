@@ -58,7 +58,6 @@
       plugins = [
         "git"
         "z"
-        # "fzf"
       ];
       extraConfig = ''
         ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
@@ -90,10 +89,4 @@
 
     # Platform-specific zsh opts are in darwin.nix and nixos.nix
   };
-
-  # Not sure if I'm still using fzf, possibly re-enable later
-  # programs.fzf = {
-  #   enable = true;
-  #   enableZshIntegration = true;
-  # };
 }
