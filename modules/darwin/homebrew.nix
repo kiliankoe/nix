@@ -24,6 +24,7 @@
       "bambu-studio"
       "blender"
       "chatgpt"
+      "claude"
       "coconutbattery"
       "crossover"
       "cyberduck"
