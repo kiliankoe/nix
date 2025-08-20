@@ -39,6 +39,7 @@
     jq
     lazygit
     lucky-commit
+    lychee
     mitmproxy
     mitmproxy2swagger
     neofetch
