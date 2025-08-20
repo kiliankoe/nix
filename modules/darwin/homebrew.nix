@@ -49,6 +49,7 @@
       "macdependency"
       "monitorcontrol"
       "notion"
+      "obsidian"
       "ollama"
       "openscad"
       "orbstack"
