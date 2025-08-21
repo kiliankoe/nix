@@ -2,9 +2,9 @@
 {
   homebrew = {
     enable = true;
-    onActivation = {
-      autoUpdate = true;
-    };
+    # onActivation = {
+    #   autoUpdate = true;
+    # };
     taps = [
       "homebrew/bundle"
       "homebrew/cask"
