@@ -52,7 +52,7 @@
       "monitorcontrol"
       "notion"
       "obsidian"
-      "ollama"
+      "ollama-app"
       "openscad"
       "orbstack"
       "pictogram"
