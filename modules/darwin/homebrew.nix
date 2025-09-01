@@ -16,6 +16,7 @@
       "gh"
       "swift-outdated"
       "codex"
+      "mas"
     ];
     casks = [
       "1password"
