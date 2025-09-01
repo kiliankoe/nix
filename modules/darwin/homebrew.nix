@@ -22,6 +22,7 @@
       "anki"
       "balenaetcher"
       "bambu-studio"
+      "beeper"
       "blender"
       "chatgpt"
       "claude"
