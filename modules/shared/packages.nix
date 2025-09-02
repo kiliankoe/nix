@@ -30,7 +30,6 @@
     docker-compose
     eza
     fd
-    gemini-cli
     git
     gping
     heh
