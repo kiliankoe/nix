@@ -13,7 +13,6 @@
 
     ../../services/changedetection.nix
     ../../services/factorio.nix
-    ../../services/forgejo.nix
     ../../services/freshrss.nix
     ../../services/paperless.nix
     ../../services/uptime-kuma.nix
@@ -36,15 +35,10 @@
 
     # Ensure all required databases and users exist
     ensureDatabases = [
-      "forgejo"
       "freshrss"
       "paperless"
     ];
     ensureUsers = [
-      {
-        name = "forgejo";
-        ensureDBOwnership = true;
-      }
       {
         name = "freshrss";
         ensureDBOwnership = true;
