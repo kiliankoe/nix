@@ -14,7 +14,7 @@
 
   programs.zsh = {
     initContent = ''
-      alias brewup="brew update && brew upgrade && brew cleanup"
+      alias brewup="brew upgrade && brew cleanup"
       # BSD ls flags
       alias ls='ls -G'
       alias l='ls -lAhG'
