@@ -15,7 +15,6 @@
     brews = [
       "gh"
       "swift-outdated"
-      "codex"
       "mas"
     ];
     casks = [
