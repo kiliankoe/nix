@@ -5,6 +5,7 @@
 
     port = config.k.ports.paperless_http;
     address = "0.0.0.0";
+    domain = "http://localhost:${toString config.k.ports.paperless_http}";
 
     dataDir = "/var/lib/paperless";
     consumptionDir = "/var/lib/paperless/consume";
@@ -17,7 +18,6 @@
       PAPERLESS_OCR_LANGUAGE = "deu";
       PAPERLESS_TIME_ZONE = config.time.timeZone;
       PAPERLESS_ADMIN_USER = "admin";
-      PAPERLESS_URL = "http://localhost:${toString config.k.ports.paperless_http}";
 
       PAPERLESS_REDIS = "redis://localhost:6379";
 
@@ -26,6 +26,7 @@
       PAPERLESS_DBUSER = "paperless";
       PAPERLESS_DBHOST = "localhost";
       PAPERLESS_DBPORT = 5432;
+
     };
   };
 
