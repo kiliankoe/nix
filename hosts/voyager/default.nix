@@ -13,5 +13,8 @@
     ./homebrew.nix
   ];
 
+  networking.hostName = "voyager";
+  networking.computerName = "Voyager";
+
   nixpkgs.hostPlatform = "aarch64-darwin";
 }

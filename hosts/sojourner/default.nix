@@ -13,6 +13,9 @@
     ./homebrew.nix
   ];
 
+  networking.hostName = "sojourner";
+  networking.computerName = "Sojourner";
+
   nixpkgs.hostPlatform = "aarch64-darwin";
 
   home-manager.users.kilian = {
