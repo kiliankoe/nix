@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(nix flake check:*)",
+      "Bash(nix search:*)",
+      "WebFetch(domain:nixos.wiki)",
+      "WebFetch(domain:discourse.nixos.org)",
+      "WebFetch(domain:nix-darwin.github.io)",
+      "WebFetch(domain:mynixos.com)",
+      "Bash(defaults read:*)"
+    ],
+    "deny": []
+  }
+}
