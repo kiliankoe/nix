@@ -13,8 +13,8 @@
 
   programs.zsh = {
     initContent = ''
-      alias nrs="sudo nixos-rebuild switch --flake ."
-      alias nrb="sudo nixos-rebuild build --flake ."
+      alias nhb="nh os build -H ${config.networking.hostName} ."
+      alias nhs="nh os switch -H ${config.networking.hostName} ."
       alias ls='ls --color=auto'
       alias l='ls -lAh --color=auto'
     '';
