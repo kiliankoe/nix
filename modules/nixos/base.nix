@@ -3,6 +3,8 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
   networking.networkmanager.enable = true;
 
   time.timeZone = "Europe/Berlin";
@@ -22,6 +24,7 @@
   users.users.kilian = {
     isNormalUser = true;
     description = "Kilian";
+    shell = pkgs.zsh;
     extraGroups = [
       "networkmanager"
       "wheel"
@@ -71,6 +74,8 @@
   };
   services.tailscale.enable = true;
   virtualisation.docker.enable = true;
+
+  programs.zsh.enable = true;
 
   # Used for backwards compatibility, don't touch.
   system.stateVersion = "24.11";
