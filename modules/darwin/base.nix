@@ -77,14 +77,15 @@
       askForPasswordDelay = 0;
     };
 
+    # Could not write domain com.apple.universalaccess; exiting
     # Accessibility settings
-    "com.apple.universalaccess" = {
-      # Use scroll gesture with the Ctrl (^) modifier key to zoom
-      closeViewScrollWheelToggle = true;
-      HIDScrollZoomModifierMask = 262144;
-      # Follow the keyboard focus while zoomed in
-      closeViewZoomFollowsFocus = true;
-    };
+    # "com.apple.universalaccess" = {
+    #   # Use scroll gesture with the Ctrl (^) modifier key to zoom
+    #   closeViewScrollWheelToggle = true;
+    #   HIDScrollZoomModifierMask = 262144;
+    #   # Follow the keyboard focus while zoomed in
+    #   closeViewZoomFollowsFocus = true;
+    # };
 
     # Avoid creating .DS_Store files on network volumes
     "com.apple.desktopservices".DSDontWriteNetworkStores = true;
@@ -96,25 +97,26 @@
       auto-open-rw-root = true;
     };
 
-    "com.apple.Safari" = {
-      # Privacy: don't send search queries to Apple
-      UniversalSearchEnabled = false;
-      SuppressSearchSuggestions = true;
-      # Show the full URL in the address bar (note: this still hides the scheme)
-      ShowFullURLInSmartSearchField = true;
-      # Set Safari's home page to `about:blank` for faster loading
-      HomePage = "about:blank";
-      # Prevent Safari from opening 'safe' files automatically after downloading
-      AutoOpenSafeDownloads = false;
-      # Enable Safari's debug menu
-      IncludeInternalDebugMenu = true;
-      # Make Safari's search banners default to Contains instead of Starts With
-      FindOnPageMatchesWordStartsOnly = false;
-      # Enable the Develop menu and the Web Inspector in Safari
-      IncludeDevelopMenu = true;
-      WebKitDeveloperExtrasEnabledPreferenceKey = true;
-      "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" = true;
-    };
+    # defaults[30575:250868958] Could not write domain /Users/kilian/Library/Containers/com.apple.Safari/Data/Library/Preferences/com.apple.Safari; exiting
+    # "com.apple.Safari" = {
+    #   # Privacy: don't send search queries to Apple
+    #   UniversalSearchEnabled = false;
+    #   SuppressSearchSuggestions = true;
+    #   # Show the full URL in the address bar (note: this still hides the scheme)
+    #   ShowFullURLInSmartSearchField = true;
+    #   # Set Safari's home page to `about:blank` for faster loading
+    #   HomePage = "about:blank";
+    #   # Prevent Safari from opening 'safe' files automatically after downloading
+    #   AutoOpenSafeDownloads = false;
+    #   # Enable Safari's debug menu
+    #   IncludeInternalDebugMenu = true;
+    #   # Make Safari's search banners default to Contains instead of Starts With
+    #   FindOnPageMatchesWordStartsOnly = false;
+    #   # Enable the Develop menu and the Web Inspector in Safari
+    #   IncludeDevelopMenu = true;
+    #   WebKitDeveloperExtrasEnabledPreferenceKey = true;
+    #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" = true;
+    # };
 
     "com.apple.TextEdit" = {
       # Use plain text mode for new TextEdit documents
