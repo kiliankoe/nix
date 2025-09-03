@@ -15,8 +15,8 @@
   programs.zsh = {
     initContent = ''
       alias brewup="brew upgrade && brew cleanup"
-      alias nhb="nh darwin build -H ${config.networking.hostName} ~/nix"
-      alias nhs="nh darwin switch -H ${config.networking.hostName} ~/nix"
+      alias nhb="nh darwin build -H $(hostname -s) ~/nix"
+      alias nhs="nh darwin switch -H $(hostname -s) ~/nix"
       # BSD ls flags
       alias ls='ls -G'
       alias l='ls -lAhG'
