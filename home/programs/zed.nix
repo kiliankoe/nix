@@ -1,12 +1,12 @@
-{ ... }:
+{ pkgs, ... }:
 # For information on how to configure Zed, see the Zed
 # documentation: https://zed.dev/docs/configuring-zed
 #
 # To see all of Zed's default settings without changing your
 # custom settings, run `zed: open default settings` from the
 # command palette (cmd-shift-p / ctrl-shift-p)
-{
-  home.file.".config/zed/settings.json".text = builtins.toJSON {
+let
+  settings = {
     agent = {
       default_model = {
         provider = "copilot_chat";
@@ -23,8 +23,8 @@
     buffer_font_size = 12;
     theme = {
       mode = "system";
-      light = "Xcode Classic Light";
-      dark = "Xcode Classic Dark";
+      light = "One Light";
+      dark = "One Dark";
     };
     format_on_save = "on";
     code_actions_on_format = {
@@ -32,4 +32,12 @@
       "source.removeUnusedImports" = true;
     };
   };
+
+  # Pretty-print JSON using jq
+  prettyJson = pkgs.runCommand "zed-settings.json" { } ''
+    echo '${builtins.toJSON settings}' | ${pkgs.jq}/bin/jq . > $out
+  '';
+in
+{
+  home.file.".config/zed/settings.json".source = prettyJson;
 }
