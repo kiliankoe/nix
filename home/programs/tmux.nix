@@ -3,7 +3,7 @@
   programs.tmux = {
     enable = true;
     package = pkgs.tmux;
-    sensibleOnTop = false;
+    sensibleOnTop = true;
     mouse = true;
     prefix = "C-a";
     baseIndex = 1;
@@ -17,6 +17,12 @@
     # keyMode = "emacs"; # Default, but explicit
 
     extraConfig = ''
+      # Explicitly set and bind the prefix for nested sessions,
+      # only using `prefix` above doesn't suffice unfortunately
+      unbind C-b
+      set -g prefix C-a
+      bind C-a send-prefix
+
       # Renumber windows when one is closed
       set -g renumber-windows on
 
