@@ -26,7 +26,10 @@ let
       light = "One Light";
       dark = "One Dark";
     };
+    autosave = "on_window_change";
     format_on_save = "on";
+    ensure_final_newline_on_save = true;
+    remove_trailing_whitespace_on_save = true;
     code_actions_on_format = {
       "source.organizeImports" = true;
       "source.removeUnusedImports" = true;
