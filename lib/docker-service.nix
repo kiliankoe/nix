@@ -64,7 +64,9 @@ in
 
       # Generate ExecStartPre commands to create .env files
       envFileCommands = builtins.attrValues (
-        builtins.mapAttrs (svcName: script: "${script} > ${serviceDir}/${svcName}.env") envScripts
+        builtins.mapAttrs (
+          svcName: script: "${pkgs.bash}/bin/bash -c '${script} > ${serviceDir}/${svcName}.env'"
+        ) envScripts
       );
 
       # Create backup environment file if volumes are specified
