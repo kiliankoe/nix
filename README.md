@@ -52,11 +52,13 @@ Key is stored in `~/.config/sops/age.key`, make sure that exists.
 ### Managing Secrets
 
 **Edit secrets**
+
 ```bash
 sops secrets/secrets.yaml
 ```
 
 **Decrypt to stdout**
+
 ```bash
 sops -d secrets/secrets.yaml
 ```
@@ -68,15 +70,11 @@ Services are defined as native NixOS or docker services. Not everything has been
 ### Service Management
 
 ```bash
-# Start/stop/restart services
+sudo systemctl status $servicename
 sudo systemctl start $servicename
 sudo systemctl stop $servicename
 sudo systemctl restart $servicename
 
-# Check service status
-sudo systemctl status $servicename
-
-# View service logs
 journalctl -u $servicename -f
 journalctl -u $servicename --since "1 hour ago"
 
@@ -85,6 +83,15 @@ sudo systemctl enable $servicename
 sudo systemctl disable $servicename
 ```
 
-### Service Secrets
+#### Docker Service Logs
 
-Service secrets are managed through sops-nix.
+Docker-based services run in detached mode `docker-compose up -d`, so their container logs are not captured by journalctl.
+
+```bash
+cd /etc/docker-compose/$servicename
+sudo docker-compose logs -f
+# or
+sudo docker-compose logs --tail=50
+```
+
+This is intentional to keep container logs separate and avoid interleaving multiple container outputs in journald.
