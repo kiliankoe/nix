@@ -6,7 +6,7 @@ let
     services:
       wbbash:
         container_name: wbbash
-        image: wbbash:latest # TODO: Publish on ghcr.io
+        image: ghcr.io/kiliankoe/wbbash:latest
         restart: unless-stopped
         environment:
           - DATABASE_URL=file:/db.sqlite
