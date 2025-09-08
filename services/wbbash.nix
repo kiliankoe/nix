@@ -6,7 +6,7 @@ let
     services:
       wbbash:
         container_name: wbbash
-        image: ghcr.io/kiliankoe/wbbash:latest
+        image: ghcr.io/kiliankoe/wbbash:main
         restart: unless-stopped
         environment:
           - DATABASE_URL=file:/db.sqlite
