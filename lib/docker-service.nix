@@ -48,9 +48,17 @@ in
         svcName: envVars:
         pkgs.writeScript "${serviceName}-${svcName}-env" ''
           #!/bin/sh
-          cat <<'EOF'
-          ${mkEnvFileContent envVars}
-          EOF
+          ${builtins.concatStringsSep "\n" (
+            builtins.attrValues (
+              builtins.mapAttrs (
+                name: value:
+                if builtins.isAttrs value && value ? secretFile then
+                  "echo \"${name}=$(cat ${value.secretFile})\""
+                else
+                  "echo \"${name}=${toString value}\""
+              ) envVars
+            )
+          )}
         ''
       ) environment;
 
