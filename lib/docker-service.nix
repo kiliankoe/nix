@@ -48,7 +48,9 @@ in
         svcName: envVars:
         pkgs.writeScript "${serviceName}-${svcName}-env" ''
           #!/bin/sh
+          cat <<'EOF'
           ${mkEnvFileContent envVars}
+          EOF
         ''
       ) environment;
 
