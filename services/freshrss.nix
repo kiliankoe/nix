@@ -7,7 +7,7 @@
 
     database = {
       type = "pgsql";
-      host = "localhost";
+      host = "/run/postgresql";
       port = null; # Use default PostgreSQL port
       user = "freshrss";
       name = "freshrss";
