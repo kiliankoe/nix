@@ -50,5 +50,6 @@
     tree
     vim
     yt-dlp
+    zola
   ];
 }
