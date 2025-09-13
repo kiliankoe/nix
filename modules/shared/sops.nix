@@ -16,6 +16,7 @@
         echo "Creating sops environment script..."
         mkdir -p "$HOME/.config/sops"
         cat > "$HOME/.config/sops/env.sh" << 'EOF'
+    export SOPS_AGE_KEY_FILE="${config.sops.age.keyFile}"
     export HOMEBREW_GITHUB_API_TOKEN="$(cat ${
       config.sops.secrets."env/homebrew_github_api_token".path
     } 2>/dev/null || echo "")"
