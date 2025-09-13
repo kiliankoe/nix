@@ -5,8 +5,6 @@
 
     port = config.k.ports.paperless_http;
     address = "0.0.0.0";
-    # domain = "http://localhost:${toString config.k.ports.paperless_http}";
-    domain = "https://docs.kilko.de"
 
     dataDir = "/var/lib/paperless";
     consumptionDir = "/var/lib/paperless/consume";
@@ -25,9 +23,6 @@
       PAPERLESS_DBENGINE = "postgresql";
       PAPERLESS_DBNAME = "paperless";
       PAPERLESS_DBUSER = "paperless";
-      PAPERLESS_DBHOST = "localhost";
-      PAPERLESS_DBPORT = 5432;
-
     };
   };
 
