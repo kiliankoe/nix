@@ -77,10 +77,6 @@ sudo systemctl restart $servicename
 
 journalctl -u $servicename -f
 journalctl -u $servicename --since "1 hour ago"
-
-# Enable/disable auto-start
-sudo systemctl enable $servicename
-sudo systemctl disable $servicename
 ```
 
 #### Docker Service Logs
