@@ -12,7 +12,6 @@
     ./packages.nix
 
     ../../services/changedetection.nix
-    ../../services/factorio.nix
     ../../services/freshrss.nix
     ../../services/paperless.nix
     ../../services/uptime-kuma.nix
