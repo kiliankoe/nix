@@ -15,6 +15,7 @@
         rssbridge_http = 8386;
         uptime_kuma_http = 8387;
         wbbash_http = 8388;
+        lehmuese-ics_http = 8389;
       };
       description = ''
         Central registry for service port assignments to avoid conflicts and

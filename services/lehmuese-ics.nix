@@ -13,7 +13,7 @@ let
         volumes:
           - lehmuese-ics-db:/app/db.sqlite
         ports:
-          - '8380:3000'
+          - '${toString config.k.ports.lehmuese-ics_http}:3000'
 
     volumes:
       lehmuese-ics-db:
