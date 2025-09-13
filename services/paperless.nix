@@ -5,7 +5,8 @@
 
     port = config.k.ports.paperless_http;
     address = "0.0.0.0";
-    domain = "http://localhost:${toString config.k.ports.paperless_http}";
+    # domain = "http://localhost:${toString config.k.ports.paperless_http}";
+    domain = "https://docs.kilko.de"
 
     dataDir = "/var/lib/paperless";
     consumptionDir = "/var/lib/paperless/consume";
