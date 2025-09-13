@@ -17,6 +17,7 @@
     ../../services/uptime-kuma.nix
 
     # Docker-based services
+    ../../services/lehmuese-ics.nix
     ../../services/linkding.nix
     ../../services/mato.nix
     ../../services/swiftdebot.nix

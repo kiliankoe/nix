@@ -6,7 +6,7 @@ let
     services:
       lehmuese-ics:
         container_name: lehmuese-ics
-        image: lehmuese-ics:latest # TODO: Publish on ghcr.io
+        image: ghcr.io/kiliankoe/lehmuese-ics:latest
         restart: unless-stopped
         env_file:
           - lehmuese-ics.env
