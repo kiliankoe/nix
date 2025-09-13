@@ -3,7 +3,8 @@
   services.freshrss = {
     enable = true;
 
-    baseUrl = "http://localhost:${toString config.k.ports.freshrss_http}";
+    # baseUrl = "http://localhost:${toString config.k.ports.freshrss_http}";
+    baseUrl = "https://rss.kilko.de";
 
     database = {
       type = "pgsql";
