@@ -1,7 +1,7 @@
 { config, ... }:
 {
   services.factorio = {
-    enable = true;
+    enable = false;
 
     port = config.k.ports.factorio_udp;
     bind = "0.0.0.0";
