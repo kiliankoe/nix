@@ -25,13 +25,13 @@ dockerService.mkDockerComposeService {
   environment = {
     foundry = {
       FOUNDRY_USERNAME = {
-        secretFile = config.sops.secrets."foundry-vtt/username".path;
+        secretFile = config.sops.secrets."foundryvtt/username".path;
       };
       FOUNDRY_PASSWORD = {
-        secretFile = config.sops.secrets."foundry-vtt/password".path;
+        secretFile = config.sops.secrets."foundryvtt/password".path;
       };
       FOUNDRY_ADMIN_KEY = {
-        secretFile = config.sops.secrets."foundry-vtt/admin_key".path;
+        secretFile = config.sops.secrets."foundryvtt/admin_key".path;
       };
     };
   };
