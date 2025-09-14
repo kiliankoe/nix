@@ -17,6 +17,7 @@
     ../../services/uptime-kuma.nix
 
     # Docker-based services
+    # ../../services/foundry-vtt.nix
     ../../services/linkding.nix
     ../../services/mato.nix
     ../../services/swiftdebot.nix
@@ -74,6 +75,9 @@
     "wbbash/miniqdb_name" = { };
     "wbbash/nextauth_secret" = { };
     "wbbash/nothing_to_see_here_text" = { };
+    "foundry-vtt/username" = { };
+    "foundry-vtt/password" = { };
+    "foundry-vtt/admin_key" = { };
   };
 
   # Disable power management (server)
