@@ -75,9 +75,9 @@
     "wbbash/miniqdb_name" = { };
     "wbbash/nextauth_secret" = { };
     "wbbash/nothing_to_see_here_text" = { };
-    "foundry-vtt/username" = { };
-    "foundry-vtt/password" = { };
-    "foundry-vtt/admin_key" = { };
+    "foundryvtt/username" = { };
+    "foundryvtt/password" = { };
+    "foundryvtt/admin_key" = { };
   };
 
   # Disable power management (server)
