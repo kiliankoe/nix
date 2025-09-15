@@ -4,20 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build Commands
 
-To test if the configuration builds correctly, use the following commands. Please do so after any significant config changes to make sure it works.
+First check what system we are running on using `hostname`. It will likely be one of the known hosts (see @README.md). If building the config for the same host, use `nhb` (an alias for `nh darwin build -H <hostname>`), otherwise use on of the following options.
 
 ```bash
 # Quick check
 nix flake check --no-build
 
-# For macOS
-nhb # alias for `nh darwin build -H $currentSystem ~/nix`
-
-# For NixOS
+# For building a nixos host from macOS
 ssh nixos@orb 'cd /mnt/mac/Users/kilian/dev/kiliankoe/nix && nixos-rebuild build --flake .#kepler'
 ```
-
-See @README.md for a list of hosts. macOS hosts can be built directly like above, NixOS configs are tested locally by running them within `nixos@orb`.
 
 ### Code Formatting
 
