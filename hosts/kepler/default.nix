@@ -17,7 +17,7 @@
     ../../services/uptime-kuma.nix
 
     # Docker-based services
-    # ../../services/foundry-vtt.nix
+    ../../services/foundry-vtt.nix
     ../../services/linkding.nix
     ../../services/mato.nix
     ../../services/swiftdebot.nix

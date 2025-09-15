@@ -35,5 +35,5 @@ dockerService.mkDockerComposeService {
       };
     };
   };
-  volumesToBackup = [ "foundry-data" ];
+  # volumesToBackup = [ "foundry-data" ];
 }
