@@ -12,6 +12,7 @@
     ./packages.nix
 
     ../../services/changedetection.nix
+    ../../services/cockpit.nix
     ../../services/freshrss.nix
     ../../services/paperless.nix
     ../../services/uptime-kuma.nix

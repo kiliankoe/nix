@@ -17,6 +17,7 @@
         wbbash_http = 8388;
         lehmuese-ics_http = 8389;
         foundry-vtt_http = 8390;
+        cockpit_http = 8391;
       };
       description = ''
         Central registry for service port assignments to avoid conflicts and
