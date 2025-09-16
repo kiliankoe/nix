@@ -88,7 +88,7 @@
     "ssh-keys": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-3QET9zOXQNnGMvm//uyjxLHViYpYS0cyBDb5al+cZ5g=",
+        "narHash": "sha256-Nq/zVkfNWyicb/NbnN8cHSQ+Oy/TAZI9t4aagCG5MCk=",
         "type": "file",
         "url": "https://github.com/kiliankoe.keys"
       },
