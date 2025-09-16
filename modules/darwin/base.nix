@@ -24,6 +24,8 @@
       NSAutomaticDashSubstitutionEnabled = false;
       # Disable auto-correct
       NSAutomaticSpellingCorrectionEnabled = false;
+      # Enable window dragging when holding ctrl+cmd
+      NSWindowShouldDragOnGesture = true;
     };
 
     # com.apple.dock
