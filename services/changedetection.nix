@@ -24,6 +24,8 @@ let
         depends_on:
           sockpuppetbrowser:
             condition: service_started
+        labels:
+          - "com.centurylinklabs.watchtower.enable=true"
 
       sockpuppetbrowser:
         image: dgtlmoon/sockpuppetbrowser:latest
@@ -39,6 +41,8 @@ let
           - SCREEN_HEIGHT=1024
           - SCREEN_DEPTH=16
           - MAX_CONCURRENT_CHROME_PROCESSES=10
+        labels:
+          - "com.centurylinklabs.watchtower.enable=true"
 
     volumes:
       changedetection-data:
