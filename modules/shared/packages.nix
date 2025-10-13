@@ -51,7 +51,6 @@
     vim
     yazi
     yt-dlp
-    zellij
     zola
   ];
 }
