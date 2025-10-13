@@ -34,6 +34,7 @@
       "discord"
       "element"
       "fantastical"
+      "fastmail"
       "firefox"
       "font-comic-mono"
       "font-jetbrains-mono"

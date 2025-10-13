@@ -9,7 +9,6 @@
       "audacity"
       "calibre"
       "deluge"
-      "fmail3"
       "forecast"
       "handbrake-app"
       "minecraft"
