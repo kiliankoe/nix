@@ -51,6 +51,7 @@
       "jordanbaird-ice"
       "macdependency"
       "monitorcontrol"
+      "netnewswire"
       "notion"
       "obsidian"
       "ollama-app"
