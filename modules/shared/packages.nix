@@ -37,7 +37,7 @@
     hyperfine
     jq
     lazygit
-    lucky-commit
+    # lucky-commit
     lychee
     mitmproxy
     mitmproxy2swagger
