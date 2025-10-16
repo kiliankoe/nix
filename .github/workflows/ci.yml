@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -35,7 +35,7 @@ jobs:
         run: |
           set -euxo pipefail
           nix eval '.#darwinConfigurations.voyager.config.system.build.toplevel.outPath' >/dev/null
-          nix eval '.#darwinConfigurations.sojourner.config.system.build.toplevel.outPath' >/dev/null
+          nix eval '.#darwinConfigurations.cassini.config.system.build.toplevel.outPath' >/dev/null
           echo "Darwin configurations evaluated successfully"
 
   eval-check-linux:

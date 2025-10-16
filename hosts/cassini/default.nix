@@ -13,14 +13,14 @@
     ./homebrew.nix
   ];
 
-  networking.hostName = "sojourner";
-  networking.computerName = "Sojourner";
+  networking.hostName = "cassini";
+  networking.computerName = "Cassini";
 
   nixpkgs.hostPlatform = "aarch64-darwin";
 
   home-manager.users.kilian = {
     imports = [ ../../home/programs/k9s.nix ];
-    
+
     programs.git = {
       userEmail = "kilian.koeltzsch@wandelbots.com";
     };

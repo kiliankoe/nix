@@ -18,7 +18,7 @@ nix/
 ## Hosts
 
 - **Voyager**: macOS (aarch64-darwin)
-- **Sojourner**: macOS (aarch64-darwin)
+- **Cassini**: macOS (aarch64-darwin)
 - **Kepler**: NixOS (x86_64-linux, headless)
 - **Cubesat**: NixOS (x86_64-linux, headless)
 - **Gaia**: NixOS (x86_64-linux, desktop)

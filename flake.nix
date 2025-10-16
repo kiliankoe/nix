@@ -40,10 +40,10 @@
           ];
         };
 
-        # Build with: darwin-rebuild build --flake .#sojourner
-        sojourner = nix-darwin.lib.darwinSystem {
+        # Build with: darwin-rebuild build --flake .#cassini
+        cassini = nix-darwin.lib.darwinSystem {
           modules = [
-            ./hosts/sojourner
+            ./hosts/cassini
             sops-nix.darwinModules.sops
             home-manager.darwinModules.home-manager
             {
