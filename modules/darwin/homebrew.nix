@@ -6,9 +6,6 @@
     #   autoUpdate = true;
     # };
     taps = [
-      "homebrew/bundle"
-      "homebrew/cask"
-      "homebrew/core"
       "kiliankoe/formulae"
     ];
     brews = [
