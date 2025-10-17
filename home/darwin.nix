@@ -21,6 +21,9 @@
       # BSD ls flags
       alias ls='ls -G'
       alias l='ls -lAhG'
+
+      # Homebrew
+      eval "$(/opt/homebrew/bin/brew shellenv)"
     '';
   };
 }
