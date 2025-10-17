@@ -70,6 +70,11 @@
       AppleHighlightColor = "1.000000 0.749020 0.823529 Pink";
     };
 
+    # Disable input source indicator at cursor
+    kCFPreferencesAnyApplication = {
+      TSMLanguageIndicatorEnabled = 0;
+    };
+
     # Automatically quit printer app once the print jobs complete
     "com.apple.print.PrintingPrefs"."Quit When Finished" = true;
 
