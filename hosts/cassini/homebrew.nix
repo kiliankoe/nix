@@ -16,7 +16,9 @@
       "google-chrome"
       "microsoft-auto-update"
       "microsoft-outlook"
+      "microsoft-teams"
       "slack"
+      "viscosity"
     ];
   };
 }
