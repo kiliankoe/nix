@@ -53,6 +53,9 @@ dockerService.mkDockerComposeService {
       CATFACT_SLACK_WEBHOOK_URL = {
         secretFile = config.sops.secrets."mato/catfact_slack_webhook".path;
       };
+      KAGI_API_KEY = {
+        secretFile = config.sops.secrets."mato/kagi_api_key".path;
+      };
     };
   };
 }
