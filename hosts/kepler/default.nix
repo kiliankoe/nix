@@ -60,6 +60,7 @@
     "mato/smtp_host" = { };
     "mato/smtp_pass" = { };
     "mato/smtp_user" = { };
+    "mato/kagi_api_key" = { };
     "paperless/secret_key" = { };
     "swiftdebot/discord_app_id" = { };
     "swiftdebot/discord_logs_webhook_url" = { };
