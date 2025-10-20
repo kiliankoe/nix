@@ -42,6 +42,7 @@
     mitmproxy
     mitmproxy2swagger
     neofetch
+    ripgrep
     ripgrep-all
     sops
     tealdeer
