@@ -1,5 +1,10 @@
 { pkgs, ... }:
 {
+  # Darwin-specific secret definitions
+  sops.secrets = {
+    "env/homebrew_github_api_token" = { };
+  };
+
   nix.enable = true;
   nix.settings.experimental-features = "nix-command flakes";
 

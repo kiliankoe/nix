@@ -5,6 +5,7 @@
     ../../modules/nixos/base.nix
     ../../modules/shared/common.nix
     ../../modules/shared/packages.nix
+    ../../modules/shared/sops.nix
     ./packages.nix
   ];
 
