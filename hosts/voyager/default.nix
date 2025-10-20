@@ -3,6 +3,7 @@
   imports = [
     ../../modules/shared/common.nix
     ../../modules/shared/packages.nix
+    ../../modules/shared/package-overrides.nix
     ../../modules/shared/sops.nix
 
     ../../modules/darwin/base.nix
