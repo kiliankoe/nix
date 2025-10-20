@@ -26,8 +26,6 @@
   home-manager.users.kilian = {
     imports = [ ../../home/programs/k9s.nix ];
 
-    programs.git = {
-      userEmail = "kilian.koeltzsch@wandelbots.com";
-    };
+    programs.git.settings.user.email = "kilian.koeltzsch@wandelbots.com";
   };
 }

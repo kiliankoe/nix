@@ -8,14 +8,15 @@
   programs.git = {
     enable = true;
 
-    userName = lib.mkDefault "Kilian Koeltzsch";
-    userEmail = lib.mkDefault "me@kilian.io";
-
     lfs.enable = true;
 
     signing.key = "24D7C6B4";
 
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Kilian Koeltzsch";
+        email = "me@kilian.io";
+      };
       init = {
         defaultBranch = "main";
       };
@@ -60,7 +61,7 @@
       staash = "stash --include-untracked";
       stsh = "stash --keep-index";
       unstage = "reset HEAD --";
-      visual = "!gitk";
+      visual = "!fork";
       which = "!git branch | grep -i";
       yolo = "push --force";
       standup = "!git log --all --author=$USER --since='9am yesterday' --format=%s";
