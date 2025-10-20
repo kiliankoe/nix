@@ -32,6 +32,8 @@
     dock = {
       # Automatically hide and show the Dock
       autohide = true;
+      autohide-delay = 0.0;
+      autohide-time-modifier = 0.0;
       # Change minimize/maximize window effect to scale
       mineffect = "scale";
     };
