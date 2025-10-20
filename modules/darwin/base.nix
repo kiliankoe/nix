@@ -73,8 +73,7 @@
   # Custom user preferences for settings not directly supported by nix-darwin
   system.defaults.CustomUserPreferences = {
     NSGlobalDomain = {
-      # Set highlight color to pink
-      AppleHighlightColor = "1.000000 0.749020 0.823529 Pink";
+      AppleAccentColor = "6"; # Pink
     };
 
     # Disable input source indicator at cursor
