@@ -61,7 +61,7 @@
       staash = "stash --include-untracked";
       stsh = "stash --keep-index";
       unstage = "reset HEAD --";
-      visual = "!fork";
+      vis = "!fork";
       which = "!git branch | grep -i";
       yolo = "push --force";
       standup = "!git log --all --author=$USER --since='9am yesterday' --format=%s";
