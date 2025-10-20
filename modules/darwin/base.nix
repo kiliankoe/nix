@@ -77,6 +77,10 @@
       TSMLanguageIndicatorEnabled = 0;
     };
 
+    "com.apple.WindowManager" = {
+      EnabledTiledWindowMargins = false;
+    };
+
     # Automatically quit printer app once the print jobs complete
     "com.apple.print.PrintingPrefs"."Quit When Finished" = true;
 
