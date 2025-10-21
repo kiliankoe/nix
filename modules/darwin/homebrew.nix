@@ -51,6 +51,7 @@
       "netnewswire"
       "notion"
       "obsidian"
+      "ogdesign-eagle"
       "ollama-app"
       "openscad"
       "orbstack"
