@@ -15,6 +15,6 @@
     # Common sops exports
     export SOPS_AGE_KEY_FILE="${osConfig.sops.age.keyFile}"
     EOF
-        chmod 644 "$HOME/.config/sops/env.sh"
+        chmod 600 "$HOME/.config/sops/env.sh"
   '';
 }
