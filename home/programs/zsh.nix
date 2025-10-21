@@ -5,16 +5,6 @@
     source = ./norm-kilian.zsh-theme;
   };
 
-  home.sessionVariables = {
-    REPORTTIME = "5";
-    EDITOR = "hx";
-    # fixes mouse scrolling in bat's pager output in tmux
-    LESS = "--mouse";
-  }
-  // pkgs.lib.mkIf pkgs.stdenv.isDarwin {
-    ICLOUD_DRIVE = "$HOME/Library/Mobile Documents/com~apple~CloudDocs";
-  };
-
   home.sessionPath = [
     "$HOME/bin"
     "$HOME/.bun/bin"
@@ -67,7 +57,18 @@
       '';
     };
 
+    # unfortunately zsh.sessionVariables or zsh.localVariables doesn't appear to be working
     initContent = ''
+      # Session variables
+      export REPORTTIME="5"
+      export EDITOR="hx"
+      export LESS="--mouse"
+    ''
+    + pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
+      export ICLOUD_DRIVE="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
+    ''
+    + ''
+
       # Load sops-managed environment variables
       if [[ -f "$HOME/.config/sops/env.sh" ]]; then
         source "$HOME/.config/sops/env.sh"
