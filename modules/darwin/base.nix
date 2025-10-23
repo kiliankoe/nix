@@ -149,6 +149,10 @@
       # Disable continuous spell checking
       continuousSpellCheckingEnabled = false;
     };
+
+    "com.apple.dt.Xcode" = {
+      DVTTextEditorTrimWhitespaceOnlyLines = 1;
+    };
   };
 
   # Touch ID for sudo
