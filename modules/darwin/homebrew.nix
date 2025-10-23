@@ -80,6 +80,7 @@
 
     masApps = {
       "Bakery" = 1575220747;
+      "Deliveries" = 290986013;
       "Developer" = 640199958;
       "Home Assistant" = 1099568401; # is in brew, but more up to date in mas
       "Keynote" = 409183694;
