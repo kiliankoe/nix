@@ -97,6 +97,7 @@
       "StopTheMadness" = 1376402589;
       "TestFlight" = 899247664;
       "WireGuard" = 1451685025;
+      "Yomu" = 562211012;
     };
   };
 }
