@@ -15,6 +15,8 @@
     ];
     casks = [
       "1password"
+      "affinity-photo"
+      "affinity-designer"
       "anki"
       "balenaetcher"
       "bambu-studio"
