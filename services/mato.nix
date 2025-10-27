@@ -25,6 +25,8 @@ let
           interval: 2s
           timeout: 10s
           retries: 15
+        labels:
+          - "com.centurylinklabs.watchtower.enable=true"
 
     volumes:
       mato-data:
