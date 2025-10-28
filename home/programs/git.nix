@@ -12,40 +12,44 @@
 
     signing.key = "24D7C6B4";
 
-    settings = {
-      user = {
-        name = "Kilian Koeltzsch";
-        email = "me@kilian.io";
-      };
-      init = {
-        defaultBranch = "main";
-      };
-      ff = "only";
-      push = {
-        default = "simple";
-      };
-      pull = {
-        rebase = true;
-      };
-      core = {
-        editor = "hx";
-        autocrlf = false;
-      };
-      diff = {
-        colorMoved = "default";
-      };
-      user.username = "kiliankoe";
-      merge = {
-        color.ui = true;
-      };
-      # // lib.mkIf pkgs.stdenv.isDarwin {
-      #   tool = "opendiff";
-      #   conflictstyle = "diff3";
-      # };
-    }
-    // lib.mkIf pkgs.stdenv.isDarwin {
-      credential.helper = "osxkeychain";
-    };
+    settings = lib.mkMerge [
+      {
+        user = {
+          name = "Kilian Koeltzsch";
+          email = lib.mkDefault "me@kilian.io";
+          username = "kiliankoe";
+        };
+        init = {
+          defaultBranch = "main";
+        };
+        merge = {
+          ff = "only";
+        };
+        push = {
+          default = "simple";
+        };
+        pull = {
+          rebase = true;
+        };
+        core = {
+          editor = "hx";
+          autocrlf = false;
+        };
+        diff = {
+          colorMoved = "default";
+        };
+        color = {
+          ui = true;
+        };
+        # // lib.mkIf pkgs.stdenv.isDarwin {
+        #   tool = "opendiff";
+        #   conflictstyle = "diff3";
+        # };
+      }
+      (lib.mkIf pkgs.stdenv.isDarwin {
+        credential.helper = "osxkeychain";
+      })
+    ];
 
     aliases = {
       br = "branch";
