@@ -26,6 +26,7 @@
     claude-code
     codex
     ddate
+    dive
     docker
     docker-compose
     eza
