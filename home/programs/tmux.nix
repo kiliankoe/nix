@@ -61,6 +61,10 @@
       set -g pane-border-style fg=default
       set-window-option -g window-status-current-style "fg=black,bg=white,bold"
 
+      # Move windows with ctrl shift+arrow
+      bind-key -n C-S-Left swap-window -t -1\; select-window -t -1
+      bind-key -n C-S-Right swap-window -t +1\; select-window -t +1
+
       # Format for active window: show directory name for zsh, command name otherwise, and Z if zoomed
       set-window-option -g window-status-current-format " #I:#(if [ \"#{pane_current_command}\" = \"zsh\" ]; then basename \"#{pane_current_path}\" 2>/dev/null || echo \"?\"; else echo \"#{pane_current_command}\"; fi)#{?window_zoomed_flag, Z,} "
 
