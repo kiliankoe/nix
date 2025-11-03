@@ -17,8 +17,8 @@
       "microsoft-auto-update"
       "microsoft-outlook"
       "microsoft-teams"
+      "openvpn-connect"
       "slack"
-      "viscosity"
     ];
   };
 }
