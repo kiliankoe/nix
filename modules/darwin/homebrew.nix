@@ -76,7 +76,6 @@
       "windows-app"
       "xcodes-app"
       "yaak"
-      "zed"
       "zen"
     ];
 
