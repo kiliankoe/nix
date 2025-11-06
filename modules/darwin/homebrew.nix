@@ -50,6 +50,7 @@
       "macdependency"
       "monitorcontrol"
       "netnewswire"
+      "nvidia-geforce-now"
       "obsidian"
       "ogdesign-eagle"
       "ollama-app"
