@@ -29,6 +29,7 @@
     dive
     docker
     docker-compose
+    dua
     eza
     fd
     git
@@ -43,6 +44,7 @@
     mitmproxy
     mitmproxy2swagger
     neofetch
+    openapi-tui
     ripgrep
     ripgrep-all
     sops
