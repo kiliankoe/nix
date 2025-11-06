@@ -50,7 +50,6 @@
       "macdependency"
       "monitorcontrol"
       "netnewswire"
-      "notion"
       "obsidian"
       "ogdesign-eagle"
       "ollama-app"
