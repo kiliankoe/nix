@@ -24,12 +24,12 @@
       sops-nix,
       ssh-keys,
     }:
-    {
-      darwinConfigurations = {
-        # Build with: darwin-rebuild build --flake .#voyager
-        voyager = nix-darwin.lib.darwinSystem {
+    let
+      # Helper function to create darwin configurations
+      mkDarwin = hostname:
+        nix-darwin.lib.darwinSystem {
           modules = [
-            ./hosts/voyager
+            ./hosts/${hostname}
             sops-nix.darwinModules.sops
             home-manager.darwinModules.home-manager
             {
@@ -40,66 +40,40 @@
           ];
         };
 
-        # Build with: darwin-rebuild build --flake .#cassini
-        cassini = nix-darwin.lib.darwinSystem {
+      # Helper function to create nixos configurations
+      mkNixos = hostname:
+        nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
           modules = [
-            ./hosts/cassini
-            sops-nix.darwinModules.sops
-            home-manager.darwinModules.home-manager
+            ./hosts/${hostname}
+            sops-nix.nixosModules.sops
+            home-manager.nixosModules.home-manager
             {
-              system.configurationRevision = self.rev or self.dirtyRev or null;
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
             }
           ];
         };
+    in
+    {
+      darwinConfigurations = {
+        # Build with: darwin-rebuild build --flake .#voyager
+        voyager = mkDarwin "voyager";
+
+        # Build with: darwin-rebuild build --flake .#cassini
+        cassini = mkDarwin "cassini";
       };
 
       nixosConfigurations = {
         # Build with: nixos-rebuild build --flake .#kepler
-        kepler = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./hosts/kepler
-            sops-nix.nixosModules.sops
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-            }
-          ];
-        };
+        kepler = mkNixos "kepler";
 
         # Build with: nixos-rebuild build --flake .#cubesat
-        cubesat = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./hosts/cubesat
-            sops-nix.nixosModules.sops
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-            }
-          ];
-        };
+        cubesat = mkNixos "cubesat";
 
         # Build with: nixos-rebuild build --flake .#gaia
-        gaia = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./hosts/gaia
-            sops-nix.nixosModules.sops
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-            }
-          ];
-        };
+        gaia = mkNixos "gaia";
       };
 
     };

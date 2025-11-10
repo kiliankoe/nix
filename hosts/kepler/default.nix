@@ -2,13 +2,7 @@
 {
   imports = [
     ./hardware-configuration.nix
-
-    ../../modules/shared/common.nix
-    ../../modules/shared/packages.nix
-    ../../modules/shared/sops.nix
-
-    ../../modules/nixos/base.nix
-
+    ../../modules/nixos
     ./packages.nix
 
     ../../services/changedetection.nix
