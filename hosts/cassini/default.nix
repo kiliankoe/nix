@@ -14,11 +14,6 @@
     ./homebrew.nix
   ];
 
-  # this machine uses determinate nix
-  nix.enable = lib.mkForce false;
-  nix.gc.automatic = lib.mkForce false;
-  nix.optimise.automatic = lib.mkForce false;
-
   networking.hostName = "cassini";
   networking.computerName = "Cassini";
 

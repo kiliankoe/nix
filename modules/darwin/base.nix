@@ -5,16 +5,8 @@
     "env/homebrew_github_api_token" = { };
   };
 
-  nix.enable = true;
-  nix.settings.experimental-features = "nix-command flakes";
-
-  # Optimize Nix-Store During Rebuilds
-  nix.optimise.automatic = true;
-
-  nix.gc = {
-    automatic = true;
-    options = "--delete-older-than 14d";
-  };
+  # Using Determinate Nix on Darwin hosts
+  nix.enable = false;
 
   # https://nix-darwin.github.io/nix-darwin/manual/
   # https://mynixos.com/nix-darwin/options
