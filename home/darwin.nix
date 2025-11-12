@@ -6,6 +6,10 @@
   ...
 }:
 {
+  imports = [
+    ./programs/zed.nix
+  ];
+
   home.sessionVariables = {
     # macOS uses 'open' for default browser
     BROWSER = "open";

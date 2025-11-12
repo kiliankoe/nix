@@ -10,7 +10,6 @@
     ./programs/helix.nix
     ./programs/sops-env.nix
     ./programs/tmux.nix
-    ./programs/zed.nix
     ./programs/zsh.nix
   ];
 
