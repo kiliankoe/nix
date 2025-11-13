@@ -55,6 +55,7 @@
     "linkding/superuser_name" = { };
     "linkding/superuser_password" = { };
     "mato/catfact_slack_webhook" = { };
+    "mato/jobdiff_slack_webhook" = { };
     "mato/my_email" = { };
     "mato/smtp_from" = { };
     "mato/smtp_host" = { };
