@@ -2,9 +2,13 @@
 {
   homebrew = {
     enable = true;
-    # onActivation = {
-    #   autoUpdate = true;
-    # };
+    onActivation = {
+      cleanup = "uninstall";
+      # Whether to enable Homebrew to auto-update itself and all formulae during nix-darwin system activation.
+      autoUpdate = true;
+      # Whether to enable Homebrew to upgrade outdated formulae and Mac App Store apps during nix-darwin system activation.
+      upgrade = true;
+    };
     taps = [
       "kiliankoe/formulae"
     ];
