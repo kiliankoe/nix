@@ -27,7 +27,6 @@
       "Compressor" = 424390742;
       "CustomSymbols" = 1566662030;
       "Day One" = 1055511498;
-      "Final Cut Pro" = 424389933;
       "Gifski" = 1351639930;
       "Logic Pro" = 634148309;
       "RocketSim" = 1504940162;
