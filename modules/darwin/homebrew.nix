@@ -95,7 +95,6 @@
       "Navigator" = 1590354537;
       "Numbers" = 409203825;
       "Pages" = 409201541;
-      "Reeder" = 1529448980;
       "Shareful" = 1522267256;
       "SomaFM" = 449155338;
       "Speediness" = 1596706466;
