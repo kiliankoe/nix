@@ -24,6 +24,7 @@
       "balenaetcher"
       "bambu-studio"
       "beeper"
+      "bettermouse"
       "blender"
       "chatgpt"
       "claude"
