@@ -4,7 +4,6 @@
     delta
     devbox
     devenv
-    direnv
     emcee
     k9s
     kubectl

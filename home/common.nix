@@ -6,6 +6,7 @@
 }:
 {
   imports = [
+    ./programs/direnv.nix
     ./programs/git.nix
     ./programs/helix.nix
     ./programs/sops-env.nix
