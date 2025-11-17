@@ -10,7 +10,6 @@
 
     # languages, package managers, etc.
     bun
-    go
     ni
     nodejs_24
     rustup
