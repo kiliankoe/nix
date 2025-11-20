@@ -53,6 +53,7 @@
       "istat-menus"
       "jordanbaird-ice"
       "macdependency"
+      "macwhisper"
       "monitorcontrol"
       "netnewswire"
       "nvidia-geforce-now"
