@@ -1,7 +1,7 @@
 { config, lib, ... }:
 {
   services.cockpit = {
-    enable = true;
+    enable = false;
     port = config.k.ports.cockpit_http;
     openFirewall = true;
 
