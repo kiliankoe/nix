@@ -13,7 +13,7 @@
       agent = {
         default_model = {
           provider = "copilot_chat";
-          model = "claude-sonnet-4";
+          model = "claude-sonnet-4.5";
         };
       };
       features = {
