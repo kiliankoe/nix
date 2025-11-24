@@ -10,6 +10,8 @@ let
         restart: unless-stopped
         env_file:
           - swiftdebot.env
+        labels:
+          - "com.centurylinklabs.watchtower.enable=true"
   '';
 in
 dockerService.mkDockerComposeService {
