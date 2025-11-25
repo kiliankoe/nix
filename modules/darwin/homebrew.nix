@@ -52,6 +52,7 @@
       "imageoptim"
       "istat-menus"
       "jordanbaird-ice"
+      "lightburn"
       "macdependency"
       "macwhisper"
       "monitorcontrol"
