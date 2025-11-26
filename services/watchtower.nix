@@ -1,23 +1,18 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
-  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
-
-  composeFile = pkgs.writeText "watchtower-compose.yml" ''
-    services:
-      watchtower:
-        image: containrrr/watchtower
-        container_name: watchtower
-        restart: unless-stopped
-        volumes:
-          - /var/run/docker.sock:/var/run/docker.sock
-        command: --label-enable --interval 21600 # seconds -> 6 hours
-
-    # Use this to enable watchtower for specific containers
-    # labels:
-    #   - "com.centurylinklabs.watchtower.enable=true"
-  '';
+  dockerService = import ../lib/docker-service.nix { inherit pkgs lib; };
 in
 dockerService.mkDockerComposeService {
   serviceName = "watchtower";
-  composeFile = composeFile;
+  # To enable watchtower for a container, add label:
+  # labels = [ "com.centurylinklabs.watchtower.enable=true" ];
+  compose = {
+    services.watchtower = {
+      image = "containrrr/watchtower";
+      container_name = "watchtower";
+      restart = "unless-stopped";
+      volumes = [ "/var/run/docker.sock:/var/run/docker.sock" ];
+      command = "--label-enable --interval 21600"; # 6 hours
+    };
+  };
 }

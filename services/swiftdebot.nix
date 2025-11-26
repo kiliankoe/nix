@@ -1,22 +1,18 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
-  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
-
-  composeFile = pkgs.writeText "swiftdebot-compose.yml" ''
-    services:
-      swiftdebot:
-        image: ghcr.io/swiftde/swiftdebot:latest
-        container_name: swiftdebot
-        restart: unless-stopped
-        env_file:
-          - swiftdebot.env
-        labels:
-          - "com.centurylinklabs.watchtower.enable=true"
-  '';
+  dockerService = import ../lib/docker-service.nix { inherit pkgs lib; };
 in
 dockerService.mkDockerComposeService {
   serviceName = "swiftdebot";
-  composeFile = composeFile;
+  compose = {
+    services.swiftdebot = {
+      image = "ghcr.io/swiftde/swiftdebot:latest";
+      container_name = "swiftdebot";
+      restart = "unless-stopped";
+      env_file = [ "swiftdebot.env" ];
+      labels = [ "com.centurylinklabs.watchtower.enable=true" ];
+    };
+  };
   environment = {
     swiftdebot = {
       DISCORD_TOKEN = {

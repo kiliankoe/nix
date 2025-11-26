@@ -1,7 +1,9 @@
-{ pkgs }:
+{ pkgs, lib }:
 
 let
-  backupConfig = {
+  yamlFormat = pkgs.formats.yaml { };
+
+  defaultBackupConfig = {
     sshHost = "marvin";
     sshPort = 43593;
     sshUser = "kilian";
@@ -12,36 +14,23 @@ in
 {
   # Creates a standardized Docker Compose service
   # serviceName: Name of the service
-  # composeFile: The compose file content (pkgs.writeText result)
-  # extraFiles: Optional attrset of additional files to copy if necessary
+  # compose: Attrset representing the docker-compose.yml structure
+  # extraFiles: Optional attrset of additional files to copy
   # environment: Optional attrset of service-scoped environment variables and secrets
-  #   Format: { serviceName = { VAR = value; SECRET = { secretFile = "/path"; }; }; _all = { ... }; }
+  #   Format: { serviceName = { VAR = value; SECRET = { secretFile = "/path"; }; }; }
   # volumesToBackup: Optional list of volume names to backup with docker-volume-backup
+  # backupConfig: Optional override for backup configuration
   mkDockerComposeService =
     {
       serviceName,
-      composeFile,
+      compose,
       extraFiles ? { },
       environment ? { },
       volumesToBackup ? [ ],
+      backupConfig ? defaultBackupConfig,
     }:
     let
       serviceDir = "/etc/docker-compose/${serviceName}";
-
-      # Helper to create environment file content for a service
-      mkEnvFileContent =
-        envVars:
-        builtins.concatStringsSep "\n" (
-          builtins.attrValues (
-            builtins.mapAttrs (
-              name: value:
-              if builtins.isAttrs value && value ? secretFile then
-                "${name}=$(cat ${value.secretFile})"
-              else
-                "${name}=${toString value}"
-            ) envVars
-          )
-        );
 
       # Create environment file scripts for each service
       envScripts = builtins.mapAttrs (
@@ -83,45 +72,42 @@ in
         else
           null;
 
-      # Generate volume mounts for backup service
-      backupVolumeMounts = builtins.map (volume: "${volume}:/backup/${volume}:ro") volumesToBackup;
-
-      # Parse the original compose file and inject backup service if needed
-      finalComposeFile =
+      # Backup service definition
+      backupService =
         if volumesToBackup != [ ] then
-          pkgs.writeText "${serviceName}-compose-with-backup.yml" (
-            builtins.readFile composeFile
-            + ''
-
-              backup:
-                image: offen/docker-volume-backup:v2
-                restart: always
-                env_file: ./backup.env
-                volumes:
-                  - /home/kilian/.ssh/id_ed25519:/root/.ssh/id_ed25519:ro
-                  - /var/run/docker.sock:/var/run/docker.sock:ro
-                  ${builtins.concatStringsSep "\n          " (
-                    builtins.map (mount: "- ${mount}") backupVolumeMounts
-                  )}
-            ''
-          )
+          {
+            services.backup = {
+              image = "offen/docker-volume-backup:v2";
+              restart = "always";
+              env_file = [ "./backup.env" ];
+              volumes = [
+                "/home/kilian/.ssh/id_ed25519:/root/.ssh/id_ed25519:ro"
+                "/var/run/docker.sock:/var/run/docker.sock:ro"
+              ] ++ map (vol: "${vol}:/backup/${vol}:ro") volumesToBackup;
+            };
+          }
         else
-          composeFile;
+          { };
+
+      # Merge compose config with backup service
+      finalCompose = lib.recursiveUpdate compose backupService;
+      composeFile = yamlFormat.generate "${serviceName}-compose.yml" finalCompose;
     in
     {
       # Copy compose files to system
-      environment.etc = {
-        "docker-compose/${serviceName}/docker-compose.yml".source = finalComposeFile;
-      }
-      // extraFiles
-      // (
-        if backupEnvFile != null then
-          {
-            "docker-compose/${serviceName}/backup.env".source = backupEnvFile;
-          }
-        else
-          { }
-      );
+      environment.etc =
+        {
+          "docker-compose/${serviceName}/docker-compose.yml".source = composeFile;
+        }
+        // extraFiles
+        // (
+          if backupEnvFile != null then
+            {
+              "docker-compose/${serviceName}/backup.env".source = backupEnvFile;
+            }
+          else
+            { }
+        );
 
       systemd.services.${serviceName} = {
         description = "Docker Compose service for ${serviceName}";
