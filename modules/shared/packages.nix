@@ -31,6 +31,8 @@
     dua
     eza
     fd
+    ffmpeg
+    genact
     git
     gping
     heh
