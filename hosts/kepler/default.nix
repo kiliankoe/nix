@@ -85,6 +85,12 @@
 
   # Disable power management (server)
   powerManagement.enable = false;
+  # Set CPU governor to performance for better responsiveness
+  powerManagement.cpuFreqGovernor = "performance";
+
+  # Add swap to prevent performance degradation under memory pressure
+  swapDevices = [ { device = "/swapfile"; size = 8192; } ];
+
   systemd = {
     targets = {
       sleep = {
