@@ -1,29 +1,23 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
-  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
-
-  composeFile = pkgs.writeText "wbbash-compose.yml" ''
-    services:
-      wbbash:
-        container_name: wbbash
-        image: ghcr.io/kiliankoe/wbbash:main
-        restart: unless-stopped
-        environment:
-          - DATABASE_URL=file:/data/db.sqlite
-        env_file:
-          - wbbash.env
-        volumes:
-          - wbbash-db:/data
-        ports:
-          - '${toString config.k.ports.wbbash_http}:3000'
-
-    volumes:
-      wbbash-db:
-  '';
+  dockerService = import ../lib/docker-service.nix { inherit pkgs lib; };
 in
 dockerService.mkDockerComposeService {
   serviceName = "wbbash";
-  composeFile = composeFile;
+  compose = {
+    services.wbbash = {
+      container_name = "wbbash";
+      image = "ghcr.io/kiliankoe/wbbash:main";
+      restart = "unless-stopped";
+      environment = [
+        "DATABASE_URL=file:/data/db.sqlite"
+      ];
+      env_file = [ "wbbash.env" ];
+      volumes = [ "wbbash-db:/data" ];
+      ports = [ "${toString config.k.ports.wbbash_http}:3000" ];
+    };
+    volumes.wbbash-db = { };
+  };
   environment = {
     wbbash = {
       MINIQDB_NAME = {

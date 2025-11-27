@@ -1,27 +1,20 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
-  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
-
-  composeFile = pkgs.writeText "foundry-vtt-compose.yml" ''
-    services:
-      foundry:
-        image: felddy/foundryvtt:13
-        hostname: foundry-vtt-host
-        restart: unless-stopped
-        env_file:
-          - foundry.env
-        volumes:
-          - foundry-data:/data
-        ports:
-          - '${toString config.k.ports.foundry-vtt_http}:30000'
-
-    volumes:
-      foundry-data:
-  '';
+  dockerService = import ../lib/docker-service.nix { inherit pkgs lib; };
 in
 dockerService.mkDockerComposeService {
   serviceName = "foundry-vtt";
-  composeFile = composeFile;
+  compose = {
+    services.foundry = {
+      image = "felddy/foundryvtt:13";
+      hostname = "foundry-vtt-host";
+      restart = "unless-stopped";
+      env_file = [ "foundry.env" ];
+      volumes = [ "foundry-data:/data" ];
+      ports = [ "${toString config.k.ports.foundry-vtt_http}:30000" ];
+    };
+    volumes.foundry-data = { };
+  };
   environment = {
     foundry = {
       FOUNDRY_USERNAME = {
@@ -35,5 +28,4 @@ dockerService.mkDockerComposeService {
       };
     };
   };
-  # volumesToBackup = [ "foundry-data" ];
 }

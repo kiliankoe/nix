@@ -17,6 +17,9 @@
     ../../services/paperless.nix
     ../../services/uptime-kuma.nix
 
+    # Unified backup for all services
+    ../../services/backup.nix
+
     # Docker-based services
     ../../services/foundry-vtt.nix
     ../../services/linkding.nix
@@ -51,6 +54,9 @@
   };
 
   sops.secrets = {
+    "kepler_backup/server" = { };
+    "kepler_backup/username" = { };
+    "kepler_backup/password" = { };
     "lehmuese_ics/url" = { };
     "linkding/superuser_name" = { };
     "linkding/superuser_password" = { };
@@ -89,7 +95,12 @@
   powerManagement.cpuFreqGovernor = "performance";
 
   # Add swap to prevent performance degradation under memory pressure
-  swapDevices = [ { device = "/swapfile"; size = 8192; } ];
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 8192;
+    }
+  ];
 
   systemd = {
     targets = {

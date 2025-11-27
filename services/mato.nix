@@ -1,40 +1,30 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
-  dockerService = import ../lib/docker-service.nix { inherit pkgs; };
-
-  composeFile = pkgs.writeText "mato-compose.yml" ''
-    services:
-      app:
-        image: ghcr.io/kiliankoe/mato:latest
-        restart: unless-stopped
-        environment:
-          - TIMEZONE=${config.time.timeZone}
-          - DB_PATH=/data/db.json
-        env_file:
-          - mato.env
-        volumes:
-          - mato-data:/data
-        ports:
-          - '${toString config.k.ports.mato_http}:5050'
-        healthcheck:
-          test:
-            - CMD
-            - curl
-            - '-f'
-            - 'http://127.0.0.1:5050/webhook'
-          interval: 2s
-          timeout: 10s
-          retries: 15
-        labels:
-          - "com.centurylinklabs.watchtower.enable=true"
-
-    volumes:
-      mato-data:
-  '';
+  dockerService = import ../lib/docker-service.nix { inherit pkgs lib; };
 in
 dockerService.mkDockerComposeService {
   serviceName = "mato";
-  composeFile = composeFile;
+  compose = {
+    services.app = {
+      image = "ghcr.io/kiliankoe/mato:latest";
+      restart = "unless-stopped";
+      environment = [
+        "TIMEZONE=${config.time.timeZone}"
+        "DB_PATH=/data/db.json"
+      ];
+      env_file = [ "mato.env" ];
+      volumes = [ "mato-data:/data" ];
+      ports = [ "${toString config.k.ports.mato_http}:5050" ];
+      healthcheck = {
+        test = [ "CMD" "curl" "-f" "http://127.0.0.1:5050/webhook" ];
+        interval = "2s";
+        timeout = "10s";
+        retries = 15;
+      };
+      labels = [ "com.centurylinklabs.watchtower.enable=true" ];
+    };
+    volumes.mato-data = { };
+  };
   environment = {
     mato = {
       MY_EMAIL = {
