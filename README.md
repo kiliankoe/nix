@@ -91,3 +91,52 @@ sudo docker-compose logs --tail=50
 ```
 
 This is intentional to keep container logs separate and avoid interleaving multiple container outputs in journald.
+
+## Backups
+
+Kepler uses restic for unified backups of all services (native NixOS + Docker) to an SFTP server. Backups run daily at 4 AM.
+
+### Manual Backup
+
+```bash
+# Run backup manually
+sudo systemctl start kepler-backup
+
+# Check backup status/logs
+journalctl -u kepler-backup -f
+```
+
+### Restore
+
+The `kepler-backup-restore` command is available on kepler:
+
+```bash
+# List all snapshots
+kepler-backup-restore list
+
+# Browse files in a snapshot
+kepler-backup-restore files latest
+kepler-backup-restore files latest /var/lib/paperless
+
+# Restore everything to /var/restore/<snapshot-id>/
+kepler-backup-restore restore latest
+
+# Extract PostgreSQL dumps and show restore commands
+kepler-backup-restore restore-db latest
+
+# Open shell with restic configured for manual operations
+kepler-backup-restore shell
+```
+
+### Restore Workflow
+
+1. `kepler-backup-restore list` - find the snapshot you want
+2. `kepler-backup-restore restore <snapshot-id>` - extract to `/var/restore/`
+3. Stop the relevant service: `sudo systemctl stop <service>`
+4. Copy files from restore dir to original location
+5. For PostgreSQL databases: `sudo -u postgres psql <dbname> < /path/to/dump.sql`
+6. Start the service: `sudo systemctl start <service>`
+
+### Notifications
+
+Backup failures are reported via healthchecks.io. Configure `kepler_backup/healthcheck_url` in sops secrets to enable.
