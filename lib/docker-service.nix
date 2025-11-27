@@ -3,11 +3,12 @@
 let
   yamlFormat = pkgs.formats.yaml { };
 
-  defaultBackupConfig = {
-    sshHost = "marvin";
-    sshPort = 43593;
-    sshUser = "kilian";
-    sshBasePath = "/volume1/Backups/kepler";
+  # Backup configuration using sops secrets (paths are /run/secrets/<name>)
+  backupConfig = {
+    serverFile = "/run/secrets/kepler_backup/server";
+    usernameFile = "/run/secrets/kepler_backup/username";
+    passwordFile = "/run/secrets/kepler_backup/password";
+    basePath = "/backups";
     schedule = "0 4 * * *"; # Daily at 4 AM
   };
 in
@@ -19,7 +20,7 @@ in
   # environment: Optional attrset of service-scoped environment variables and secrets
   #   Format: { serviceName = { VAR = value; SECRET = { secretFile = "/path"; }; }; }
   # volumesToBackup: Optional list of volume names to backup with docker-volume-backup
-  # backupConfig: Optional override for backup configuration
+  #   Uses SFTP backup to server configured in sops secrets (kepler_backup/*)
   mkDockerComposeService =
     {
       serviceName,
@@ -27,7 +28,6 @@ in
       extraFiles ? { },
       environment ? { },
       volumesToBackup ? [ ],
-      backupConfig ? defaultBackupConfig,
     }:
     let
       serviceDir = "/etc/docker-compose/${serviceName}";
@@ -58,19 +58,26 @@ in
         ) envScripts
       );
 
-      # Create backup environment file if volumes are specified
-      backupEnvFile =
+      # Create backup environment file script if volumes are specified
+      backupEnvScript =
         if volumesToBackup != [ ] then
-          pkgs.writeText "${serviceName}-backup.env" ''
-            BACKUP_CRON_EXPRESSION=${backupConfig.schedule}
-            SSH_HOST_NAME=${backupConfig.sshHost}
-            SSH_PORT=${toString backupConfig.sshPort}
-            SSH_REMOTE_PATH=${backupConfig.sshBasePath}/${serviceName}
-            SSH_USER=${backupConfig.sshUser}
-            SSH_IDENTITY_FILE="/root/.ssh/id_ed25519"
+          pkgs.writeScript "${serviceName}-backup-env" ''
+            #!/bin/sh
+            echo "BACKUP_CRON_EXPRESSION=${backupConfig.schedule}"
+            echo "SSH_HOST_NAME=$(cat ${backupConfig.serverFile})"
+            echo "SSH_USER=$(cat ${backupConfig.usernameFile})"
+            echo "SSH_PASSWORD=$(cat ${backupConfig.passwordFile})"
+            echo "SSH_REMOTE_PATH=${backupConfig.basePath}/${serviceName}"
           ''
         else
           null;
+
+      # Add backup env file command if needed
+      backupEnvCommand =
+        if backupEnvScript != null then
+          [ "${pkgs.bash}/bin/bash -c '${backupEnvScript} > ${serviceDir}/backup.env'" ]
+        else
+          [ ];
 
       # Backup service definition
       backupService =
@@ -81,9 +88,9 @@ in
               restart = "always";
               env_file = [ "./backup.env" ];
               volumes = [
-                "/home/kilian/.ssh/id_ed25519:/root/.ssh/id_ed25519:ro"
                 "/var/run/docker.sock:/var/run/docker.sock:ro"
-              ] ++ map (vol: "${vol}:/backup/${vol}:ro") volumesToBackup;
+              ]
+              ++ map (vol: "${vol}:/backup/${vol}:ro") volumesToBackup;
             };
           }
         else
@@ -95,19 +102,10 @@ in
     in
     {
       # Copy compose files to system
-      environment.etc =
-        {
-          "docker-compose/${serviceName}/docker-compose.yml".source = composeFile;
-        }
-        // extraFiles
-        // (
-          if backupEnvFile != null then
-            {
-              "docker-compose/${serviceName}/backup.env".source = backupEnvFile;
-            }
-          else
-            { }
-        );
+      environment.etc = {
+        "docker-compose/${serviceName}/docker-compose.yml".source = composeFile;
+      }
+      // extraFiles;
 
       systemd.services.${serviceName} = {
         description = "Docker Compose service for ${serviceName}";
@@ -115,17 +113,21 @@ in
         requires = [ "docker.service" ];
         wantedBy = [ "multi-user.target" ];
 
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-          WorkingDirectory = serviceDir;
-          ExecStartPre = if envFileCommands != [ ] then envFileCommands else null;
-          ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
-          ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
-          ExecReload = "${pkgs.docker-compose}/bin/docker-compose up -d --force-recreate";
-          TimeoutStartSec = 0;
-          User = "root";
-        };
+        serviceConfig =
+          let
+            allEnvCommands = envFileCommands ++ backupEnvCommand;
+          in
+          {
+            Type = "oneshot";
+            RemainAfterExit = true;
+            WorkingDirectory = serviceDir;
+            ExecStartPre = if allEnvCommands != [ ] then allEnvCommands else null;
+            ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
+            ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
+            ExecReload = "${pkgs.docker-compose}/bin/docker-compose up -d --force-recreate";
+            TimeoutStartSec = 0;
+            User = "root";
+          };
 
         unitConfig = {
           StartLimitBurst = 3;
