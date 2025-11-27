@@ -40,5 +40,4 @@ dockerService.mkDockerComposeService {
     };
     volumes.changedetection-data = { };
   };
-  volumesToBackup = [ "changedetection-data" ];
 }

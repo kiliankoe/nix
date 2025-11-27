@@ -17,6 +17,9 @@
     ../../services/paperless.nix
     ../../services/uptime-kuma.nix
 
+    # Unified backup for all services
+    ../../services/backup.nix
+
     # Docker-based services
     ../../services/foundry-vtt.nix
     ../../services/linkding.nix

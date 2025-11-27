@@ -15,7 +15,6 @@ dockerService.mkDockerComposeService {
     };
     volumes.foundry-data = { };
   };
-  # volumesToBackup = [ "foundry-data" ];
   environment = {
     foundry = {
       FOUNDRY_USERNAME = {

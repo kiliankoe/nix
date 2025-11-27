@@ -18,7 +18,6 @@ dockerService.mkDockerComposeService {
     };
     volumes.wbbash-db = { };
   };
-  volumesToBackup = [ "wbbash-db" ];
   environment = {
     wbbash = {
       MINIQDB_NAME = {

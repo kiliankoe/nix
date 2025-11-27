@@ -22,7 +22,6 @@ dockerService.mkDockerComposeService {
     };
     volumes.linkding-data = { };
   };
-  volumesToBackup = [ "linkding-data" ];
   environment = {
     linkding = {
       LD_SUPERUSER_NAME = {
