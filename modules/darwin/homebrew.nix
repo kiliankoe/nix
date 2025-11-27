@@ -21,6 +21,7 @@
       "1password"
       "affinity"
       "anki"
+      "arq"
       "balenaetcher"
       "bambu-studio"
       "beeper"
