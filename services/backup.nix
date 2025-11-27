@@ -8,25 +8,22 @@
 { config, pkgs, lib, ... }:
 
 let
-  # Docker Compose volume naming: <project>_<volume>
-  # Project name is the directory name in /etc/docker-compose/
-  dockerVolume = project: volume: "/var/lib/docker/volumes/${project}_${volume}/_data";
-
-  backupPaths = [
-    # Native NixOS services
+  # Static paths for native NixOS services
+  staticBackupPaths = [
     "/var/lib/paperless"
     "/var/lib/uptime-kuma"
-
-    # PostgreSQL dumps (created by backupPrepareCommand)
     "/var/backup/postgresql"
+  ];
 
-    # Docker Compose volumes
-    (dockerVolume "wbbash" "wbbash-db")
-    (dockerVolume "linkding" "linkding-data")
-    (dockerVolume "changedetection" "changedetection-data")
-    (dockerVolume "mato" "mato-data")
-    (dockerVolume "foundry-vtt" "foundry-data")
-    (dockerVolume "lehmuese-ics" "lehmuese-ics-db")
+  # Docker volume names to back up (we query Docker for actual paths at runtime)
+  # Format: patterns to match with `docker volume ls --filter`
+  dockerVolumePatterns = [
+    "wbbash"
+    "linkding"
+    "changedetection"
+    "mato"
+    "foundry"
+    "lehmuese"
   ];
 
   # Common environment setup for both backup and restore
@@ -77,15 +74,32 @@ let
       fi
     done
 
-    # Build list of existing paths to back up
+    # Build list of paths to back up
     PATHS_TO_BACKUP=""
-    for path in ${lib.concatMapStringsSep " " (p: ''"${p}"'') backupPaths}; do
+
+    # Add static paths (native NixOS services)
+    echo "Checking static backup paths..."
+    for path in ${lib.concatMapStringsSep " " (p: ''"${p}"'') staticBackupPaths}; do
       if [ -e "$path" ]; then
         PATHS_TO_BACKUP="$PATHS_TO_BACKUP $path"
         echo "  Will back up: $path"
       else
         echo "  Skipping (not found): $path"
       fi
+    done
+
+    # Discover Docker volumes at runtime (more resilient than hardcoding paths)
+    echo "Discovering Docker volumes..."
+    for pattern in ${lib.concatMapStringsSep " " (p: ''"${p}"'') dockerVolumePatterns}; do
+      # Find all volumes matching this pattern
+      for volume in $(${pkgs.docker}/bin/docker volume ls --filter "name=$pattern" -q 2>/dev/null || true); do
+        # Get the actual mountpoint from Docker
+        mountpoint=$(${pkgs.docker}/bin/docker volume inspect "$volume" --format '{{.Mountpoint}}' 2>/dev/null || true)
+        if [ -n "$mountpoint" ] && [ -e "$mountpoint" ]; then
+          PATHS_TO_BACKUP="$PATHS_TO_BACKUP $mountpoint"
+          echo "  Will back up Docker volume: $volume -> $mountpoint"
+        fi
+      done
     done
 
     if [ -z "$PATHS_TO_BACKUP" ]; then
