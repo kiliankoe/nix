@@ -14,6 +14,23 @@
         # Also disable OpenCL which isn't needed
         buildNoDefaultFeatures = true;
       });
+
+      # Fix mitmproxy-macos hash mismatch (upstream wheel was rebuilt)
+      # TODO: Remove once nixpkgs is updated with correct hash
+      pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+        (python-final: python-prev: {
+          mitmproxy-macos = python-prev.mitmproxy-macos.overridePythonAttrs (old: {
+            src = prev.fetchPypi {
+              pname = "mitmproxy_macos";
+              version = old.version;
+              format = "wheel";
+              dist = "py3";
+              python = "py3";
+              hash = "sha256-baAfEY4hEN3wOEicgE53gY71IX003JYFyyZaNJ7U8UA=";
+            };
+          });
+        })
+      ];
     })
   ];
 }
