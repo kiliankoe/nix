@@ -21,7 +21,6 @@ nix/
 - **Cassini**: macOS (aarch64-darwin)
 - **Kepler**: NixOS (x86_64-linux, headless)
 - **Cubesat**: NixOS (x86_64-linux, headless)
-- **Gaia**: NixOS (x86_64-linux, desktop)
 
 ## Usage
 
