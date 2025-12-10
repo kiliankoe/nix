@@ -82,6 +82,7 @@
       "visual-studio-code"
       "windows-app"
       "xcodes-app"
+      "xscreensaver"
       "yaak"
       "zen"
     ];
