@@ -19,6 +19,7 @@
       "microsoft-teams"
       "openvpn-connect"
       "slack"
+      "ultrastardeluxe"
     ];
   };
 }
