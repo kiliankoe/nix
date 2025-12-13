@@ -23,5 +23,12 @@
     imports = [ ../../home/programs/k9s.nix ];
 
     programs.git.settings.user.email = "kilian.koeltzsch@wandelbots.com";
+
+    programs.git.includes = [
+      {
+        condition = "gitdir:~/dev/personal/";
+        contents.user.email = "me@kilian.io";
+      }
+    ];
   };
 }
