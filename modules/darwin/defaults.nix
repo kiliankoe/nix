@@ -81,10 +81,11 @@
       };
 
       # Accessibility settings
-      "com.apple.universalaccess" = {
-        # Use scroll gesture with the Ctrl (^) modifier key to zoom
-        closeViewScrollWheelToggle = true;
-      };
+      # Could not write domain com.apple.universalaccess; exiting
+      # "com.apple.universalaccess" = {
+      #   # Use scroll gesture with the Ctrl (^) modifier key to zoom
+      #   closeViewScrollWheelToggle = true;
+      # };
 
       # Avoid creating .DS_Store files on network volumes
       "com.apple.desktopservices".DSDontWriteNetworkStores = true;
