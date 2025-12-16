@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   dockerService = import ../lib/docker-service.nix { inherit pkgs lib; };
 in
@@ -16,7 +21,12 @@ dockerService.mkDockerComposeService {
       volumes = [ "mato-data:/data" ];
       ports = [ "${toString config.k.ports.mato_http}:5050" ];
       healthcheck = {
-        test = [ "CMD" "curl" "-f" "http://127.0.0.1:5050/webhook" ];
+        test = [
+          "CMD"
+          "curl"
+          "-f"
+          "http://127.0.0.1:5050/webhook"
+        ];
         interval = "2s";
         timeout = "10s";
         retries = 15;
@@ -50,6 +60,9 @@ dockerService.mkDockerComposeService {
       };
       KAGI_API_TOKEN = {
         secretFile = config.sops.secrets."mato/kagi_api_token".path;
+      };
+      OPENAI_API_KEY = {
+        secretFile = config.sops.secrets."mato/openai_api_key".path;
       };
     };
   };
