@@ -61,6 +61,9 @@ dockerService.mkDockerComposeService {
       KAGI_API_TOKEN = {
         secretFile = config.sops.secrets."mato/kagi_api_token".path;
       };
+      PSYCHJOBS_RECIPIENT = {
+        secretFile = config.sops.secrets."mato/psychjobs_recipient".path;
+      };
       OPENAI_API_KEY = {
         secretFile = config.sops.secrets."mato/openai_api_key".path;
       };
