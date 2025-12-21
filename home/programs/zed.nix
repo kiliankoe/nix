@@ -8,12 +8,12 @@
 
 {
   programs.zed-editor = {
-    enable = false;
+    enable = true;
     userSettings = {
       agent = {
         default_model = {
           provider = "copilot_chat";
-          model = "claude-sonnet-4.5";
+          model = "claude-opus-4.5";
         };
       };
       features = {
