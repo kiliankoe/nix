@@ -12,6 +12,7 @@
       "forecast"
       "handbrake-app"
       "minecraft"
+      "mullvad-vpn"
       "nault"
       "sketch"
       "tor-browser"
