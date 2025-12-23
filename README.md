@@ -2,25 +2,12 @@
 
 My consolidated Nix configuration for macOS and NixOS systems, including a few services.
 
-```
-nix/
-├── flake.nix
-├── hosts/            # Host-specific configs
-├── home/             # Home Manager user configs
-├── modules/
-│   ├── darwin/       # macOS-specific modules
-│   ├── nixos/        # NixOS-specific modules
-│   └── shared/       # Cross-platform modules
-├── secrets/          # Encrypted secrets (managed by sops-nix)
-└── services/         # Server service definitions
-```
-
 ## Hosts
 
-- **Voyager**: macOS (aarch64-darwin)
-- **Cassini**: macOS (aarch64-darwin)
-- **Kepler**: NixOS (x86_64-linux, headless)
-- **Cubesat**: NixOS (x86_64-linux, headless)
+- Voyager: macOS (aarch64-darwin)
+- Cassini: macOS (aarch64-darwin)
+- Kepler: NixOS (x86_64-linux, headless)
+- Cubesat: NixOS (x86_64-linux, headless)
 
 ## Usage
 
@@ -54,12 +41,6 @@ Key is stored in `~/.config/sops/age.key`, make sure that exists.
 
 ```bash
 sops secrets/secrets.yaml
-```
-
-**Decrypt to stdout**
-
-```bash
-sops -d secrets/secrets.yaml
 ```
 
 ## Services
