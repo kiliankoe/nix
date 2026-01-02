@@ -24,6 +24,7 @@ let
     "mato"
     "foundry"
     "lehmuese"
+    "newsdiff"
   ];
 
   # Common environment setup for both backup and restore

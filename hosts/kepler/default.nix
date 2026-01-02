@@ -24,6 +24,7 @@
     ../../services/foundry-vtt.nix
     ../../services/linkding.nix
     ../../services/mato.nix
+    ../../services/newsdiff.nix
     ../../services/swiftdebot.nix
     ../../services/watchtower.nix
     ../../services/wbbash.nix
