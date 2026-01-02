@@ -13,7 +13,7 @@ dockerService.mkDockerComposeService {
     services.backend = {
       image = "ghcr.io/kiliankoe/news.dresden.lol/backend:main";
       restart = "unless-stopped";
-      volumes = [ "newsdiff-data:/data" ];
+      volumes = [ "newsdiff-data:/app/data" ];
       labels = [ "com.centurylinklabs.watchtower.enable=true" ];
     };
     services.frontend = {
