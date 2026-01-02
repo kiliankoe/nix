@@ -26,10 +26,10 @@
       buffer_font_size = 12;
       theme = {
         mode = "system";
-        light = "One Light";
+        light = "Fleet Light";
         dark = "Fleet Dark Purple";
       };
-      icon_theme = "Colored Zed Icons Theme Dark";
+      icon_theme = "Colored Zed Icons Theme Light";
       autosave = "on_window_change";
       format_on_save = "on";
       ensure_final_newline_on_save = true;
