@@ -27,8 +27,9 @@
       theme = {
         mode = "system";
         light = "One Light";
-        dark = "One Dark";
+        dark = "Fleet Dark Purple";
       };
+      icon_theme = "Colored Zed Icons Theme Dark";
       autosave = "on_window_change";
       format_on_save = "on";
       ensure_final_newline_on_save = true;
