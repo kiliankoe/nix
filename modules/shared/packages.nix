@@ -45,7 +45,6 @@
     mitmproxy
     mitmproxy2swagger
     neofetch
-    openapi-tui
     ripgrep
     ripgrep-all
     sops
