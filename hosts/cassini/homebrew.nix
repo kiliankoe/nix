@@ -20,6 +20,7 @@
       "openvpn-connect"
       "slack"
       "ultrastardeluxe"
+      "windows-app"
     ];
   };
 }

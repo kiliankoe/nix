@@ -80,7 +80,6 @@
       "todoist-app"
       "utm"
       "visual-studio-code"
-      "windows-app"
       "xcodes-app"
       "xscreensaver"
       "yaak"
