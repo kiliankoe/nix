@@ -57,6 +57,7 @@
       "macdependency"
       "macwhisper"
       "monitorcontrol"
+      "mountain-duck"
       "netnewswire"
       "nvidia-geforce-now"
       "obsidian"
