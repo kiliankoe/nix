@@ -8,7 +8,7 @@
 
 {
   programs.zed-editor = {
-    enable = true;
+    enable = false;
     userSettings = {
       agent = {
         default_model = {

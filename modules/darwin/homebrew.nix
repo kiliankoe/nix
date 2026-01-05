@@ -84,6 +84,7 @@
       "xcodes-app"
       "xscreensaver"
       "yaak"
+      "zed"
       "zen"
     ];
 
