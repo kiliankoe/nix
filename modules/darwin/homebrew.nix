@@ -30,6 +30,7 @@
       "chatgpt"
       "claude"
       "coconutbattery"
+      "conductor"
       "crossover"
       "cyberduck"
       "daisydisk"
