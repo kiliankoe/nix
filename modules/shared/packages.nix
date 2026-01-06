@@ -53,6 +53,7 @@
     tokei
     tree
     vim
+    witr
     yazi
     yt-dlp
     zola
