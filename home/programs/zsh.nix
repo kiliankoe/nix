@@ -5,6 +5,12 @@
     source = ./norm-kilian.zsh-theme;
   };
 
+  # Install tmux helper script for copying last command output
+  home.file.".local/bin/tmux-copy-last-output" = {
+    source = ./scripts/tmux-copy-last-output.sh;
+    executable = true;
+  };
+
   home.sessionPath = [
     "$HOME/bin"
     "$HOME/.bun/bin"
