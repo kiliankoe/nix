@@ -30,6 +30,7 @@
 
   programs.zsh = {
     initContent = ''
+      alias brewout="brew outdated"
       alias brewup="brew upgrade && brew cleanup"
       alias nu="cd ~/nix && nix flake update && cd -"
       alias nhb="nh darwin build -H $(hostname -s) ~/nix"
