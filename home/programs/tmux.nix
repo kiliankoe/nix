@@ -76,6 +76,9 @@
 
       # Reload config on prefix-r - is this even still necessary with nix/home-manager?
       bind r source-file ~/.config/tmux/tmux.conf \; display-message "Reloaded config..."
+
+      # Capture pane contents to clipboard (last 1000 lines)
+      bind y run-shell "tmux capture-pane -p -S -1000 | pbcopy" \; display-message "Pane captured to clipboard"
     '';
 
     plugins = with pkgs.tmuxPlugins; [
