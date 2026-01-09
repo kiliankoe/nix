@@ -31,9 +31,7 @@ in
         );
 
       # Collect all secret names from all service environments
-      allSecretNames = lib.flatten (
-        lib.mapAttrsToList (_: envVars: extractSecretNames envVars) environment
-      );
+      allSecretNames = lib.flatten (lib.mapAttrsToList (_: extractSecretNames) environment);
 
       # Create environment file scripts for each service
       envScripts = builtins.mapAttrs (

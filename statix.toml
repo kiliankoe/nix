@@ -1,0 +1,5 @@
+# Statix linter configuration
+# https://github.com/nerdypepper/statix
+
+# Disable W20 (repeated_keys) - some use dot notation improves readability
+disabled = ["repeated_keys"]

@@ -22,7 +22,7 @@
           mitmproxy-macos = python-prev.mitmproxy-macos.overridePythonAttrs (old: {
             src = prev.fetchPypi {
               pname = "mitmproxy_macos";
-              version = old.version;
+              inherit (old) version;
               format = "wheel";
               dist = "py3";
               python = "py3";

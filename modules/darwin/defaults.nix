@@ -1,5 +1,4 @@
-{ ... }:
-{
+_: {
   # https://nix-darwin.github.io/nix-darwin/manual/
   # https://mynixos.com/nix-darwin/options
   # https://macos-defaults.com/
