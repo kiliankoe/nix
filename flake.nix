@@ -9,6 +9,8 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    deploy-rs.url = "github:serokell/deploy-rs";
+    deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
     ssh-keys = {
       url = "https://github.com/kiliankoe.keys";
       flake = false;
@@ -22,6 +24,7 @@
       nix-darwin,
       home-manager,
       sops-nix,
+      deploy-rs,
       ssh-keys,
     }:
     {
@@ -86,6 +89,38 @@
           ];
         };
       };
+
+      # Deploy with: nix run github:serokell/deploy-rs -- .#kepler
+      deploy.nodes = {
+        kepler = {
+          hostname = "kepler";
+          sshUser = "kilian";
+          fastConnection = true;
+          autoRollback = true;
+          magicRollback = true;
+
+          profiles.system = {
+            user = "root";
+            path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.kepler;
+          };
+        };
+
+        cubesat = {
+          hostname = "cubesat";
+          sshUser = "kilian";
+          fastConnection = true;
+          autoRollback = true;
+          magicRollback = true;
+
+          profiles.system = {
+            user = "root";
+            path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.cubesat;
+          };
+        };
+      };
+
+      # Deployment validation checks
+      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
 
     };
 }

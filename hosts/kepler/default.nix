@@ -28,6 +28,9 @@
     ../../services/swiftdebot.nix
     ../../services/watchtower.nix
     ../../services/wbbash.nix
+
+    # Automation
+    ../../services/flake-updater.nix
   ];
 
   networking.hostName = "kepler";
