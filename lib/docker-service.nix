@@ -9,7 +9,8 @@ in
   # compose: Attrset representing the docker-compose.yml structure
   # extraFiles: Optional attrset of additional files to copy
   # environment: Optional attrset of service-scoped environment variables and secrets
-  #   Format: { serviceName = { VAR = value; SECRET = { secretFile = "/path"; }; }; }
+  #   Format: { serviceName = { VAR = value; SECRET = { secret = "name"; }; }; }
+  #   Secrets are auto-declared in sops.secrets and paths are resolved automatically
   mkDockerComposeService =
     {
       serviceName,
@@ -20,6 +21,20 @@ in
     let
       serviceDir = "/etc/docker-compose/${serviceName}";
 
+      # Extract secret names from environment
+      extractSecretNames =
+        envVars:
+        lib.filter (x: x != null) (
+          lib.mapAttrsToList (
+            _: value: if builtins.isAttrs value && value ? secret then value.secret else null
+          ) envVars
+        );
+
+      # Collect all secret names from all service environments
+      allSecretNames = lib.flatten (
+        lib.mapAttrsToList (_: envVars: extractSecretNames envVars) environment
+      );
+
       # Create environment file scripts for each service
       envScripts = builtins.mapAttrs (
         svcName: envVars:
@@ -29,8 +44,8 @@ in
             builtins.attrValues (
               builtins.mapAttrs (
                 name: value:
-                if builtins.isAttrs value && value ? secretFile then
-                  "echo \"${name}=$(cat ${value.secretFile})\""
+                if builtins.isAttrs value && value ? secret then
+                  "echo \"${name}=$(cat /run/secrets/${value.secret})\""
                 else
                   "echo \"${name}=${toString value}\""
               ) envVars
@@ -50,11 +65,10 @@ in
     in
     {
       # Copy compose files to system
-      environment.etc =
-        {
-          "docker-compose/${serviceName}/docker-compose.yml".source = composeFile;
-        }
-        // extraFiles;
+      environment.etc = {
+        "docker-compose/${serviceName}/docker-compose.yml".source = composeFile;
+      }
+      // extraFiles;
 
       systemd.services.${serviceName} = {
         description = "Docker Compose service for ${serviceName}";
@@ -83,5 +97,8 @@ in
       systemd.tmpfiles.rules = [
         "d ${serviceDir} 0755 root root -"
       ];
+
+      # Auto-declare sops.secrets for all secretFile references
+      sops.secrets = lib.genAttrs allSecretNames (_: { });
     };
 }

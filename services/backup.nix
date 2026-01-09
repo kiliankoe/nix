@@ -5,7 +5,12 @@
 # Set kepler_backup/healthcheck_url in sops to enable notifications.
 #
 # Restore: Use `kepler-backup-restore` command (installed to system PATH)
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   # Static paths for native NixOS services

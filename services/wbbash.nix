@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   dockerService = import ../lib/docker-service.nix { inherit pkgs lib; };
 in
@@ -20,36 +25,16 @@ dockerService.mkDockerComposeService {
   };
   environment = {
     wbbash = {
-      MINIQDB_NAME = {
-        secretFile = config.sops.secrets."wbbash/miniqdb_name".path;
-      };
-      ALLOWED_DOMAINS = {
-        secretFile = config.sops.secrets."wbbash/allowed_domains".path;
-      };
-      NEXT_PUBLIC_NOTHING_TO_SEE_HERE_BUTTON_TEXT = {
-        secretFile = config.sops.secrets."wbbash/nothing_to_see_here_text".path;
-      };
-      NEXT_PUBLIC_LOGIN_BUTTON_TEXT = {
-        secretFile = config.sops.secrets."wbbash/login_button_text".path;
-      };
-      NEXTAUTH_SECRET = {
-        secretFile = config.sops.secrets."wbbash/nextauth_secret".path;
-      };
-      EMAIL_SERVER_HOST = {
-        secretFile = config.sops.secrets."wbbash/email_server_host".path;
-      };
-      EMAIL_SERVER_PORT = {
-        secretFile = config.sops.secrets."wbbash/email_server_port".path;
-      };
-      EMAIL_SERVER_USER = {
-        secretFile = config.sops.secrets."wbbash/email_server_user".path;
-      };
-      EMAIL_SERVER_PASSWORD = {
-        secretFile = config.sops.secrets."wbbash/email_server_password".path;
-      };
-      EMAIL_FROM = {
-        secretFile = config.sops.secrets."wbbash/email_from".path;
-      };
+      MINIQDB_NAME.secret = "wbbash/miniqdb_name";
+      ALLOWED_DOMAINS.secret = "wbbash/allowed_domains";
+      NEXT_PUBLIC_NOTHING_TO_SEE_HERE_BUTTON_TEXT.secret = "wbbash/nothing_to_see_here_text";
+      NEXT_PUBLIC_LOGIN_BUTTON_TEXT.secret = "wbbash/login_button_text";
+      NEXTAUTH_SECRET.secret = "wbbash/nextauth_secret";
+      EMAIL_SERVER_HOST.secret = "wbbash/email_server_host";
+      EMAIL_SERVER_PORT.secret = "wbbash/email_server_port";
+      EMAIL_SERVER_USER.secret = "wbbash/email_server_user";
+      EMAIL_SERVER_PASSWORD.secret = "wbbash/email_server_password";
+      EMAIL_FROM.secret = "wbbash/email_from";
     };
   };
 }

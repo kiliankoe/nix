@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   dockerService = import ../lib/docker-service.nix { inherit pkgs lib; };
 in
@@ -17,15 +22,9 @@ dockerService.mkDockerComposeService {
   };
   environment = {
     foundry = {
-      FOUNDRY_USERNAME = {
-        secretFile = config.sops.secrets."foundryvtt/username".path;
-      };
-      FOUNDRY_PASSWORD = {
-        secretFile = config.sops.secrets."foundryvtt/password".path;
-      };
-      FOUNDRY_ADMIN_KEY = {
-        secretFile = config.sops.secrets."foundryvtt/admin_key".path;
-      };
+      FOUNDRY_USERNAME.secret = "foundryvtt/username";
+      FOUNDRY_PASSWORD.secret = "foundryvtt/password";
+      FOUNDRY_ADMIN_KEY.secret = "foundryvtt/admin_key";
     };
   };
 }

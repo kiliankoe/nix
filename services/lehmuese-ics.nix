@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   dockerService = import ../lib/docker-service.nix { inherit pkgs lib; };
 in
@@ -17,9 +22,7 @@ dockerService.mkDockerComposeService {
   };
   environment = {
     lehmuese-ics = {
-      URL = {
-        secretFile = config.sops.secrets."lehmuese_ics/url".path;
-      };
+      URL.secret = "lehmuese_ics/url";
     };
   };
 }

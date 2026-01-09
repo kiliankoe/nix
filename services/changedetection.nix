@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   dockerService = import ../lib/docker-service.nix { inherit pkgs lib; };
 in

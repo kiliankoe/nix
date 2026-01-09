@@ -66,38 +66,6 @@
     "kepler_backup/server" = { };
     "kepler_backup/username" = { };
     "kepler_backup/password" = { };
-    "lehmuese_ics/url" = { };
-    "linkding/superuser_name" = { };
-    "linkding/superuser_password" = { };
-    "mato/catfact_slack_webhook" = { };
-    "mato/jobdiff_slack_webhook" = { };
-    "mato/my_email" = { };
-    "mato/smtp_from" = { };
-    "mato/smtp_host" = { };
-    "mato/smtp_pass" = { };
-    "mato/smtp_user" = { };
-    "mato/kagi_api_token" = { };
-    "mato/psychjobs_recipient" = { };
-    "mato/openai_api_key" = { };
-    "paperless/secret_key" = { };
-    "swiftdebot/discord_app_id" = { };
-    "swiftdebot/discord_logs_webhook_url" = { };
-    "swiftdebot/discord_token" = { };
-    "swiftdebot/kagi_api_token" = { };
-    "swiftdebot/openai_api_token" = { };
-    "wbbash/allowed_domains" = { };
-    "wbbash/email_from" = { };
-    "wbbash/email_server_host" = { };
-    "wbbash/email_server_password" = { };
-    "wbbash/email_server_port" = { };
-    "wbbash/email_server_user" = { };
-    "wbbash/login_button_text" = { };
-    "wbbash/miniqdb_name" = { };
-    "wbbash/nextauth_secret" = { };
-    "wbbash/nothing_to_see_here_text" = { };
-    "foundryvtt/username" = { };
-    "foundryvtt/password" = { };
-    "foundryvtt/admin_key" = { };
   };
 
   # Disable power management (server)

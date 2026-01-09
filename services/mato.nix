@@ -37,36 +37,16 @@ dockerService.mkDockerComposeService {
   };
   environment = {
     mato = {
-      MY_EMAIL = {
-        secretFile = config.sops.secrets."mato/my_email".path;
-      };
-      SMTP_HOST = {
-        secretFile = config.sops.secrets."mato/smtp_host".path;
-      };
-      SMTP_FROM = {
-        secretFile = config.sops.secrets."mato/smtp_from".path;
-      };
-      SMTP_USER = {
-        secretFile = config.sops.secrets."mato/smtp_user".path;
-      };
-      SMTP_PASS = {
-        secretFile = config.sops.secrets."mato/smtp_pass".path;
-      };
-      CATFACT_SLACK_WEBHOOK_URL = {
-        secretFile = config.sops.secrets."mato/catfact_slack_webhook".path;
-      };
-      JOBDIFF_SLACK_WEBHOOK_URL = {
-        secretFile = config.sops.secrets."mato/jobdiff_slack_webhook".path;
-      };
-      KAGI_API_TOKEN = {
-        secretFile = config.sops.secrets."mato/kagi_api_token".path;
-      };
-      PSYCHJOBS_RECIPIENT = {
-        secretFile = config.sops.secrets."mato/psychjobs_recipient".path;
-      };
-      OPENAI_API_KEY = {
-        secretFile = config.sops.secrets."mato/openai_api_key".path;
-      };
+      MY_EMAIL.secret = "mato/my_email";
+      SMTP_HOST.secret = "mato/smtp_host";
+      SMTP_FROM.secret = "mato/smtp_from";
+      SMTP_USER.secret = "mato/smtp_user";
+      SMTP_PASS.secret = "mato/smtp_pass";
+      CATFACT_SLACK_WEBHOOK_URL.secret = "mato/catfact_slack_webhook";
+      JOBDIFF_SLACK_WEBHOOK_URL.secret = "mato/jobdiff_slack_webhook";
+      KAGI_API_TOKEN.secret = "mato/kagi_api_token";
+      PSYCHJOBS_RECIPIENT.secret = "mato/psychjobs_recipient";
+      OPENAI_API_KEY.secret = "mato/openai_api_key";
     };
   };
 }

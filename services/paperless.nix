@@ -1,5 +1,6 @@
 { config, ... }:
 {
+  sops.secrets."paperless/secret_key" = { };
   services.paperless = {
     enable = true;
 

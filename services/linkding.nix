@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   dockerService = import ../lib/docker-service.nix { inherit pkgs lib; };
 in
@@ -24,12 +29,8 @@ dockerService.mkDockerComposeService {
   };
   environment = {
     linkding = {
-      LD_SUPERUSER_NAME = {
-        secretFile = config.sops.secrets."linkding/superuser_name".path;
-      };
-      LD_SUPERUSER_PASSWORD = {
-        secretFile = config.sops.secrets."linkding/superuser_password".path;
-      };
+      LD_SUPERUSER_NAME.secret = "linkding/superuser_name";
+      LD_SUPERUSER_PASSWORD.secret = "linkding/superuser_password";
     };
   };
 }
