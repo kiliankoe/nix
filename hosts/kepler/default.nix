@@ -32,6 +32,14 @@
 
   networking.hostName = "kepler";
 
+  home-manager.users.kilian = {
+    programs.tmux.extraConfig = ''
+      set -g status-bg green
+      set -g status-fg black
+      set -g pane-active-border-style bg=default,fg=green
+    '';
+  };
+
   # db shared by multiple services
   services.postgresql = {
     enable = true;

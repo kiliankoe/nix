@@ -10,4 +10,12 @@
   ];
 
   networking.hostName = "cubesat";
+
+  home-manager.users.kilian = {
+    programs.tmux.extraConfig = ''
+      set -g status-bg yellow
+      set -g status-fg black
+      set -g pane-active-border-style bg=default,fg=yellow
+    '';
+  };
 }
