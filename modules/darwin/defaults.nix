@@ -30,6 +30,8 @@
 
     # com.apple.finder
     finder = {
+      # Show file extensions in Finder
+      AppleShowAllExtensions = true;
       # When performing a search, search the current folder by default
       FXDefaultSearchScope = "SCcf";
       # Show path bar
@@ -138,5 +140,4 @@
       };
     };
   };
-
 }
