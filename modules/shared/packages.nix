@@ -7,6 +7,7 @@
     nil
     nixd
     nixfmt
+    statix
 
     # languages, package managers, etc.
     bun
