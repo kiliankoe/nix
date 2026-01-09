@@ -48,7 +48,6 @@
       theme = "norm-kilian";
       plugins = [
         "git"
-        "z"
       ];
       extraConfig = ''
         ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"

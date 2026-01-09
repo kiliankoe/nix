@@ -11,6 +11,7 @@
     ./programs/helix.nix
     ./programs/sops-env.nix
     ./programs/tmux.nix
+    ./programs/zoxide.nix
     ./programs/zsh.nix
   ];
 
