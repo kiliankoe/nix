@@ -95,6 +95,7 @@ in
     };
     path = [
       pkgs.git
+      pkgs.openssh
       pkgs.nix
       pkgs.gh
       pkgs.nvd
