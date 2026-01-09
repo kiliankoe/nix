@@ -19,6 +19,9 @@
         foundry-vtt_http = 8390;
         cockpit_http = 8391;
         newsdiff_http = 8392;
+        prometheus_http = 8393;
+        grafana_http = 8394;
+        alertmanager_http = 8395;
       };
       description = ''
         Central registry for service port assignments to avoid conflicts and
