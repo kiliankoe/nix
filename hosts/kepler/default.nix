@@ -20,6 +20,9 @@
     # Unified backup for all services
     ../../services/backup.nix
 
+    # Monitoring stack (Prometheus + Grafana + AlertManager)
+    ../../services/monitoring
+
     # Docker-based services
     ../../services/foundry-vtt.nix
     ../../services/lehmuese.nix

@@ -21,6 +21,9 @@
         newsdiff_http = 8392;
         speedtest_tracker_http = 8393;
         lehmuese_http = 8394;
+        prometheus_http = 8395;
+        grafana_http = 8396;
+        alertmanager_http = 8397;
       };
       description = ''
         Central registry for service port assignments to avoid conflicts and
