@@ -9,6 +9,7 @@ First check what system we are running on using `hostname`. It will likely be on
 ```bash
 # Quick check
 statix check .
+deadnix
 nix flake check --no-build
 
 # For building a nixos host from macOS

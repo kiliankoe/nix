@@ -17,5 +17,6 @@
       set -g status-fg black
       set -g pane-active-border-style bg=default,fg=yellow
     '';
+    programs.starship.settings.hostname.format = "[$hostname ](bold yellow)";
   };
 }
