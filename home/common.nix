@@ -10,6 +10,7 @@
     ./programs/git.nix
     ./programs/helix.nix
     ./programs/sops-env.nix
+    ./programs/starship.nix
     ./programs/tmux.nix
     ./programs/zoxide.nix
     ./programs/zsh.nix

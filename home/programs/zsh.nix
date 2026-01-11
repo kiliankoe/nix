@@ -1,10 +1,5 @@
 { config, pkgs, ... }:
 {
-  # Install custom Oh My Zsh theme from dotfiles
-  home.file.".oh-my-zsh/custom/themes/norm-kilian.zsh-theme" = {
-    source = ./norm-kilian.zsh-theme;
-  };
-
   # Install tmux helper script for copying last command output
   home.file.".local/bin/tmux-copy-last-output" = {
     source = ./scripts/tmux-copy-last-output.sh;
@@ -41,20 +36,6 @@
       ignoreDups = true;
       ignoreSpace = true;
       share = true;
-    };
-
-    oh-my-zsh = {
-      enable = true;
-      theme = "norm-kilian";
-      plugins = [
-        "git"
-      ];
-      extraConfig = ''
-        ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
-        COMPLETION_WAITING_DOTS="true"
-        DEFAULT_USER="kilian"
-        zstyle ':omz:update' mode reminder
-      '';
     };
 
     # unfortunately zsh.sessionVariables or zsh.localVariables doesn't appear to be working
