@@ -18,6 +18,8 @@ dockerService.mkDockerComposeService {
         "PUID=1000"
         "PGID=1000"
         "DB_CONNECTION=sqlite"
+        "APP_URL=https://speedtest.kilko.de"
+        "APP_TIMEZONE=Europe/Berlin"
       ];
       env_file = [ "speedtest-tracker.env" ];
       volumes = [ "speedtest-tracker-data:/config" ];
