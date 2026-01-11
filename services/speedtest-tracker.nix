@@ -19,7 +19,7 @@ dockerService.mkDockerComposeService {
         "PGID=1000"
         "DB_CONNECTION=sqlite"
         "APP_URL=https://speedtest.kilko.de"
-        "APP_TIMEZONE=Europe/Berlin"
+        "DISPLAY_TIMEZONE=Europe/Berlin"
         "SPEEDTEST_SCHEDULE=8 */2 * * *"
         # See https://c.speedtest.net/speedtest-servers-static.php
         "SPEEDTEST_SERVERS=30907"
