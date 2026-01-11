@@ -1,5 +1,5 @@
 # Prometheus exporters for kepler monitoring
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 {
   services.prometheus.exporters = {
     # System metrics: CPU, memory, disk, network
