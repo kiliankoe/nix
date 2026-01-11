@@ -1,5 +1,4 @@
-{ ... }:
-{
+_: {
   nixpkgs.overlays = [
     (_final: prev: {
       # Fix lucky-commit build on aarch64-darwin
