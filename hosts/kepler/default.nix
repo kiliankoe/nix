@@ -25,6 +25,7 @@
     ../../services/linkding.nix
     ../../services/mato.nix
     ../../services/newsdiff.nix
+    ../../services/speedtest-tracker.nix
     ../../services/swiftdebot.nix
     ../../services/watchtower.nix
     ../../services/wbbash.nix
