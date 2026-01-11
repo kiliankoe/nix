@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ ... }:
 {
   imports = [
     ../../modules/shared/common.nix

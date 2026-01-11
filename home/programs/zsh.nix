@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 {
   # Install tmux helper script for copying last command output
   home.file.".local/bin/tmux-copy-last-output" = {

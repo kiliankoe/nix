@@ -28,7 +28,7 @@
       sops-nix,
       deploy-rs,
       pre-commit-hooks,
-      ssh-keys,
+      ...
     }:
     let
       mkSystem = import ./lib/mksystem.nix {
@@ -91,7 +91,7 @@
       checks =
         let
           deployChecks = builtins.mapAttrs (
-            system: deployLib: deployLib.deployChecks self.deploy
+            _system: deployLib: deployLib.deployChecks self.deploy
           ) deploy-rs.lib;
           preCommitChecks = builtins.listToAttrs (
             map

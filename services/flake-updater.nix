@@ -1,9 +1,4 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
+{ pkgs, ... }:
 
 let
   updateScript = pkgs.writeShellScript "flake-update" ''
