@@ -8,6 +8,7 @@
     nixd
     nixfmt
     statix
+    deadnix
 
     # languages, package managers, etc.
     bun

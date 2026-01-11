@@ -26,3 +26,6 @@ jobs:
           nix run nixpkgs#nixfmt -- --check **/*.nix || {
             echo "::warning::Some files need formatting. Run: nixfmt **/*.nix"
           }
+
+      - name: Check for dead code
+        run: nix run nixpkgs#deadnix -- --fail .
