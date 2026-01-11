@@ -1,9 +1,4 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
+{ pkgs, ... }:
 {
   # TODO: Read this from op? At least on macOS?
   # Would make it interesting to bootstrap new machines though.

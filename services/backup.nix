@@ -6,7 +6,6 @@
 #
 # Restore: Use `kepler-backup-restore` command (installed to system PATH)
 {
-  config,
   pkgs,
   lib,
   ...
