@@ -1,10 +1,12 @@
-_: {
+{ lib, ... }:
+{
   programs.starship = {
     enable = true;
     settings = {
       add_newline = false;
 
       format = builtins.concatStringsSep "" [
+        "$hostname"
         "$directory"
         "$git_branch"
         "$git_status"
@@ -66,6 +68,10 @@ _: {
       character = {
         success_symbol = "[❯](yellow)";
         error_symbol = "[❯](red)";
+      };
+
+      hostname = {
+        format = lib.mkDefault "[$hostname ](bold magenta)";
       };
     };
   };

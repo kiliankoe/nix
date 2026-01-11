@@ -42,6 +42,7 @@
       set -g status-fg black
       set -g pane-active-border-style bg=default,fg=green
     '';
+    programs.starship.settings.hostname.format = "[$hostname ](bold green)";
   };
 
   # db shared by multiple services
