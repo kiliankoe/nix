@@ -11,6 +11,8 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     deploy-rs.url = "github:serokell/deploy-rs";
     deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
+    pre-commit-hooks.url = "github:cachix/git-hooks.nix";
+    pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
     ssh-keys = {
       url = "https://github.com/kiliankoe.keys";
       flake = false;
@@ -25,69 +27,36 @@
       home-manager,
       sops-nix,
       deploy-rs,
+      pre-commit-hooks,
       ssh-keys,
     }:
+    let
+      mkSystem = import ./lib/mksystem.nix {
+        inherit
+          self
+          nixpkgs
+          nix-darwin
+          home-manager
+          sops-nix
+          inputs
+          ;
+      };
+    in
     {
       darwinConfigurations = {
-        # Build with: darwin-rebuild build --flake .#voyager
-        voyager = nix-darwin.lib.darwinSystem {
-          modules = [
-            ./hosts/voyager
-            sops-nix.darwinModules.sops
-            home-manager.darwinModules.home-manager
-            {
-              system.configurationRevision = self.rev or self.dirtyRev or null;
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-            }
-          ];
+        voyager = mkSystem "voyager" {
+          system = "aarch64-darwin";
+          darwin = true;
         };
-
-        # Build with: darwin-rebuild build --flake .#cassini
-        cassini = nix-darwin.lib.darwinSystem {
-          modules = [
-            ./hosts/cassini
-            sops-nix.darwinModules.sops
-            home-manager.darwinModules.home-manager
-            {
-              system.configurationRevision = self.rev or self.dirtyRev or null;
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-            }
-          ];
+        cassini = mkSystem "cassini" {
+          system = "aarch64-darwin";
+          darwin = true;
         };
       };
 
       nixosConfigurations = {
-        # Build with: nixos-rebuild build --flake .#kepler
-        kepler = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./hosts/kepler
-            sops-nix.nixosModules.sops
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-            }
-          ];
-        };
-
-        # Build with: nixos-rebuild build --flake .#cubesat
-        cubesat = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./hosts/cubesat
-            sops-nix.nixosModules.sops
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-            }
-          ];
-        };
+        kepler = mkSystem "kepler" { system = "x86_64-linux"; };
+        cubesat = mkSystem "cubesat" { system = "x86_64-linux"; };
       };
 
       # Deploy with: nix run github:serokell/deploy-rs -- .#kepler
@@ -119,8 +88,58 @@
         };
       };
 
-      # Deployment validation checks
-      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+      checks =
+        let
+          deployChecks = builtins.mapAttrs (
+            system: deployLib: deployLib.deployChecks self.deploy
+          ) deploy-rs.lib;
+          preCommitChecks = builtins.listToAttrs (
+            map
+              (system: {
+                name = system;
+                value = {
+                  pre-commit = pre-commit-hooks.lib.${system}.run {
+                    src = ./.;
+                    hooks = {
+                      nixfmt-rfc-style.enable = true;
+                      statix.enable = true;
+                      deadnix.enable = true;
+                    };
+                  };
+                };
+              })
+              [
+                "x86_64-linux"
+                "aarch64-linux"
+                "aarch64-darwin"
+                "x86_64-darwin"
+              ]
+          );
+        in
+        builtins.mapAttrs (system: checks: checks // (preCommitChecks.${system} or { })) deployChecks;
+
+      devShells = builtins.listToAttrs (
+        map
+          (system: {
+            name = system;
+            value = {
+              default =
+                let
+                  pkgs = nixpkgs.legacyPackages.${system};
+                in
+                pkgs.mkShell {
+                  inherit (self.checks.${system}.pre-commit) shellHook;
+                  buildInputs = self.checks.${system}.pre-commit.enabledPackages;
+                };
+            };
+          })
+          [
+            "x86_64-linux"
+            "aarch64-linux"
+            "aarch64-darwin"
+            "x86_64-darwin"
+          ]
+      );
 
     };
 }
