@@ -20,6 +20,7 @@
         cockpit_http = 8391;
         newsdiff_http = 8392;
         speedtest_tracker_http = 8393;
+        lehmuese_http = 8394;
       };
       description = ''
         Central registry for service port assignments to avoid conflicts and
