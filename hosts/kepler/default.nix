@@ -22,6 +22,7 @@
 
     # Docker-based services
     ../../services/foundry-vtt.nix
+    ../../services/lehmuese.nix
     ../../services/linkding.nix
     ../../services/mato.nix
     ../../services/newsdiff.nix
