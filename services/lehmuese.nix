@@ -34,6 +34,7 @@ dockerService.mkDockerComposeService {
   environment = {
     backend = {
       ENCRYPTION_KEY.secret = "lehmuese/encryption_key";
+      ADMIN_EMAILS.secret = "lehmuese/admin_emails";
     };
   };
 }
