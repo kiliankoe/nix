@@ -11,7 +11,7 @@ dockerService.mkDockerComposeService {
   serviceName = "lehmuese";
   compose = {
     services.backend = {
-      image = "ghcr.io/kiliankoe/lehmuese/backend:main";
+      image = "ghcr.io/kiliankoe/wandelmuese/backend:main";
       container_name = "lehmuese-backend";
       restart = "unless-stopped";
       volumes = [ "lehmuese-data:/app/data" ];
@@ -22,7 +22,7 @@ dockerService.mkDockerComposeService {
       labels = [ "com.centurylinklabs.watchtower.enable=true" ];
     };
     services.frontend = {
-      image = "ghcr.io/kiliankoe/lehmuese/frontend:main";
+      image = "ghcr.io/kiliankoe/wandelmuese/frontend:main";
       container_name = "lehmuese-frontend";
       restart = "unless-stopped";
       ports = [ "${toString config.k.ports.lehmuese_http}:80" ];
