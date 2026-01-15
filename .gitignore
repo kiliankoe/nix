@@ -15,3 +15,4 @@ result-*
 
 # Nix
 .direnv/
+.pre-commit-config.yaml
