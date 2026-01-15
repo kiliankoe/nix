@@ -63,7 +63,7 @@ _: {
       "obsidian"
       "ogdesign-eagle"
       "ollama-app"
-      "openscad"
+      "openscad@snapshot"
       "orbstack"
       "pictogram"
       "proxyman"
