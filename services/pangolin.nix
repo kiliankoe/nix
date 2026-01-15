@@ -25,7 +25,13 @@ in
       RemainAfterExit = true;
     };
     script = ''
+      set -euo pipefail
       mkdir -p /run/pangolin
+      test -s ${config.sops.secrets."pangolin/server_secret".path}
+      test -s ${config.sops.secrets."pangolin/smtp_host".path}
+      test -s ${config.sops.secrets."pangolin/smtp_user".path}
+      test -s ${config.sops.secrets."pangolin/smtp_pass".path}
+      test -s ${config.sops.secrets."pangolin/no_reply".path}
       cat > /run/pangolin/env <<EOF
       SERVER_SECRET=$(cat ${config.sops.secrets."pangolin/server_secret".path})
       EMAIL_SMTP_HOST=$(cat ${config.sops.secrets."pangolin/smtp_host".path})
@@ -55,8 +61,11 @@ in
     wantedBy = [ "pangolin.service" ];
     before = [ "pangolin.service" ];
     after = [ "geoipupdate.service" ];
+    requires = [ "geoipupdate.service" ];
     serviceConfig.Type = "oneshot";
     script = ''
+      set -euo pipefail
+      test -s ${geoipDir}/GeoLite2-Country.mmdb
       mkdir -p ${dataDir}/config
       ln -sf ${geoipDir}/GeoLite2-Country.mmdb ${dataDir}/config/GeoLite2-Country.mmdb
     '';
@@ -121,6 +130,11 @@ in
     };
   };
 
+  systemd.services.pangolin = {
+    after = [ "pangolin-geoip-link.service" ];
+    requires = [ "pangolin-geoip-link.service" ];
+  };
+
   # CrowdSec is disabled for initial deployment due to NixOS module issues.
   # TODO: Enable once NixOS crowdsec modules are more stable.
   # See: https://github.com/NixOS/nixpkgs/issues/445342
@@ -140,9 +154,4 @@ in
   #   settings.api_url = "http://localhost:8080";
   # };
 
-  systemd.tmpfiles.rules = [
-    "d ${dataDir} 0755 pangolin pangolin -"
-    "d ${dataDir}/config 0755 pangolin pangolin -"
-    "d ${dataDir}/logs 0755 pangolin pangolin -"
-  ];
 }
