@@ -210,7 +210,7 @@ let
             # Container high memory
             {
               alert = "ContainerHighMemory";
-              expr = "(container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 90";
+              expr = "(container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 90 and container_spec_memory_limit_bytes > 0";
               for = "5m";
               labels.severity = "warning";
               annotations = {
