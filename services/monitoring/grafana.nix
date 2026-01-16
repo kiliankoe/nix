@@ -400,7 +400,7 @@ let
                   }
                 ];
               };
-              unit = "percent";
+              unit = "bytes";
             };
             overrides = [ ];
           };
@@ -427,8 +427,8 @@ let
           type = "timeseries";
           targets = [
             {
-              expr = "(1 - (node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"})) * 100";
-              legendFormat = "Disk %";
+              expr = "node_filesystem_size_bytes{mountpoint=\"/\"} - node_filesystem_avail_bytes{mountpoint=\"/\"}";
+              legendFormat = "Used";
               refId = "A";
             }
           ];
@@ -782,7 +782,7 @@ let
           type = "timeseries";
           targets = [
             {
-              expr = "topk(5, container_memory_usage_bytes{name!=\"\"})";
+              expr = "topk(5, container_memory_working_set_bytes{image!=\"\"})";
               legendFormat = "{{name}}";
               refId = "A";
             }
