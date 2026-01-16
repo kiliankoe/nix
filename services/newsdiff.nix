@@ -9,20 +9,19 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "newsdiff";
+  auto_update = true;
   compose = {
     services.backend = {
       container_name = "newsdiff-backend";
       image = "ghcr.io/kiliankoe/news.dresden.lol/backend:main";
       restart = "unless-stopped";
       volumes = [ "newsdiff-data:/app/data" ];
-      labels = [ "com.centurylinklabs.watchtower.enable=true" ];
     };
     services.frontend = {
       container_name = "newsdiff-frontend";
       image = "ghcr.io/kiliankoe/news.dresden.lol/frontend:main";
       restart = "unless-stopped";
       ports = [ "${toString config.k.ports.newsdiff_http}:80" ];
-      labels = [ "com.centurylinklabs.watchtower.enable=true" ];
     };
     volumes.newsdiff-data = { };
   };

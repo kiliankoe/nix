@@ -9,6 +9,7 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "changedetection";
+  auto_update = true;
   monitoring.httpEndpoint = {
     name = "changedetection";
     url = "http://localhost:${toString config.k.ports.changedetection_http}/";
@@ -30,7 +31,6 @@ dockerService.mkDockerComposeService {
       volumes = [ "changedetection-data:/datastore" ];
       ports = [ "${toString config.k.ports.changedetection_http}:5000" ];
       depends_on.sockpuppetbrowser.condition = "service_started";
-      labels = [ "com.centurylinklabs.watchtower.enable=true" ];
     };
     services.sockpuppetbrowser = {
       image = "dgtlmoon/sockpuppetbrowser:latest";
@@ -45,7 +45,6 @@ dockerService.mkDockerComposeService {
         "SCREEN_DEPTH=16"
         "MAX_CONCURRENT_CHROME_PROCESSES=10"
       ];
-      labels = [ "com.centurylinklabs.watchtower.enable=true" ];
     };
     volumes.changedetection-data = { };
   };

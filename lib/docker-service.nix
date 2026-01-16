@@ -15,6 +15,7 @@ in
   #   enable: Whether to register for monitoring (default: true, set to false for infra containers)
   #   containers: List of container names to monitor (auto-detected from compose if not specified)
   #   httpEndpoint: Optional { name, url } for HTTP endpoint monitoring
+  # auto_update: Whether to enable watchtower auto-updates for all containers (default: false)
   mkDockerComposeService =
     {
       serviceName,
@@ -22,6 +23,7 @@ in
       extraFiles ? { },
       environment ? { },
       monitoring ? { },
+      auto_update ? false,
     }:
     let
       serviceDir = "/etc/docker-compose/${serviceName}";
@@ -64,7 +66,28 @@ in
         ) envScripts
       );
 
-      composeFile = yamlFormat.generate "${serviceName}-compose.yml" compose;
+      # Watchtower auto-update label
+      watchtowerLabel = "com.centurylinklabs.watchtower.enable=true";
+
+      # Transform compose.services to add watchtower label when auto_update is true
+      servicesWithAutoUpdate =
+        if auto_update && compose ? services then
+          lib.mapAttrs (
+            _: svcConfig:
+            svcConfig
+            // {
+              labels = (svcConfig.labels or [ ]) ++ [ watchtowerLabel ];
+            }
+          ) compose.services
+        else
+          compose.services or { };
+
+      # Use the transformed compose
+      finalCompose = compose // {
+        services = servicesWithAutoUpdate;
+      };
+
+      composeFile = yamlFormat.generate "${serviceName}-compose.yml" finalCompose;
 
       # Extract container names from compose services
       # Uses container_name if specified, otherwise the service name

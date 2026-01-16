@@ -9,6 +9,7 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "mato";
+  auto_update = true;
   monitoring.httpEndpoint = {
     name = "mato";
     url = "http://localhost:${toString config.k.ports.mato_http}/";
@@ -36,7 +37,6 @@ dockerService.mkDockerComposeService {
         timeout = "10s";
         retries = 15;
       };
-      labels = [ "com.centurylinklabs.watchtower.enable=true" ];
     };
     volumes.mato-data = { };
   };
