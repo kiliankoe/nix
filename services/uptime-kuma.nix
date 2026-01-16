@@ -4,7 +4,7 @@
     httpEndpoints = [
       {
         name = "uptime-kuma";
-        url = "http://localhost:${toString config.k.ports.uptime_kuma_http}/";
+        url = "http://0.0.0.0:${toString config.k.ports.uptime_kuma_http}/";
       }
     ];
     systemdServices = [ "uptime-kuma" ];

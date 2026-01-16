@@ -4,7 +4,7 @@
     httpEndpoints = [
       {
         name = "paperless";
-        url = "http://localhost:${toString config.k.ports.paperless_http}/";
+        url = "http://0.0.0.0:${toString config.k.ports.paperless_http}/";
       }
     ];
     systemdServices = [ "paperless" ];

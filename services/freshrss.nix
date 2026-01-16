@@ -4,7 +4,7 @@
     httpEndpoints = [
       {
         name = "freshrss";
-        url = "http://localhost:${toString config.k.ports.freshrss_http}/";
+        url = "https://rss.kilko.de";
       }
     ];
     systemdServices = [ "freshrss" ];
