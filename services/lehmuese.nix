@@ -9,6 +9,7 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "lehmuese";
+  auto_update = true;
   monitoring.httpEndpoint = {
     name = "lehmuese";
     url = "http://localhost:${toString config.k.ports.lehmuese_http}/";
@@ -23,7 +24,6 @@ dockerService.mkDockerComposeService {
         "DATABASE_URL=sqlite:/app/data/lehmuese.db?mode=rwc"
       ];
       env_file = [ "backend.env" ];
-      labels = [ "com.centurylinklabs.watchtower.enable=true" ];
     };
     services.frontend = {
       image = "ghcr.io/kiliankoe/wandelmuese/frontend:main";
@@ -31,7 +31,6 @@ dockerService.mkDockerComposeService {
       restart = "unless-stopped";
       ports = [ "${toString config.k.ports.lehmuese_http}:80" ];
       depends_on.backend.condition = "service_started";
-      labels = [ "com.centurylinklabs.watchtower.enable=true" ];
     };
     volumes.lehmuese-data = { };
   };

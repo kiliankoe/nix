@@ -9,6 +9,7 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "speedtest-tracker";
+  auto_update = true;
   compose = {
     services.speedtest-tracker = {
       container_name = "speedtest-tracker";
@@ -28,7 +29,6 @@ dockerService.mkDockerComposeService {
       env_file = [ "speedtest-tracker.env" ];
       volumes = [ "speedtest-tracker-data:/config" ];
       ports = [ "${toString config.k.ports.speedtest_tracker_http}:80" ];
-      labels = [ "com.centurylinklabs.watchtower.enable=true" ];
     };
     volumes.speedtest-tracker-data = { };
   };

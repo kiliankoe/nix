@@ -8,13 +8,13 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "swiftdebot";
+  auto_update = true;
   compose = {
     services.swiftdebot = {
       image = "ghcr.io/swiftde/swiftdebot:latest";
       container_name = "swiftdebot";
       restart = "unless-stopped";
       env_file = [ "swiftdebot.env" ];
-      labels = [ "com.centurylinklabs.watchtower.enable=true" ];
     };
   };
   environment = {

@@ -5,8 +5,7 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "watchtower";
   monitoring.enable = false;
-  # To enable watchtower for a container, add label:
-  # labels = [ "com.centurylinklabs.watchtower.enable=true" ];
+  # To enable watchtower for containers, use: auto_update = true;
   compose = {
     services.watchtower = {
       image = "nickfedor/watchtower";
