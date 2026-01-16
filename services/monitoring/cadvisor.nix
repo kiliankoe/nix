@@ -9,7 +9,7 @@ dockerService.mkDockerComposeService {
   monitoring.enable = false;
   compose = {
     services.cadvisor = {
-      image = "gcr.io/cadvisor/cadvisor:v0.49.1";
+      image = "gcr.io/cadvisor/cadvisor:v0.51.0";
       container_name = "cadvisor";
       privileged = true;
       restart = "unless-stopped";
