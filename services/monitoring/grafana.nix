@@ -16,6 +16,63 @@ let
       links = [ ];
       liveNow = false;
       panels = [
+        # Row 1: Key metrics gauges (Load, Memory, Disk)
+        {
+          datasource = {
+            type = "prometheus";
+            uid = "prometheus";
+          };
+          fieldConfig = {
+            defaults = {
+              color.mode = "palette-classic";
+              mappings = [ ];
+              thresholds = {
+                mode = "absolute";
+                steps = [
+                  {
+                    color = "green";
+                    value = null;
+                  }
+                  {
+                    color = "yellow";
+                    value = 2;
+                  }
+                  {
+                    color = "red";
+                    value = 4;
+                  }
+                ];
+              };
+              unit = "short";
+            };
+            overrides = [ ];
+          };
+          gridPos = {
+            h = 6;
+            w = 8;
+            x = 0;
+            y = 0;
+          };
+          id = 1;
+          options = {
+            orientation = "auto";
+            reduceOptions = {
+              calcs = [ "lastNotNull" ];
+              fields = "";
+              values = false;
+            };
+            showThresholdLabels = false;
+            showThresholdMarkers = true;
+          };
+          title = "Load (5m)";
+          type = "gauge";
+          targets = [
+            {
+              expr = "node_load5";
+              refId = "A";
+            }
+          ];
+        }
         {
           datasource = {
             type = "prometheus";
@@ -48,11 +105,11 @@ let
           };
           gridPos = {
             h = 6;
-            w = 6;
-            x = 0;
+            w = 8;
+            x = 8;
             y = 0;
           };
-          id = 1;
+          id = 2;
           options = {
             orientation = "auto";
             reduceOptions = {
@@ -104,11 +161,11 @@ let
           };
           gridPos = {
             h = 6;
-            w = 6;
-            x = 6;
+            w = 8;
+            x = 16;
             y = 0;
           };
-          id = 2;
+          id = 3;
           options = {
             orientation = "auto";
             reduceOptions = {
@@ -124,112 +181,6 @@ let
           targets = [
             {
               expr = "(1 - (node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"})) * 100";
-              refId = "A";
-            }
-          ];
-        }
-        {
-          datasource = {
-            type = "prometheus";
-            uid = "prometheus";
-          };
-          fieldConfig = {
-            defaults = {
-              color.mode = "palette-classic";
-              mappings = [ ];
-              thresholds = {
-                mode = "absolute";
-                steps = [
-                  {
-                    color = "green";
-                    value = null;
-                  }
-                  {
-                    color = "yellow";
-                    value = 2;
-                  }
-                  {
-                    color = "red";
-                    value = 4;
-                  }
-                ];
-              };
-              unit = "short";
-            };
-            overrides = [ ];
-          };
-          gridPos = {
-            h = 6;
-            w = 6;
-            x = 12;
-            y = 0;
-          };
-          id = 3;
-          options = {
-            orientation = "auto";
-            reduceOptions = {
-              calcs = [ "lastNotNull" ];
-              fields = "";
-              values = false;
-            };
-            showThresholdLabels = false;
-            showThresholdMarkers = true;
-          };
-          title = "Load (5m)";
-          type = "gauge";
-          targets = [
-            {
-              expr = "node_load5";
-              refId = "A";
-            }
-          ];
-        }
-        {
-          datasource = {
-            type = "prometheus";
-            uid = "prometheus";
-          };
-          fieldConfig = {
-            defaults = {
-              color.mode = "palette-classic";
-              mappings = [ ];
-              thresholds = {
-                mode = "absolute";
-                steps = [
-                  {
-                    color = "green";
-                    value = null;
-                  }
-                ];
-              };
-              unit = "s";
-            };
-            overrides = [ ];
-          };
-          gridPos = {
-            h = 6;
-            w = 6;
-            x = 18;
-            y = 0;
-          };
-          id = 4;
-          options = {
-            colorMode = "value";
-            graphMode = "area";
-            justifyMode = "auto";
-            orientation = "auto";
-            reduceOptions = {
-              calcs = [ "lastNotNull" ];
-              fields = "";
-              values = false;
-            };
-            textMode = "auto";
-          };
-          title = "Uptime";
-          type = "stat";
-          targets = [
-            {
-              expr = "node_time_seconds - node_boot_time_seconds";
               refId = "A";
             }
           ];
@@ -287,7 +238,7 @@ let
           gridPos = {
             h = 8;
             w = 12;
-            x = 0;
+            x = 12;
             y = 6;
           };
           id = 5;
@@ -366,7 +317,7 @@ let
           gridPos = {
             h = 8;
             w = 12;
-            x = 12;
+            x = 0;
             y = 6;
           };
           id = 6;
@@ -402,6 +353,171 @@ let
             }
           ];
         }
+        # Row 3: Disk and Network time series
+        {
+          datasource = {
+            type = "prometheus";
+            uid = "prometheus";
+          };
+          fieldConfig = {
+            defaults = {
+              color.mode = "palette-classic";
+              custom = {
+                axisBorderShow = false;
+                axisCenteredZero = false;
+                axisColorMode = "text";
+                axisLabel = "";
+                axisPlacement = "auto";
+                barAlignment = 0;
+                drawStyle = "line";
+                fillOpacity = 10;
+                gradientMode = "none";
+                hideFrom = {
+                  legend = false;
+                  tooltip = false;
+                  viz = false;
+                };
+                insertNulls = false;
+                lineInterpolation = "smooth";
+                lineWidth = 1;
+                pointSize = 5;
+                scaleDistribution.type = "linear";
+                showPoints = "never";
+                spanNulls = false;
+                stacking = {
+                  group = "A";
+                  mode = "none";
+                };
+                thresholdsStyle.mode = "off";
+              };
+              mappings = [ ];
+              thresholds = {
+                mode = "absolute";
+                steps = [
+                  {
+                    color = "green";
+                    value = null;
+                  }
+                ];
+              };
+              unit = "percent";
+            };
+            overrides = [ ];
+          };
+          gridPos = {
+            h = 8;
+            w = 12;
+            x = 0;
+            y = 14;
+          };
+          id = 11;
+          options = {
+            legend = {
+              calcs = [ ];
+              displayMode = "list";
+              placement = "bottom";
+              showLegend = true;
+            };
+            tooltip = {
+              mode = "single";
+              sort = "none";
+            };
+          };
+          title = "Disk Usage Over Time";
+          type = "timeseries";
+          targets = [
+            {
+              expr = "(1 - (node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"})) * 100";
+              legendFormat = "Disk %";
+              refId = "A";
+            }
+          ];
+        }
+        {
+          datasource = {
+            type = "prometheus";
+            uid = "prometheus";
+          };
+          fieldConfig = {
+            defaults = {
+              color.mode = "palette-classic";
+              custom = {
+                axisBorderShow = false;
+                axisCenteredZero = true;
+                axisColorMode = "text";
+                axisLabel = "";
+                axisPlacement = "auto";
+                barAlignment = 0;
+                drawStyle = "line";
+                fillOpacity = 10;
+                gradientMode = "none";
+                hideFrom = {
+                  legend = false;
+                  tooltip = false;
+                  viz = false;
+                };
+                insertNulls = false;
+                lineInterpolation = "smooth";
+                lineWidth = 1;
+                pointSize = 5;
+                scaleDistribution.type = "linear";
+                showPoints = "never";
+                spanNulls = false;
+                stacking = {
+                  group = "A";
+                  mode = "none";
+                };
+                thresholdsStyle.mode = "off";
+              };
+              mappings = [ ];
+              thresholds = {
+                mode = "absolute";
+                steps = [
+                  {
+                    color = "green";
+                    value = null;
+                  }
+                ];
+              };
+              unit = "Bps";
+            };
+            overrides = [ ];
+          };
+          gridPos = {
+            h = 8;
+            w = 12;
+            x = 12;
+            y = 14;
+          };
+          id = 12;
+          options = {
+            legend = {
+              calcs = [ ];
+              displayMode = "list";
+              placement = "bottom";
+              showLegend = true;
+            };
+            tooltip = {
+              mode = "single";
+              sort = "none";
+            };
+          };
+          title = "Network Traffic";
+          type = "timeseries";
+          targets = [
+            {
+              expr = "rate(node_network_receive_bytes_total{device!=\"lo\"}[5m])";
+              legendFormat = "Receive ({{device}})";
+              refId = "A";
+            }
+            {
+              expr = "-rate(node_network_transmit_bytes_total{device!=\"lo\"}[5m])";
+              legendFormat = "Transmit ({{device}})";
+              refId = "B";
+            }
+          ];
+        }
+        # Row 4: Service Health
         {
           datasource = {
             type = "prometheus";
@@ -447,7 +563,7 @@ let
             h = 8;
             w = 24;
             x = 0;
-            y = 14;
+            y = 22;
           };
           id = 7;
           options = {
@@ -472,6 +588,7 @@ let
             }
           ];
         }
+        # Row 5: Infrastructure status
         {
           datasource = {
             type = "prometheus";
@@ -479,7 +596,7 @@ let
           };
           fieldConfig = {
             defaults = {
-              color.mode = "thresholds";
+              color.mode = "palette-classic";
               mappings = [ ];
               thresholds = {
                 mode = "absolute";
@@ -488,17 +605,9 @@ let
                     color = "green";
                     value = null;
                   }
-                  {
-                    color = "yellow";
-                    value = 50;
-                  }
-                  {
-                    color = "red";
-                    value = 80;
-                  }
                 ];
               };
-              unit = "short";
+              unit = "s";
             };
             overrides = [ ];
           };
@@ -506,12 +615,12 @@ let
             h = 6;
             w = 6;
             x = 0;
-            y = 22;
+            y = 30;
           };
-          id = 8;
+          id = 4;
           options = {
             colorMode = "value";
-            graphMode = "area";
+            graphMode = "none";
             justifyMode = "auto";
             orientation = "auto";
             reduceOptions = {
@@ -521,12 +630,11 @@ let
             };
             textMode = "auto";
           };
-          title = "PostgreSQL Connections";
+          title = "Uptime";
           type = "stat";
           targets = [
             {
-              expr = "sum(pg_stat_activity_count)";
-              legendFormat = "Total";
+              expr = "node_time_seconds - node_boot_time_seconds";
               refId = "A";
             }
           ];
@@ -576,7 +684,7 @@ let
             h = 6;
             w = 6;
             x = 6;
-            y = 22;
+            y = 30;
           };
           id = 9;
           options = {
@@ -601,7 +709,145 @@ let
             }
           ];
         }
-        # PostgreSQL connections by database
+        {
+          datasource = {
+            type = "prometheus";
+            uid = "prometheus";
+          };
+          fieldConfig = {
+            defaults = {
+              color.mode = "palette-classic";
+              custom = {
+                axisBorderShow = false;
+                axisCenteredZero = false;
+                axisColorMode = "text";
+                axisLabel = "";
+                axisPlacement = "auto";
+                barAlignment = 0;
+                drawStyle = "line";
+                fillOpacity = 30;
+                gradientMode = "none";
+                hideFrom = {
+                  legend = false;
+                  tooltip = false;
+                  viz = false;
+                };
+                insertNulls = false;
+                lineInterpolation = "smooth";
+                lineWidth = 1;
+                pointSize = 5;
+                scaleDistribution.type = "linear";
+                showPoints = "never";
+                spanNulls = false;
+                stacking = {
+                  group = "A";
+                  mode = "normal";
+                };
+                thresholdsStyle.mode = "off";
+              };
+              mappings = [ ];
+              thresholds = {
+                mode = "absolute";
+                steps = [
+                  {
+                    color = "green";
+                    value = null;
+                  }
+                ];
+              };
+              unit = "bytes";
+            };
+            overrides = [ ];
+          };
+          gridPos = {
+            h = 6;
+            w = 12;
+            x = 12;
+            y = 30;
+          };
+          id = 13;
+          options = {
+            legend = {
+              calcs = [ "last" ];
+              displayMode = "table";
+              placement = "right";
+              showLegend = true;
+            };
+            tooltip = {
+              mode = "multi";
+              sort = "desc";
+            };
+          };
+          title = "Container Memory Usage";
+          type = "timeseries";
+          targets = [
+            {
+              expr = "topk(5, container_memory_usage_bytes{name!=\"\"})";
+              legendFormat = "{{name}}";
+              refId = "A";
+            }
+          ];
+        }
+        # Row 6: PostgreSQL
+        {
+          datasource = {
+            type = "prometheus";
+            uid = "prometheus";
+          };
+          fieldConfig = {
+            defaults = {
+              color.mode = "thresholds";
+              mappings = [ ];
+              thresholds = {
+                mode = "absolute";
+                steps = [
+                  {
+                    color = "green";
+                    value = null;
+                  }
+                  {
+                    color = "yellow";
+                    value = 50;
+                  }
+                  {
+                    color = "red";
+                    value = 80;
+                  }
+                ];
+              };
+              unit = "short";
+            };
+            overrides = [ ];
+          };
+          gridPos = {
+            h = 6;
+            w = 6;
+            x = 0;
+            y = 36;
+          };
+          id = 8;
+          options = {
+            colorMode = "value";
+            graphMode = "none";
+            justifyMode = "auto";
+            orientation = "auto";
+            reduceOptions = {
+              calcs = [ "lastNotNull" ];
+              fields = "";
+              values = false;
+            };
+            textMode = "auto";
+          };
+          title = "PostgreSQL Connections";
+          type = "stat";
+          targets = [
+            {
+              expr = "sum(pg_stat_activity_count{datname!~\"template0|template1|\"})";
+              legendFormat = "Total";
+              refId = "A";
+            }
+          ];
+        }
         {
           datasource = {
             type = "prometheus";
@@ -654,9 +900,9 @@ let
           };
           gridPos = {
             h = 6;
-            w = 12;
-            x = 12;
-            y = 22;
+            w = 18;
+            x = 6;
+            y = 36;
           };
           id = 10;
           options = {
@@ -675,7 +921,7 @@ let
           type = "timeseries";
           targets = [
             {
-              expr = "sum by (datname) (pg_stat_activity_count{datname!=\"\"})";
+              expr = "sum by (datname) (pg_stat_activity_count{datname!~\"template0|template1|\"})";
               legendFormat = "{{ datname }}";
               refId = "A";
             }
