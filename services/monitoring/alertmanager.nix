@@ -91,8 +91,7 @@ in
         ${pkgs.prometheus-alertmanager}/bin/alertmanager \
           --config.file=/var/lib/alertmanager/alertmanager.yml \
           --storage.path=/var/lib/alertmanager/data \
-          --web.listen-address=0.0.0.0:${toString config.k.ports.alertmanager_http} \
-          --cluster.listen-address=
+          --web.listen-address=0.0.0.0:${toString config.k.ports.alertmanager_http}
       '';
       Restart = "on-failure";
       RestartSec = "5s";
