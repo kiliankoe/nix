@@ -12,6 +12,7 @@ in
   #   Format: { serviceName = { VAR = value; SECRET = { secret = "name"; }; }; }
   #   Secrets are auto-declared in sops.secrets and paths are resolved automatically
   # monitoring: Optional monitoring configuration
+  #   enable: Whether to register for monitoring (default: true, set to false for infra containers)
   #   containers: List of container names to monitor (auto-detected from compose if not specified)
   #   httpEndpoint: Optional { name, url } for HTTP endpoint monitoring
   mkDockerComposeService =
@@ -75,6 +76,9 @@ in
 
       # Use explicitly specified containers or auto-detected ones
       monitoredContainers = monitoring.containers or autoContainerNames;
+
+      # Check if monitoring is enabled (default: true)
+      monitoringEnabled = monitoring.enable or true;
     in
     {
       # Copy compose files to system
@@ -114,8 +118,8 @@ in
       # Auto-declare sops.secrets for all secretFile references
       sops.secrets = lib.genAttrs allSecretNames (_: { });
 
-      # Register containers and endpoints for monitoring
-      k.monitoring = {
+      # Register containers and endpoints for monitoring (if enabled)
+      k.monitoring = lib.mkIf monitoringEnabled {
         dockerContainers = monitoredContainers;
         httpEndpoints = lib.optional (monitoring ? httpEndpoint) monitoring.httpEndpoint;
         systemdServices = [ serviceName ];

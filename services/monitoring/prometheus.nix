@@ -164,21 +164,35 @@ let
         {
           name = "kepler-containers";
           rules =
-            # Generate one alert per container so the name is always included
-            (map (container: {
-              alert = "ContainerDown";
-              expr = ''absent(container_last_seen{name="${container}"}) or (time() - container_last_seen{name="${container}"}) > 300'';
-              for = "5m";
-              labels = {
-                severity = "critical";
-                inherit container;
-              };
-              annotations = {
-                summary = "Container ${container} is down";
-                description = "Docker container ${container} has been missing for 5+ minutes.";
-              };
-            }) dockerContainers)
-            ++ [
+            [
+              # cAdvisor down - alerts when we can't scrape container metrics
+              {
+                alert = "CAdvisorDown";
+                expr = "up{job=\"cadvisor\"} == 0";
+                for = "2m";
+                labels.severity = "critical";
+                annotations = {
+                  summary = "cAdvisor is down";
+                  description = "Cannot scrape container metrics from cAdvisor. Container monitoring is unavailable.";
+                };
+              }
+
+              # Container down - only fires when we HAVE stale data (not when data is missing)
+              # This avoids false alerts during cAdvisor restarts
+              {
+                alert = "ContainerDown";
+                expr =
+                  let
+                    containerPattern = lib.concatStringsSep "|" dockerContainers;
+                  in
+                  ''(time() - container_last_seen{name=~"${containerPattern}"}) > 300'';
+                for = "5m";
+                labels.severity = "critical";
+                annotations = {
+                  summary = "Container {{ $labels.name }} is down";
+                  description = "Docker container {{ $labels.name }} has been missing for 5+ minutes.";
+                };
+              }
 
               # Container high memory
               {

@@ -6,6 +6,7 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "cadvisor";
+  monitoring.enable = false;
   compose = {
     services.cadvisor = {
       image = "gcr.io/cadvisor/cadvisor:v0.49.1";

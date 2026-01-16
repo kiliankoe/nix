@@ -4,6 +4,7 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "watchtower";
+  monitoring.enable = false;
   # To enable watchtower for a container, add label:
   # labels = [ "com.centurylinklabs.watchtower.enable=true" ];
   compose = {
