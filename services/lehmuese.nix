@@ -39,6 +39,7 @@ dockerService.mkDockerComposeService {
     backend = {
       ENCRYPTION_KEY.secret = "lehmuese/encryption_key";
       ADMIN_EMAILS.secret = "lehmuese/admin_emails";
+      SLACK_BOT_TOKEN.secret = "lehmuese/slack_bot_token";
     };
   };
 }
