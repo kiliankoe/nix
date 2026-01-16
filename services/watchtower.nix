@@ -9,7 +9,7 @@ dockerService.mkDockerComposeService {
   # labels = [ "com.centurylinklabs.watchtower.enable=true" ];
   compose = {
     services.watchtower = {
-      image = "containrrr/watchtower";
+      image = "nickfedor/watchtower";
       container_name = "watchtower";
       restart = "unless-stopped";
       volumes = [ "/var/run/docker.sock:/var/run/docker.sock" ];
