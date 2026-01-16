@@ -479,7 +479,7 @@ let
           };
           fieldConfig = {
             defaults = {
-              color.mode = "palette-classic";
+              color.mode = "thresholds";
               mappings = [ ];
               thresholds = {
                 mode = "absolute";
@@ -487,6 +487,14 @@ let
                   {
                     color = "green";
                     value = null;
+                  }
+                  {
+                    color = "yellow";
+                    value = 50;
+                  }
+                  {
+                    color = "red";
+                    value = 80;
                   }
                 ];
               };
@@ -496,7 +504,7 @@ let
           };
           gridPos = {
             h = 6;
-            w = 12;
+            w = 6;
             x = 0;
             y = 22;
           };
@@ -517,7 +525,8 @@ let
           type = "stat";
           targets = [
             {
-              expr = "pg_stat_activity_count";
+              expr = "sum(pg_stat_activity_count)";
+              legendFormat = "Total";
               refId = "A";
             }
           ];
@@ -565,8 +574,8 @@ let
           };
           gridPos = {
             h = 6;
-            w = 12;
-            x = 12;
+            w = 6;
+            x = 6;
             y = 22;
           };
           id = 9;
@@ -588,6 +597,86 @@ let
             {
               expr = "redis_up";
               legendFormat = "Redis";
+              refId = "A";
+            }
+          ];
+        }
+        # PostgreSQL connections by database
+        {
+          datasource = {
+            type = "prometheus";
+            uid = "prometheus";
+          };
+          fieldConfig = {
+            defaults = {
+              color.mode = "palette-classic";
+              custom = {
+                axisBorderShow = false;
+                axisCenteredZero = false;
+                axisColorMode = "text";
+                axisLabel = "";
+                axisPlacement = "auto";
+                barAlignment = 0;
+                drawStyle = "line";
+                fillOpacity = 30;
+                gradientMode = "none";
+                hideFrom = {
+                  legend = false;
+                  tooltip = false;
+                  viz = false;
+                };
+                insertNulls = false;
+                lineInterpolation = "smooth";
+                lineWidth = 1;
+                pointSize = 5;
+                scaleDistribution.type = "linear";
+                showPoints = "never";
+                spanNulls = false;
+                stacking = {
+                  group = "A";
+                  mode = "normal";
+                };
+                thresholdsStyle.mode = "off";
+              };
+              mappings = [ ];
+              thresholds = {
+                mode = "absolute";
+                steps = [
+                  {
+                    color = "green";
+                    value = null;
+                  }
+                ];
+              };
+              unit = "short";
+            };
+            overrides = [ ];
+          };
+          gridPos = {
+            h = 6;
+            w = 12;
+            x = 12;
+            y = 22;
+          };
+          id = 10;
+          options = {
+            legend = {
+              calcs = [ "last" ];
+              displayMode = "table";
+              placement = "right";
+              showLegend = true;
+            };
+            tooltip = {
+              mode = "multi";
+              sort = "desc";
+            };
+          };
+          title = "PostgreSQL Connections by Database";
+          type = "timeseries";
+          targets = [
+            {
+              expr = "sum by (datname) (pg_stat_activity_count{datname!=\"\"})";
+              legendFormat = "{{ datname }}";
               refId = "A";
             }
           ];
