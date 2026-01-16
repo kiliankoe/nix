@@ -11,11 +11,12 @@ let
   httpTargets = httpEndpoints;
 
   # Build regex pattern for systemd service matching
+  # Use [.] instead of \. to match literal dot - avoids JSON/Nix escaping issues
   systemdServicePattern =
     if systemdServices == [ ] then
       "^$" # Match nothing if no services
     else
-      "(${lib.concatStringsSep "|" systemdServices})\\.service";
+      "(${lib.concatStringsSep "|" systemdServices})[.]service";
 
   alertRules = pkgs.writeText "alert-rules.yml" (
     builtins.toJSON {
