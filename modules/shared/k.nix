@@ -30,5 +30,39 @@
         keep them discoverable.
       '';
     };
+
+    # Monitoring configuration - services register themselves here
+    monitoring = {
+      httpEndpoints = lib.mkOption {
+        type = lib.types.listOf (
+          lib.types.submodule {
+            options = {
+              name = lib.mkOption {
+                type = lib.types.str;
+                description = "Service name for display in alerts";
+              };
+              url = lib.mkOption {
+                type = lib.types.str;
+                description = "URL to probe";
+              };
+            };
+          }
+        );
+        default = [ ];
+        description = "HTTP endpoints to monitor via blackbox exporter";
+      };
+
+      dockerContainers = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = "Docker container names to monitor";
+      };
+
+      systemdServices = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = "Systemd service names to monitor for restarts/failures";
+      };
+    };
   };
 }

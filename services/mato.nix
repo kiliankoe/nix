@@ -9,8 +9,13 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "mato";
+  monitoring.httpEndpoint = {
+    name = "mato";
+    url = "http://localhost:${toString config.k.ports.mato_http}/";
+  };
   compose = {
     services.app = {
+      container_name = "mato";
       image = "ghcr.io/kiliankoe/mato:latest";
       restart = "unless-stopped";
       environment = [

@@ -1,5 +1,15 @@
 { config, ... }:
 {
+  k.monitoring = {
+    httpEndpoints = [
+      {
+        name = "paperless";
+        url = "http://localhost:${toString config.k.ports.paperless_http}/api/";
+      }
+    ];
+    systemdServices = [ "paperless" ];
+  };
+
   sops.secrets."paperless/secret_key" = { };
   services.paperless = {
     enable = true;

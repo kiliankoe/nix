@@ -9,6 +9,10 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "changedetection";
+  monitoring.httpEndpoint = {
+    name = "changedetection";
+    url = "http://localhost:${toString config.k.ports.changedetection_http}/";
+  };
   compose = {
     services.changedetection = {
       image = "ghcr.io/dgtlmoon/changedetection.io:latest";

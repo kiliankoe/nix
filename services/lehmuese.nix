@@ -9,6 +9,10 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "lehmuese";
+  monitoring.httpEndpoint = {
+    name = "lehmuese";
+    url = "http://localhost:${toString config.k.ports.lehmuese_http}/";
+  };
   compose = {
     services.backend = {
       image = "ghcr.io/kiliankoe/wandelmuese/backend:main";

@@ -11,6 +11,7 @@ dockerService.mkDockerComposeService {
   serviceName = "foundry-vtt";
   compose = {
     services.foundry = {
+      container_name = "foundry";
       image = "felddy/foundryvtt:13";
       hostname = "foundry-vtt-host";
       restart = "unless-stopped";

@@ -6,48 +6,16 @@
   ...
 }:
 let
-  # Services to probe via blackbox exporter
-  httpTargets = [
-    {
-      name = "paperless";
-      url = "http://localhost:${toString config.k.ports.paperless_http}/api/";
-    }
-    {
-      name = "freshrss";
-      url = "http://localhost:${toString config.k.ports.freshrss_http}/";
-    }
-    {
-      name = "linkding";
-      url = "http://localhost:${toString config.k.ports.linkding_http}/";
-    }
-    {
-      name = "mato";
-      url = "http://localhost:${toString config.k.ports.mato_http}/";
-    }
-    {
-      name = "changedetection";
-      url = "http://localhost:${toString config.k.ports.changedetection_http}/";
-    }
-    {
-      name = "uptime-kuma";
-      url = "http://localhost:${toString config.k.ports.uptime_kuma_http}/";
-    }
-    {
-      name = "wbbash";
-      url = "http://localhost:${toString config.k.ports.wbbash_http}/";
-    }
-  ];
+  # Read monitoring configuration from k.monitoring (set by individual services)
+  inherit (config.k.monitoring) httpEndpoints dockerContainers systemdServices;
+  httpTargets = httpEndpoints;
 
-  # Docker containers to monitor for restart/down detection
-  dockerContainers = [
-    "linkding"
-    "mato"
-    "changedetection"
-    "foundry"
-    "wbbash"
-    "lehmuese"
-    "newsdiff"
-  ];
+  # Build regex pattern for systemd service matching
+  systemdServicePattern =
+    if systemdServices == [ ] then
+      "^$" # Match nothing if no services
+    else
+      "(${lib.concatStringsSep "|" systemdServices})\\.service";
 
   alertRules = pkgs.writeText "alert-rules.yml" (
     builtins.toJSON {
@@ -118,7 +86,7 @@ let
             # Service restart detection
             {
               alert = "ServiceRestarted";
-              expr = ''increase(systemd_unit_start_time_seconds{name=~"(paperless|freshrss|linkding|mato|changedetection|uptime-kuma|wbbash|foundry-vtt|newsdiff|prometheus|grafana|alertmanager).*\\.service"}[10m]) > 0'';
+              expr = ''increase(systemd_unit_start_time_seconds{name=~"${systemdServicePattern}"}[10m]) > 0'';
               for = "0m";
               labels.severity = "warning";
               annotations = {
@@ -130,7 +98,7 @@ let
             # Systemd service failed
             {
               alert = "ServiceFailed";
-              expr = ''systemd_unit_state{name=~"(paperless|freshrss|linkding|mato|changedetection|uptime-kuma|wbbash|foundry-vtt|newsdiff).*\\.service",state="failed"} == 1'';
+              expr = ''systemd_unit_state{name=~"${systemdServicePattern}",state="failed"} == 1'';
               for = "1m";
               labels.severity = "critical";
               annotations = {
@@ -146,8 +114,8 @@ let
               for = "2m";
               labels.severity = "critical";
               annotations = {
-                summary = "HTTP endpoint down: {{ $labels.instance }}";
-                description = "The endpoint {{ $labels.instance }} has been unreachable for 2+ minutes.";
+                summary = "{{ $labels.instance }} is down";
+                description = "The {{ $labels.instance }} service has been unreachable for 2+ minutes.";
               };
             }
           ];
@@ -194,31 +162,35 @@ let
         }
         {
           name = "kepler-containers";
-          rules = [
-            # Container not running
-            {
+          rules =
+            # Generate one alert per container so the name is always included
+            (map (container: {
               alert = "ContainerDown";
-              expr = ''absent(container_last_seen{name=~"${lib.concatStringsSep "|" dockerContainers}"}) or (time() - container_last_seen{name=~"${lib.concatStringsSep "|" dockerContainers}"}) > 300'';
+              expr = ''absent(container_last_seen{name="${container}"}) or (time() - container_last_seen{name="${container}"}) > 300'';
               for = "5m";
-              labels.severity = "critical";
-              annotations = {
-                summary = "Container {{ $labels.name }} is down";
-                description = "Docker container {{ $labels.name }} has been missing for 5+ minutes.";
+              labels = {
+                severity = "critical";
+                inherit container;
               };
-            }
+              annotations = {
+                summary = "Container ${container} is down";
+                description = "Docker container ${container} has been missing for 5+ minutes.";
+              };
+            }) dockerContainers)
+            ++ [
 
-            # Container high memory
-            {
-              alert = "ContainerHighMemory";
-              expr = "(container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 90 and container_spec_memory_limit_bytes > 0";
-              for = "5m";
-              labels.severity = "warning";
-              annotations = {
-                summary = "Container {{ $labels.name }} memory usage >90%";
-                description = "Container {{ $labels.name }} is using {{ printf \"%.1f\" $value }}% of its memory limit.";
-              };
-            }
-          ];
+              # Container high memory
+              {
+                alert = "ContainerHighMemory";
+                expr = "(container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 90 and container_spec_memory_limit_bytes > 0";
+                for = "5m";
+                labels.severity = "warning";
+                annotations = {
+                  summary = "Container {{ $labels.name }} memory usage >90%";
+                  description = "Container {{ $labels.name }} is using {{ printf \"%.1f\" $value }}% of its memory limit.";
+                };
+              }
+            ];
         }
       ];
     }
@@ -321,18 +293,21 @@ in
         params = {
           module = [ "http_2xx_3xx" ];
         };
-        static_configs = [
-          {
-            targets = map (t: t.url) httpTargets;
-          }
-        ];
+        # Each target has its own entry with a service label
+        static_configs = map (t: {
+          targets = [ t.url ];
+          labels = {
+            service = t.name;
+          };
+        }) httpTargets;
         relabel_configs = [
           {
             source_labels = [ "__address__" ];
             target_label = "__param_target";
           }
+          # Use service name as instance instead of URL
           {
-            source_labels = [ "__param_target" ];
+            source_labels = [ "service" ];
             target_label = "instance";
           }
           {

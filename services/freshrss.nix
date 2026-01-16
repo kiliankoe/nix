@@ -1,5 +1,15 @@
 { config, pkgs, ... }:
 {
+  k.monitoring = {
+    httpEndpoints = [
+      {
+        name = "freshrss";
+        url = "http://localhost:${toString config.k.ports.freshrss_http}/";
+      }
+    ];
+    systemdServices = [ "freshrss" ];
+  };
+
   services.freshrss = {
     enable = true;
 

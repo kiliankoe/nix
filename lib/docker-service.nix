@@ -11,12 +11,16 @@ in
   # environment: Optional attrset of service-scoped environment variables and secrets
   #   Format: { serviceName = { VAR = value; SECRET = { secret = "name"; }; }; }
   #   Secrets are auto-declared in sops.secrets and paths are resolved automatically
+  # monitoring: Optional monitoring configuration
+  #   containers: List of container names to monitor (auto-detected from compose if not specified)
+  #   httpEndpoint: Optional { name, url } for HTTP endpoint monitoring
   mkDockerComposeService =
     {
       serviceName,
       compose,
       extraFiles ? { },
       environment ? { },
+      monitoring ? { },
     }:
     let
       serviceDir = "/etc/docker-compose/${serviceName}";
@@ -60,6 +64,17 @@ in
       );
 
       composeFile = yamlFormat.generate "${serviceName}-compose.yml" compose;
+
+      # Extract container names from compose services
+      # Uses container_name if specified, otherwise the service name
+      autoContainerNames =
+        if compose ? services then
+          lib.mapAttrsToList (svcName: svcConfig: svcConfig.container_name or svcName) compose.services
+        else
+          [ ];
+
+      # Use explicitly specified containers or auto-detected ones
+      monitoredContainers = monitoring.containers or autoContainerNames;
     in
     {
       # Copy compose files to system
@@ -98,5 +113,12 @@ in
 
       # Auto-declare sops.secrets for all secretFile references
       sops.secrets = lib.genAttrs allSecretNames (_: { });
+
+      # Register containers and endpoints for monitoring
+      k.monitoring = {
+        dockerContainers = monitoredContainers;
+        httpEndpoints = lib.optional (monitoring ? httpEndpoint) monitoring.httpEndpoint;
+        systemdServices = [ serviceName ];
+      };
     };
 }

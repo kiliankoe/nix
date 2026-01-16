@@ -9,6 +9,10 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "linkding";
+  monitoring.httpEndpoint = {
+    name = "linkding";
+    url = "http://localhost:${toString config.k.ports.linkding_http}/";
+  };
   compose = {
     services.linkding = {
       container_name = "linkding";

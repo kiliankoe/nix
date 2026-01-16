@@ -9,6 +9,10 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "wbbash";
+  monitoring.httpEndpoint = {
+    name = "wbbash";
+    url = "http://localhost:${toString config.k.ports.wbbash_http}/";
+  };
   compose = {
     services.wbbash = {
       container_name = "wbbash";

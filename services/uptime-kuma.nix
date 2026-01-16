@@ -1,5 +1,15 @@
 { config, ... }:
 {
+  k.monitoring = {
+    httpEndpoints = [
+      {
+        name = "uptime-kuma";
+        url = "http://localhost:${toString config.k.ports.uptime_kuma_http}/";
+      }
+    ];
+    systemdServices = [ "uptime-kuma" ];
+  };
+
   services.uptime-kuma = {
     enable = true;
 
