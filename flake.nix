@@ -129,7 +129,6 @@
                 in
                 pkgs.mkShell {
                   inherit (self.checks.${system}.pre-commit) shellHook;
-                  buildInputs = self.checks.${system}.pre-commit.enabledPackages;
                 };
             };
           })
