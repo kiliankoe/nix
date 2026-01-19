@@ -41,7 +41,7 @@
     # unfortunately zsh.sessionVariables or zsh.localVariables doesn't appear to be working
     initContent = ''
       # User-local binaries
-      export PATH="$HOME/bin:$HOME/.bun/bin:$HOME/.cargo/bin:$PATH"
+      export PATH="$HOME/bin:$HOME/.bun/bin:$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
 
       # Session variables
       export REPORTTIME="5"
