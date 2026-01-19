@@ -10,6 +10,10 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "speedtest-tracker";
   auto_update = true;
+  monitoring = {
+    name = "speedtest-tracker";
+    url = "https://speedtest.kilko.de";
+  };
   compose = {
     services.speedtest-tracker = {
       container_name = "speedtest-tracker";
