@@ -9,6 +9,5 @@
     kubectl
     npm-check
     pnpm
-    python315
   ];
 }
