@@ -5,10 +5,10 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "watchtower";
   monitoring.enable = false;
-  # To enable watchtower for containers, use: auto_update = true;
+  auto_update = true;
   compose = {
     services.watchtower = {
-      image = "nickfedor/watchtower";
+      image = "nicholas-fedor/watchtower";
       container_name = "watchtower";
       restart = "unless-stopped";
       volumes = [ "/var/run/docker.sock:/var/run/docker.sock" ];
