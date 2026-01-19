@@ -163,49 +163,48 @@ let
         }
         {
           name = "kepler-containers";
-          rules =
-            [
-              # cAdvisor down - alerts when we can't scrape container metrics
-              {
-                alert = "CAdvisorDown";
-                expr = "up{job=\"cadvisor\"} == 0";
-                for = "2m";
-                labels.severity = "critical";
-                annotations = {
-                  summary = "cAdvisor is down";
-                  description = "Cannot scrape container metrics from cAdvisor. Container monitoring is unavailable.";
-                };
-              }
+          rules = [
+            # cAdvisor down - alerts when we can't scrape container metrics
+            {
+              alert = "CAdvisorDown";
+              expr = "up{job=\"cadvisor\"} == 0";
+              for = "2m";
+              labels.severity = "critical";
+              annotations = {
+                summary = "cAdvisor is down";
+                description = "Cannot scrape container metrics from cAdvisor. Container monitoring is unavailable.";
+              };
+            }
 
-              # Container down - only fires when we HAVE stale data (not when data is missing)
-              # This avoids false alerts during cAdvisor restarts
-              {
-                alert = "ContainerDown";
-                expr =
-                  let
-                    containerPattern = lib.concatStringsSep "|" dockerContainers;
-                  in
-                  ''(time() - container_last_seen{name=~"${containerPattern}"}) > 300'';
-                for = "5m";
-                labels.severity = "critical";
-                annotations = {
-                  summary = "Container {{ $labels.name }} is down";
-                  description = "Docker container {{ $labels.name }} has been missing for 5+ minutes.";
-                };
-              }
+            # Container down - only fires when we HAVE stale data (not when data is missing)
+            # This avoids false alerts during cAdvisor restarts
+            {
+              alert = "ContainerDown";
+              expr =
+                let
+                  containerPattern = lib.concatStringsSep "|" dockerContainers;
+                in
+                ''(time() - container_last_seen{name=~"${containerPattern}"}) > 300'';
+              for = "5m";
+              labels.severity = "critical";
+              annotations = {
+                summary = "Container {{ $labels.name }} is down";
+                description = "Docker container {{ $labels.name }} has been missing for 5+ minutes.";
+              };
+            }
 
-              # Container high memory
-              {
-                alert = "ContainerHighMemory";
-                expr = "(container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 90 and container_spec_memory_limit_bytes > 0";
-                for = "5m";
-                labels.severity = "warning";
-                annotations = {
-                  summary = "Container {{ $labels.name }} memory usage >90%";
-                  description = "Container {{ $labels.name }} is using {{ printf \"%.1f\" $value }}% of its memory limit.";
-                };
-              }
-            ];
+            # Container high memory
+            {
+              alert = "ContainerHighMemory";
+              expr = "(container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 90 and container_spec_memory_limit_bytes > 0";
+              for = "5m";
+              labels.severity = "warning";
+              annotations = {
+                summary = "Container {{ $labels.name }} memory usage >90%";
+                description = "Container {{ $labels.name }} is using {{ printf \"%.1f\" $value }}% of its memory limit.";
+              };
+            }
+          ];
         }
       ];
     }
