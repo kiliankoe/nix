@@ -24,6 +24,7 @@
         prometheus_http = 8395;
         grafana_http = 8396;
         alertmanager_http = 8397;
+        immich_http = 8398;
       };
       description = ''
         Central registry for service port assignments to avoid conflicts and

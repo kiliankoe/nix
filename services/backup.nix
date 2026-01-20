@@ -29,6 +29,7 @@ let
     "foundry"
     "lehmuese"
     "newsdiff"
+    "immich"
   ];
 
   # Common environment setup for both backup and restore

@@ -25,6 +25,7 @@
 
     # Docker-based services
     ../../services/foundry-vtt.nix
+    ../../services/immich.nix
     ../../services/lehmuese.nix
     ../../services/linkding.nix
     ../../services/mato.nix
@@ -75,6 +76,8 @@
     "kepler_backup/server" = { };
     "kepler_backup/username" = { };
     "kepler_backup/password" = { };
+    "synology/smb_username" = { };
+    "synology/smb_password" = { };
   };
 
   # Disable power management (server)
@@ -109,6 +112,42 @@
         unitConfig.DefaultDependencies = "no";
       };
     };
+
+    services.synology-smb-credentials = {
+      description = "Generate CIFS credentials file for Synology mount";
+      before = [ "mnt-photos-immich.mount" ];
+      requiredBy = [ "mnt-photos-immich.mount" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = pkgs.writeShellScript "gen-cifs-creds" ''
+          echo "username=$(cat /run/secrets/synology/smb_username)" > /run/secrets/synology_smb_credentials
+          echo "password=$(cat /run/secrets/synology/smb_password)" >> /run/secrets/synology_smb_credentials
+          chmod 600 /run/secrets/synology_smb_credentials
+        '';
+      };
+    };
+
+    services.immich = {
+      after = [ "mnt-photos-immich.mount" ];
+      requires = [ "mnt-photos-immich.mount" ];
+    };
+  };
+
+  fileSystems."/mnt/photos/immich" = {
+    device = "//marvin/photos/immich";
+    fsType = "cifs";
+    options = [
+      "credentials=/run/secrets/synology_smb_credentials"
+      "vers=3.1.1"
+      "uid=1000"
+      "gid=100"
+      "file_mode=0664"
+      "dir_mode=0775"
+      "_netdev"
+      "x-systemd.automount"
+      "x-systemd.requires=network-online.target"
+    ];
   };
 
   # WebDAV mount for Tailscale
