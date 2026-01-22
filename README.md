@@ -75,9 +75,11 @@ This is intentional to keep container logs separate and avoid interleaving multi
 
 ## Backups
 
-Kepler uses restic for unified backups of all services (native NixOS + Docker) to an SFTP server. Backups run daily at 4 AM.
+Both kepler and cubesat use restic for backups to an SFTP server.
 
-### Manual Backup
+### Kepler
+
+Kepler backs up all services (native NixOS + Docker) daily at 4 AM.
 
 ```bash
 # Run backup manually
@@ -87,37 +89,59 @@ sudo systemctl start kepler-backup
 journalctl -u kepler-backup -f
 ```
 
-### Restore
-
 The `kepler-backup-restore` command is available on kepler:
 
 ```bash
-# List all snapshots
-kepler-backup-restore list
-
-# Browse files in a snapshot
-kepler-backup-restore files latest
-kepler-backup-restore files latest /var/lib/paperless
-
-# Restore everything to /var/restore/<snapshot-id>/
-kepler-backup-restore restore latest
-
-# Extract PostgreSQL dumps and show restore commands
-kepler-backup-restore restore-db latest
-
-# Open shell with restic configured for manual operations
-kepler-backup-restore shell
+kepler-backup-restore list                      # List all snapshots
+kepler-backup-restore files latest              # Browse files in a snapshot
+kepler-backup-restore restore latest            # Restore to /var/restore/
+kepler-backup-restore restore-db latest         # Extract PostgreSQL dumps
+kepler-backup-restore shell                     # Interactive restic shell
 ```
+
+### Cubesat
+
+Cubesat backs up pangolin data (`/var/lib/pangolin`) daily at 3 AM.
+
+```bash
+# Run backup manually
+sudo systemctl start cubesat-backup
+
+# Run pre-upgrade backup (tagged for easy identification)
+sudo systemctl start cubesat-backup-preupgrade
+
+# Check backup status/logs
+journalctl -u cubesat-backup -f
+```
+
+The `cubesat-backup-restore` command is available on cubesat:
+
+```bash
+cubesat-backup-restore list                     # List all snapshots
+cubesat-backup-restore files latest             # Browse files in a snapshot
+cubesat-backup-restore restore latest           # Restore to /var/restore/
+cubesat-backup-restore shell                    # Interactive restic shell
+```
+
+#### Deploy with Backup
+
+Use the deploy script to automatically create a pre-upgrade backup before deploying:
+
+```bash
+./scripts/deploy-with-backup.sh cubesat
+```
+
+This creates a tagged snapshot that can be used for rollback if needed.
 
 ### Restore Workflow
 
-1. `kepler-backup-restore list` - find the snapshot you want
-2. `kepler-backup-restore restore <snapshot-id>` - extract to `/var/restore/`
+1. `<host>-backup-restore list` - find the snapshot you want
+2. `<host>-backup-restore restore <snapshot-id>` - extract to `/var/restore/`
 3. Stop the relevant service: `sudo systemctl stop <service>`
 4. Copy files from restore dir to original location
-5. For PostgreSQL databases: `sudo -u postgres psql <dbname> < /path/to/dump.sql`
+5. For PostgreSQL databases (kepler only): `sudo -u postgres psql <dbname> < /path/to/dump.sql`
 6. Start the service: `sudo systemctl start <service>`
 
 ### Notifications
 
-Backup failures are reported via healthchecks.io. Configure `kepler_backup/healthcheck_url` in sops secrets to enable.
+Backup failures are reported via healthchecks.io. Configure `<host>_backup/healthcheck_url` in sops secrets to enable.
