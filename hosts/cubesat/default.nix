@@ -6,6 +6,7 @@
     ../../modules/shared/sops.nix
     ../../modules/nixos/base.nix
     ./services/pangolin.nix
+    ./services/cubesat-backup.nix
     ./packages.nix
   ];
 
