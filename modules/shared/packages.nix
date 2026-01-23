@@ -36,6 +36,7 @@
     ffmpeg
     genact
     git
+    github-copilot-cli
     gping
     heh
     helix
