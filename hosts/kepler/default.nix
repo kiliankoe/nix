@@ -118,6 +118,10 @@
       description = "Generate CIFS credentials file for Synology mount";
       before = [ "mnt-photos-immich.mount" ];
       requiredBy = [ "mnt-photos-immich.mount" ];
+      unitConfig = {
+        # Wait for secrets to be available (populated by sops-nix activation)
+        ConditionPathExists = "/run/secrets/synology/smb_username";
+      };
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -126,6 +130,15 @@
           echo "password=$(cat /run/secrets/synology/smb_password)" >> /run/secrets/synology_smb_credentials
           chmod 600 /run/secrets/synology_smb_credentials
         '';
+      };
+    };
+
+    # Path unit to trigger credentials service when secrets become available
+    paths.synology-smb-credentials = {
+      description = "Watch for Synology secrets to become available";
+      wantedBy = [ "multi-user.target" ];
+      pathConfig = {
+        PathExists = "/run/secrets/synology/smb_username";
       };
     };
 
@@ -140,14 +153,13 @@
     fsType = "cifs";
     options = [
       "credentials=/run/secrets/synology_smb_credentials"
-      "vers=3.1.1"
+      "vers=2.0"
       "uid=1000"
       "gid=100"
       "file_mode=0664"
       "dir_mode=0775"
       "_netdev"
-      "x-systemd.automount"
-      "x-systemd.requires=network-online.target"
+      "nofail"
     ];
   };
 
