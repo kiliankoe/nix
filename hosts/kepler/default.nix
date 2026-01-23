@@ -24,6 +24,7 @@
     ../../services/monitoring
 
     # Docker-based services
+    ../../services/goatcounter.nix
     ../../services/foundry-vtt.nix
     ../../services/immich.nix
     ../../services/lehmuese.nix
