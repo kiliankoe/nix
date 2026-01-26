@@ -61,6 +61,7 @@ Services on kepler use a mix of approaches:
 - Legacy host-specific secrets stored in `~/.config/secrets/env`
 - New secrets managed through `secrets/secrets.yaml` with sops-nix
   - Contains encrypted secrets for services and hosts
+  - **Note**: sops-nix populates secrets during activation, not via a systemd service. There is no `sops-nix.service` to depend on - secrets in `/run/secrets/` are available after activation completes.
 
 ### Service Development on kepler
 

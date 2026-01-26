@@ -114,53 +114,50 @@
       };
     };
 
-    services.synology-smb-credentials = {
-      description = "Generate CIFS credentials file for Synology mount";
-      before = [ "mnt-photos-immich.mount" ];
-      requiredBy = [ "mnt-photos-immich.mount" ];
-      unitConfig = {
-        # Wait for secrets to be available (populated by sops-nix activation)
-        ConditionPathExists = "/run/secrets/synology/smb_username";
-      };
+    services.immich = {
+      after = [ "immich-mount.service" ];
+      wants = [ "immich-mount.service" ];
+    };
+
+    # Mount service that always succeeds (even if mount fails)
+    services.immich-mount = {
+      description = "Mount Synology NAS for Immich";
+      after = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        ExecStart = pkgs.writeShellScript "gen-cifs-creds" ''
+        ExecStart = pkgs.writeShellScript "mount-immich" ''
+          set -e
+
+          # Create mount point if needed
+          mkdir -p /mnt/photos/immich
+
+          # Skip if already mounted
+          if mountpoint -q /mnt/photos/immich; then
+            echo "Already mounted"
+            exit 0
+          fi
+
+          # Generate credentials file from sops secrets
+          if [ ! -f /run/secrets/synology/smb_username ]; then
+            echo "Secrets not available"
+            exit 1
+          fi
           echo "username=$(cat /run/secrets/synology/smb_username)" > /run/secrets/synology_smb_credentials
           echo "password=$(cat /run/secrets/synology/smb_password)" >> /run/secrets/synology_smb_credentials
           chmod 600 /run/secrets/synology_smb_credentials
+
+          # Mount the NAS
+          ${pkgs.cifs-utils}/bin/mount.cifs //marvin/photos/immich /mnt/photos/immich \
+            -o credentials=/run/secrets/synology_smb_credentials,vers=2.0,uid=1000,gid=100,file_mode=0664,dir_mode=0775
+          echo "Mount successful"
+        '';
+        ExecStop = pkgs.writeShellScript "umount-immich" ''
+          umount /mnt/photos/immich 2>/dev/null || true
         '';
       };
     };
-
-    # Path unit to trigger credentials service when secrets become available
-    paths.synology-smb-credentials = {
-      description = "Watch for Synology secrets to become available";
-      wantedBy = [ "multi-user.target" ];
-      pathConfig = {
-        PathExists = "/run/secrets/synology/smb_username";
-      };
-    };
-
-    services.immich = {
-      after = [ "mnt-photos-immich.mount" ];
-      requires = [ "mnt-photos-immich.mount" ];
-    };
-  };
-
-  fileSystems."/mnt/photos/immich" = {
-    device = "//marvin/photos/immich";
-    fsType = "cifs";
-    options = [
-      "credentials=/run/secrets/synology_smb_credentials"
-      "vers=2.0"
-      "uid=1000"
-      "gid=100"
-      "file_mode=0664"
-      "dir_mode=0775"
-      "_netdev"
-      "nofail"
-    ];
   };
 
   # WebDAV mount for Tailscale
