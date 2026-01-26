@@ -11,8 +11,6 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     deploy-rs.url = "github:serokell/deploy-rs";
     deploy-rs.inputs.nixpkgs.follows = "nixpkgs";
-    pre-commit-hooks.url = "github:cachix/git-hooks.nix";
-    pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
     ssh-keys = {
       url = "https://github.com/kiliankoe.keys";
       flake = false;
@@ -27,7 +25,6 @@
       home-manager,
       sops-nix,
       deploy-rs,
-      pre-commit-hooks,
       ...
     }:
     let
@@ -88,57 +85,6 @@
         };
       };
 
-      checks =
-        let
-          deployChecks = builtins.mapAttrs (
-            _system: deployLib: deployLib.deployChecks self.deploy
-          ) deploy-rs.lib;
-          preCommitChecks = builtins.listToAttrs (
-            map
-              (system: {
-                name = system;
-                value = {
-                  pre-commit = pre-commit-hooks.lib.${system}.run {
-                    src = ./.;
-                    hooks = {
-                      nixfmt.enable = true;
-                      statix.enable = true;
-                      deadnix.enable = true;
-                    };
-                  };
-                };
-              })
-              [
-                "x86_64-linux"
-                "aarch64-linux"
-                "aarch64-darwin"
-                "x86_64-darwin"
-              ]
-          );
-        in
-        builtins.mapAttrs (system: checks: checks // (preCommitChecks.${system} or { })) deployChecks;
-
-      devShells = builtins.listToAttrs (
-        map
-          (system: {
-            name = system;
-            value = {
-              default =
-                let
-                  pkgs = nixpkgs.legacyPackages.${system};
-                in
-                pkgs.mkShell {
-                  inherit (self.checks.${system}.pre-commit) shellHook;
-                };
-            };
-          })
-          [
-            "x86_64-linux"
-            "aarch64-linux"
-            "aarch64-darwin"
-            "x86_64-darwin"
-          ]
-      );
-
+      checks = builtins.mapAttrs (_system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
     };
 }

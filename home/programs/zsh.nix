@@ -16,6 +16,7 @@
       df = "df -H";
       du = "du -ch";
       lg = "lazygit";
+      nlint = "nixfmt --check **/*.nix && statix check . && deadnix --fail";
       rsync = "rsync --progress";
       tmp = "cd $TMPDIR";
       tree = "tree -C";
