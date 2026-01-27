@@ -15,7 +15,9 @@
       "WebFetch(domain:mynixos.com)",
       "WebFetch(domain:nix-darwin.github.io)",
       "WebFetch(domain:nixos.wiki)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(journalctl:*)",
+      "Bash(systemctl status:*)"
     ],
     "deny": []
   }
