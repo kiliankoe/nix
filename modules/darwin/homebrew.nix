@@ -74,6 +74,7 @@ _: {
       "soulver"
       "steam"
       "sublime-text"
+      "superset"
       "suspicious-package"
       "tableplus"
       "tailscale-app"
