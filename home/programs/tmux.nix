@@ -17,10 +17,6 @@
     # keyMode = "emacs"; # Default, but explicit
 
     extraConfig = ''
-      # Use zsh as default shell
-      set-option -g default-shell /bin/zsh
-      set-option -g default-command "/bin/zsh"
-
       # Explicitly set and bind the prefix for nested sessions,
       # only using `prefix` above doesn't suffice unfortunately
       unbind C-b
