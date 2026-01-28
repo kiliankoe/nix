@@ -73,6 +73,12 @@
       # Reload config on prefix-r - is this even still necessary with nix/home-manager?
       bind r source-file ~/.config/tmux/tmux.conf \; display-message "Reloaded config..."
 
+      # Enable OSC 52 clipboard (works through SSH/nested sessions)
+      set -g set-clipboard on
+
+      # Allow escape sequences to pass through to the outer terminal (needed for nested tmux)
+      set -g allow-passthrough on
+
       # Copy last command's output to clipboard (uses OSC 133 markers from zsh)
       bind y run-shell "~/.local/bin/tmux-copy-last-output" \; display-message "Last output copied"
     '';

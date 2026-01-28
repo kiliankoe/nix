@@ -57,8 +57,9 @@ if [[ -n "$output" ]]; then
     elif command -v wl-copy >/dev/null 2>&1; then
         printf '%s' "$output" | wl-copy
     else
-        echo "No clipboard command found" >&2
-        exit 1
+        # OSC 52 fallback: sends clipboard data through the terminal escape sequence,
+        # which works over SSH when tmux allow-passthrough is enabled
+        printf '\033]52;c;%s\a' "$(printf '%s' "$output" | base64)" > /dev/tty
     fi
 else
     echo "No output found between prompts" >&2
