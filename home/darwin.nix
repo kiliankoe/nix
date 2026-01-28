@@ -11,6 +11,7 @@
   home.sessionVariables = {
     # macOS uses 'open' for default browser
     BROWSER = "open";
+    EDITOR = "zed";
   };
 
   home.homeDirectory = lib.mkForce "/Users/kilian";

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   imports = [
     ./programs/direnv.nix
@@ -23,6 +23,6 @@
 
   # Common environment variables
   home.sessionVariables = {
-    EDITOR = "hx";
+    EDITOR = lib.mkDefault "hx";
   };
 }

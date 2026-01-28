@@ -46,7 +46,6 @@
 
       # Session variables
       export REPORTTIME="5"
-      export EDITOR="hx"
       export LESS="--mouse"
     ''
     + pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
