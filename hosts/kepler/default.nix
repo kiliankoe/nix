@@ -189,4 +189,8 @@
     ];
   };
 
+  services.udev.extraRules = ''
+    SUBSYSTEM=="usb", ATTR{idVendor}=="04b8", ATTR{idProduct}=="0e28", MODE="0666"
+  '';
+
 }
