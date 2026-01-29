@@ -53,6 +53,7 @@ _: {
       "imageoptim"
       "istat-menus"
       "jordanbaird-ice"
+      "karabiner-elements"
       "lightburn"
       "macdependency"
       "macwhisper"
