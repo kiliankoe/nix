@@ -13,12 +13,13 @@
     syntaxHighlighting.enable = true;
 
     shellAliases = {
+      ta = "tmux attach || tmux new";
       df = "df -H";
       du = "du -ch";
       lg = "lazygit";
-      nlint = "nixfmt --check **/*.nix && statix check . && deadnix --fail";
+      nch = "nixfmt **/*.nix && statix check . && deadnix --fail";
       rsync = "rsync --progress";
-      tmp = "cd $TMPDIR";
+      cdtmp = "cd $TMPDIR";
       tree = "tree -C";
       lf = "/bin/ls -rt | tail -n1";
       ".." = "cd ..";
@@ -26,7 +27,6 @@
       "...." = "cd ../../../";
       "....." = "cd ../../../../";
       dockerpwd = "docker run --rm -it -v $(PWD):/src";
-      zshconfig = "hx $HOME/nix/home/programs/zsh.nix";
       zshreload = "exec zsh -l";
     };
 
