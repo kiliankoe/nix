@@ -130,6 +130,7 @@
       description = "Mount Synology NAS for Immich";
       after = [ "network-online.target" ];
       wants = [ "network-online.target" ];
+      path = [ pkgs.util-linux pkgs.cifs-utils ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -155,7 +156,7 @@
           chmod 600 /run/secrets/synology_smb_credentials
 
           # Mount the NAS
-          ${pkgs.cifs-utils}/bin/mount.cifs //marvin/photos/immich /mnt/photos/immich \
+          mount.cifs //marvin/photos/immich /mnt/photos/immich \
             -o credentials=/run/secrets/synology_smb_credentials,vers=2.0,uid=1000,gid=100,file_mode=0664,dir_mode=0775
           echo "Mount successful"
         '';
@@ -170,6 +171,7 @@
       description = "Mount Synology NAS for Plex";
       after = [ "network-online.target" ];
       wants = [ "network-online.target" ];
+      path = [ pkgs.util-linux pkgs.cifs-utils ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -198,7 +200,7 @@
           fi
 
           # Mount the NAS - using plex user/group IDs
-          ${pkgs.cifs-utils}/bin/mount.cifs //marvin/Plex /mnt/plex \
+          mount.cifs //marvin/Plex /mnt/plex \
             -o credentials=/run/secrets/synology_smb_credentials,vers=2.0,uid=$(id -u plex),gid=$(id -g plex),file_mode=0644,dir_mode=0755
           echo "Mount successful"
         '';
