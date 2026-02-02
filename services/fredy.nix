@@ -20,7 +20,7 @@ dockerService.mkDockerComposeService {
       container_name = "fredy";
       image = "ghcr.io/orangecoding/fredy:latest";
       restart = "unless-stopped";
-      ports = [ "${toString config.k.ports.fredy_http}:4200" ];
+      ports = [ "${toString config.k.ports.fredy_http}:9998" ];
       volumes = [
         "${serviceDir}/config.json:/conf/config.json:ro"
         "fredy-db:/db"
