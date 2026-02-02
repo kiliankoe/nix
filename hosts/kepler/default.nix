@@ -26,6 +26,7 @@
     # Docker-based services
     ../../services/plausible.nix
     ../../services/foundry-vtt.nix
+    ../../services/fredy.nix
     ../../services/immich.nix
     ../../services/lehmuese.nix
     ../../services/linkding.nix
