@@ -32,6 +32,7 @@
     ../../services/linkding.nix
     ../../services/mato.nix
     ../../services/newsdiff.nix
+    ../../services/rustypaste.nix
     ../../services/speedtest-tracker.nix
     ../../services/swiftdebot.nix
     ../../services/watchtower.nix

@@ -27,6 +27,7 @@
         immich_http = 8398;
         plausible_http = 8399;
         fredy_http = 8400;
+        rustypaste_http = 8401;
         plex_http = 32400;
       };
       description = ''
