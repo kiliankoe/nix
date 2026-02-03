@@ -11,7 +11,8 @@
   home.sessionVariables = {
     # macOS uses 'open' for default browser
     BROWSER = "open";
-    EDITOR = "zed";
+    # some stuff just doesn't play nicely when using a GUI editor as $EDITOR
+    # EDITOR = "zed";
   };
 
   home.homeDirectory = lib.mkForce "/Users/kilian";
