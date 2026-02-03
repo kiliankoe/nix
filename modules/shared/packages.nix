@@ -50,6 +50,7 @@
     neofetch
     ripgrep
     ripgrep-all
+    rustypaste-cli
     sops
     tealdeer
     tmux
