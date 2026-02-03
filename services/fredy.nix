@@ -6,7 +6,6 @@
 }:
 let
   dockerService = import ../lib/docker-service.nix { inherit pkgs lib; };
-  serviceDir = "/etc/docker-compose/fredy";
 in
 dockerService.mkDockerComposeService {
   serviceName = "fredy";
@@ -22,17 +21,11 @@ dockerService.mkDockerComposeService {
       restart = "unless-stopped";
       ports = [ "${toString config.k.ports.fredy_http}:9998" ];
       volumes = [
-        "${serviceDir}/config.json:/conf/config.json:ro"
+        "fredy-conf:/conf"
         "fredy-db:/db"
       ];
     };
+    volumes.fredy-conf = { };
     volumes.fredy-db = { };
-  };
-  extraFiles = {
-    "docker-compose/fredy/config.json".text = ''
-      {
-        "sqlitepath": "/db"
-      }
-    '';
   };
 }
