@@ -46,6 +46,7 @@ sops secrets/secrets.yaml
 ## Services
 
 Services are defined as native NixOS or docker services. Not everything has been migrated to native yet.
+Kepler service definitions live under `hosts/kepler/services/` (Docker services in `hosts/kepler/services/docker/`).
 
 ### Service Management
 

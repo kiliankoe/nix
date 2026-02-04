@@ -50,10 +50,10 @@ User-level configurations are managed through Home Manager:
 
 #### Service Management
 
-Services on kepler use a mix of approaches:
+Services on kepler use a mix of approaches and live under `hosts/kepler/services/`:
 
-- **Native NixOS services**: changedetection.io, factorio, freshrss, paperless, uptime-kuma
-- **Docker services**: Custom applications and services without native NixOS modules
+- **Native NixOS services** (examples): freshrss, paperless, uptime-kuma, cockpit
+- **Docker services** (examples): changedetection.io, immich, linkding
 - Secrets managed through sops-nix integration
 
 #### Secrets Management
@@ -81,8 +81,8 @@ journalctl -u $serviceName --since "1 hour ago"
 
 To add new services:
 
-- For Docker services: Use the `lib/docker-service.nix` helper, following patterns in `services/linkding.nix` or `services/forgejo.nix`
-- For native NixOS services: Follow patterns in `services/freshrss.nix` or `services/paperless.nix`
+- For Docker services: Use the `lib/docker-service.nix` helper, following patterns in `hosts/kepler/services/docker/linkding.nix`
+- For native NixOS services: Follow patterns in `hosts/kepler/services/freshrss.nix` or `hosts/kepler/services/paperless.nix`
 
 ### Package Management
 
