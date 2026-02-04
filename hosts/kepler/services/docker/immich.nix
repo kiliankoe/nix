@@ -5,7 +5,7 @@
   ...
 }:
 let
-  dockerService = import ../../../lib/docker-service.nix { inherit pkgs lib; };
+  dockerService = import ../../../../lib/docker-service.nix { inherit pkgs lib; };
 in
 dockerService.mkDockerComposeService {
   serviceName = "immich";
