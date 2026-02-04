@@ -29,6 +29,7 @@ _: {
       "chatgpt"
       "claude"
       "coconutbattery"
+      "codex-app"
       "conductor"
       "crossover"
       "cyberduck"
