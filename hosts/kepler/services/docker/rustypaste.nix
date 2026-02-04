@@ -8,7 +8,8 @@ let
   dockerService = import ../../../lib/docker-service.nix { inherit pkgs lib; };
   serviceDir = "/etc/docker-compose/rustypaste";
 in
-dockerService.mkDockerComposeService {
+lib.mkMerge [
+  (dockerService.mkDockerComposeService {
   serviceName = "rustypaste";
   auto_update = true;
   monitoring.httpEndpoint = {
@@ -24,11 +25,10 @@ dockerService.mkDockerComposeService {
       env_file = [ "rustypaste.env" ];
       ports = [ "${toString config.k.ports.rustypaste_http}:8000" ];
       volumes = [
-        "rustypaste-upload:/app/upload"
+        "/var/lib/rustypaste/upload:/app/upload"
         "${serviceDir}/config.toml:/app/config.toml:ro"
       ];
     };
-    volumes.rustypaste-upload = { };
   };
   environment = {
     rustypaste = {
@@ -183,4 +183,11 @@ dockerService.mkDockerComposeService {
       delete_expired_files = { enabled = true, interval = "1h" }
     '';
   };
-}
+  })
+  {
+    systemd.tmpfiles.rules = [
+      "d /var/lib/rustypaste 0755 1000 1000 -"
+      "d /var/lib/rustypaste/upload 0755 1000 1000 -"
+    ];
+  }
+]
