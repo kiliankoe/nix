@@ -2,7 +2,6 @@
 {
   imports = [
     ./changedetection.nix
-    ./foundry-vtt.nix
     ./fredy.nix
     ./immich.nix
     ./lehmuese.nix
