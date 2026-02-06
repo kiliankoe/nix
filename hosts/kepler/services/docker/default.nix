@@ -1,6 +1,7 @@
 { ... }:
 {
   imports = [
+    ./actual.nix
     ./changedetection.nix
     ./fredy.nix
     ./immich.nix
