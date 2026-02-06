@@ -16,7 +16,5 @@
     # Docker-based services
     ./docker
 
-    # Automation
-    ./flake-updater.nix
   ];
 }
