@@ -22,14 +22,15 @@ let
   # Docker volume names to back up (we query Docker for actual paths at runtime)
   # Format: patterns to match with `docker volume ls --filter`
   dockerVolumePatterns = [
-    "wbbash"
-    "linkding"
+    "actual"
     "changedetection"
-    "mato"
-    "foundry"
-    "lehmuese"
-    "newsdiff"
     "immich"
+    "lehmuese"
+    "linkding"
+    "mato"
+    "newsdiff"
+    "plausible"
+    "wbbash"
   ];
 
   # Common environment setup for both backup and restore
