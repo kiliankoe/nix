@@ -19,7 +19,7 @@ dockerService.mkDockerComposeService {
       container_name = "actual";
       image = "docker.io/actualbudget/actual-server:latest";
       restart = "unless-stopped";
-      ports = [ "${toString config.k.ports.fredy_http}:5006" ];
+      ports = [ "${toString config.k.ports.actual_http}:5006" ];
       volumes = [
         "actual-data:/data"
       ];
