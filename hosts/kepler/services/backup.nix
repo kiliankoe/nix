@@ -6,6 +6,7 @@
 #
 # Restore: Use `kepler-backup-restore` command (installed to system PATH)
 {
+  config,
   pkgs,
   lib,
   ...
@@ -19,19 +20,9 @@ let
     "/var/backup/postgresql"
   ];
 
-  # Docker volume names to back up (we query Docker for actual paths at runtime)
-  # Format: patterns to match with `docker volume ls --filter`
-  dockerVolumePatterns = [
-    "actual"
-    "changedetection"
-    "immich"
-    "lehmuese"
-    "linkding"
-    "mato"
-    "newsdiff"
-    "plausible"
-    "wbbash"
-  ];
+  # Docker volume name patterns collected from service modules.
+  # These are matched against `docker volume ls --filter "name=..."`.
+  dockerVolumePatterns = lib.unique config.k.backup.dockerVolumes;
 
   # Common environment setup for both backup and restore
   setupEnvScript = ''

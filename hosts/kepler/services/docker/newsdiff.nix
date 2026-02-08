@@ -10,6 +10,7 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "newsdiff";
   auto_update = true;
+  backupVolumes = [ "newsdiff-data" ];
   compose = {
     services.backend = {
       container_name = "newsdiff-backend";

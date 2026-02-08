@@ -10,6 +10,7 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "mato";
   auto_update = true;
+  backupVolumes = [ "mato-data" ];
   monitoring.httpEndpoint = {
     name = "mato";
     url = "http://localhost:${toString config.k.ports.mato_http}/";

@@ -10,6 +10,7 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "linkding";
   auto_update = true;
+  backupVolumes = [ "linkding-data" ];
   monitoring.httpEndpoint = {
     name = "linkding";
     url = "http://localhost:${toString config.k.ports.linkding_http}/";

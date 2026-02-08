@@ -70,5 +70,14 @@
         description = "Systemd service names to monitor for restarts/failures";
       };
     };
+
+    # Backup configuration - services register their backup sources here
+    backup = {
+      dockerVolumes = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = "Docker volume name patterns to include in backups";
+      };
+    };
   };
 }

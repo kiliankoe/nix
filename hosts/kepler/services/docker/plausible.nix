@@ -10,6 +10,12 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "plausible";
   auto_update = false;
+  backupVolumes = [
+    "plausible-db-data"
+    "plausible-event-data"
+    "plausible-event-logs"
+    "plausible-data"
+  ];
   monitoring.httpEndpoint = {
     name = "plausible";
     url = "http://localhost:${toString config.k.ports.plausible_http}/";

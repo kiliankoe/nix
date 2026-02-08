@@ -10,6 +10,7 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "lehmuese";
   auto_update = true;
+  backupVolumes = [ "lehmuese-data" ];
   monitoring.httpEndpoint = {
     name = "lehmuese";
     url = "http://localhost:${toString config.k.ports.lehmuese_http}/";

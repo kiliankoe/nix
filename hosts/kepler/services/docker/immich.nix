@@ -10,6 +10,10 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "immich";
   auto_update = false;
+  backupVolumes = [
+    "immich-postgres"
+    "immich-model-cache"
+  ];
   monitoring.httpEndpoint = {
     name = "immich";
     url = "http://localhost:${toString config.k.ports.immich_http}/";

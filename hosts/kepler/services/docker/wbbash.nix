@@ -10,6 +10,7 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "wbbash";
   auto_update = true;
+  backupVolumes = [ "wbbash-db" ];
   monitoring.httpEndpoint = {
     name = "wbbash";
     url = "http://localhost:${toString config.k.ports.wbbash_http}/";

@@ -10,6 +10,7 @@ in
 dockerService.mkDockerComposeService {
   serviceName = "changedetection";
   auto_update = true;
+  backupVolumes = [ "changedetection-data" ];
   monitoring.httpEndpoint = {
     name = "changedetection";
     url = "http://localhost:${toString config.k.ports.changedetection_http}/";

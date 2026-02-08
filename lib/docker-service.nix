@@ -15,6 +15,7 @@ in
   #   enable: Whether to register for monitoring (default: true, set to false for infra containers)
   #   containers: List of container names to monitor (auto-detected from compose if not specified)
   #   httpEndpoint: Optional { name, url } for HTTP endpoint monitoring
+  # backupVolumes: Optional list of Docker volume name patterns to include in backups
   # auto_update: Whether to enable watchtower auto-updates for all containers (default: false)
   mkDockerComposeService =
     {
@@ -23,6 +24,7 @@ in
       extraFiles ? { },
       environment ? { },
       monitoring ? { },
+      backupVolumes ? [ ],
       auto_update ? false,
     }:
     let
@@ -142,10 +144,13 @@ in
       sops.secrets = lib.genAttrs allSecretNames (_: { });
 
       # Register containers and endpoints for monitoring (if enabled)
-      k.monitoring = lib.mkIf monitoringEnabled {
-        dockerContainers = monitoredContainers;
-        httpEndpoints = lib.optional (monitoring ? httpEndpoint) monitoring.httpEndpoint;
-        systemdServices = [ serviceName ];
+      k = {
+        monitoring = lib.mkIf monitoringEnabled {
+          dockerContainers = monitoredContainers;
+          httpEndpoints = lib.optional (monitoring ? httpEndpoint) monitoring.httpEndpoint;
+          systemdServices = [ serviceName ];
+        };
+        backup.dockerVolumes = backupVolumes;
       };
     };
 }
