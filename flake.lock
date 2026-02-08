@@ -94,12 +94,44 @@
         "type": "github"
       }
     },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1769433173,
+        "narHash": "sha256-XbbfHzR238bSuaXUsOj6zJnCqU2C2xeHcZYKlfwxCso=",
+        "rev": "13b0f9e6ac78abbbb736c635d87845c4f4bee51b",
+        "type": "tarball",
+        "url": "https://releases.nixos.org/nixpkgs/nixpkgs-26.05pre934966.13b0f9e6ac78/nixexprs.tar.xz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz"
+      }
+    },
+    "npr": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1769621452,
+        "narHash": "sha256-dV6uLOwrN4C/r6Ajrcb2pGQZTezHHtxUIunf7BRle1k=",
+        "owner": "faukah",
+        "repo": "npr",
+        "rev": "ea611473715c48cd904a9a65cf3b83d7fe0751c4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "faukah",
+        "repo": "npr",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "deploy-rs": "deploy-rs",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs",
+        "npr": "npr",
         "sops-nix": "sops-nix",
         "ssh-keys": "ssh-keys"
       }

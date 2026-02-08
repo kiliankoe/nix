@@ -15,6 +15,7 @@
       url = "https://github.com/kiliankoe.keys";
       flake = false;
     };
+    npr.url = "github:faukah/npr";
   };
 
   outputs =
