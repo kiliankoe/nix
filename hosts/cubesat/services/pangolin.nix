@@ -73,8 +73,8 @@ in
 
   services.pangolin = {
     enable = true;
-    baseDomain = "kilko.de";
-    dashboardDomain = "tunnel.kilko.de";
+    baseDomain = "gptdash.de";
+    dashboardDomain = "tunnel.gptdash.de";
     letsEncryptEmail = "me@kilian.io";
     inherit dataDir;
     openFirewall = true;
@@ -82,18 +82,18 @@ in
 
     settings = {
       app = {
-        dashboard_url = "https://tunnel.kilko.de";
+        dashboard_url = "https://tunnel.gptdash.de";
         log_level = "info";
       };
 
       domains.domain1 = {
-        base_domain = "kilko.de";
+        base_domain = "gptdash.de";
         cert_resolver = "letsencrypt";
       };
 
       server = {
         cors = {
-          origins = [ "https://tunnel.kilko.de" ];
+          origins = [ "https://tunnel.gptdash.de" ];
           methods = [
             "GET"
             "POST"
@@ -112,7 +112,7 @@ in
 
       gerbil = {
         start_port = 51820;
-        base_endpoint = "tunnel.kilko.de";
+        base_endpoint = "tunnel.gptdash.de";
       };
 
       email = {
