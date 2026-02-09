@@ -6,5 +6,6 @@
     lazygit
     nh
     ripgrep
+    systemctl-tui
   ];
 }
