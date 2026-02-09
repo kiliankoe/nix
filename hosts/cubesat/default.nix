@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -9,6 +9,11 @@
     ./services/cubesat-backup.nix
     ./packages.nix
   ];
+
+  boot.loader.systemd-boot.enable = lib.mkForce false;
+  boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "/dev/sda";
 
   networking.hostName = "cubesat";
 
