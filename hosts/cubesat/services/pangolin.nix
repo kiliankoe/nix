@@ -1,5 +1,7 @@
 {
   config,
+  lib,
+  pkgs,
   ...
 }:
 let
@@ -16,32 +18,6 @@ in
     "maxmind/license_key" = { };
   };
 
-  systemd.services.pangolin-env = {
-    description = "Generate Pangolin environment file";
-    wantedBy = [ "pangolin.service" ];
-    before = [ "pangolin.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = ''
-      set -euo pipefail
-      mkdir -p /run/pangolin
-      test -s ${config.sops.secrets."pangolin/server_secret".path}
-      test -s ${config.sops.secrets."pangolin/smtp_host".path}
-      test -s ${config.sops.secrets."pangolin/smtp_user".path}
-      test -s ${config.sops.secrets."pangolin/smtp_pass".path}
-      test -s ${config.sops.secrets."pangolin/no_reply".path}
-      cat > /run/pangolin/env <<EOF
-      SERVER_SECRET=$(cat ${config.sops.secrets."pangolin/server_secret".path})
-      EMAIL_SMTP_HOST=$(cat ${config.sops.secrets."pangolin/smtp_host".path})
-      EMAIL_SMTP_USER=$(cat ${config.sops.secrets."pangolin/smtp_user".path})
-      EMAIL_SMTP_PASS=$(cat ${config.sops.secrets."pangolin/smtp_pass".path})
-      EMAIL_NO_REPLY=$(cat ${config.sops.secrets."pangolin/no_reply".path})
-      EOF
-      chmod 600 /run/pangolin/env
-    '';
-  };
 
   services.geoipupdate = {
     enable = true;
@@ -78,7 +54,6 @@ in
     letsEncryptEmail = "me@kilian.io";
     inherit dataDir;
     openFirewall = true;
-    environmentFile = "/run/pangolin/env";
 
     settings = {
       app = {
@@ -92,6 +67,7 @@ in
       };
 
       server = {
+        secret = "@SERVER_SECRET@";
         cors = {
           origins = [ "https://tunnel.gptdash.de" ];
           methods = [
@@ -116,8 +92,12 @@ in
       };
 
       email = {
+        smtp_host = "@SMTP_HOST@";
         smtp_port = 465;
         smtp_secure = true;
+        smtp_user = "@SMTP_USER@";
+        smtp_pass = "@SMTP_PASS@";
+        no_reply = "@NO_REPLY@";
       };
 
       flags = {
@@ -133,6 +113,15 @@ in
   systemd.services.pangolin = {
     after = [ "pangolin-geoip-link.service" ];
     requires = [ "pangolin-geoip-link.service" ];
+    preStart = lib.mkAfter ''
+      ${pkgs.gnused}/bin/sed -i \
+        -e "s|@SERVER_SECRET@|$(cat ${config.sops.secrets."pangolin/server_secret".path})|" \
+        -e "s|@SMTP_HOST@|$(cat ${config.sops.secrets."pangolin/smtp_host".path})|" \
+        -e "s|@SMTP_USER@|$(cat ${config.sops.secrets."pangolin/smtp_user".path})|" \
+        -e "s|@SMTP_PASS@|$(cat ${config.sops.secrets."pangolin/smtp_pass".path})|" \
+        -e "s|@NO_REPLY@|$(cat ${config.sops.secrets."pangolin/no_reply".path})|" \
+        ${dataDir}/config/config.yml
+    '';
   };
 
   # CrowdSec is disabled for initial deployment due to NixOS module issues.
