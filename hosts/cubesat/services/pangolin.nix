@@ -54,6 +54,7 @@ in
     letsEncryptEmail = "me@kilian.io";
     inherit dataDir;
     openFirewall = true;
+    environmentFile = "/dev/null";
 
     settings = {
       app = {
