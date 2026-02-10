@@ -7,17 +7,28 @@
 let
   dataDir = "/var/lib/pangolin";
   geoipDir = "/var/lib/GeoIP";
+  domain = "gptdash.de";
+  dashboardDomain = "tunnel.${domain}";
 in
 {
   sops.secrets = {
-    "pangolin/server_secret" = { owner = "pangolin"; };
-    "pangolin/smtp_host" = { owner = "pangolin"; };
-    "pangolin/smtp_user" = { owner = "pangolin"; };
-    "pangolin/smtp_pass" = { owner = "pangolin"; };
-    "pangolin/no_reply" = { owner = "pangolin"; };
+    "pangolin/server_secret" = {
+      owner = "pangolin";
+    };
+    "pangolin/smtp_host" = {
+      owner = "pangolin";
+    };
+    "pangolin/smtp_user" = {
+      owner = "pangolin";
+    };
+    "pangolin/smtp_pass" = {
+      owner = "pangolin";
+    };
+    "pangolin/no_reply" = {
+      owner = "pangolin";
+    };
     "maxmind/license_key" = { };
   };
-
 
   services.geoipupdate = {
     enable = true;
@@ -49,28 +60,19 @@ in
 
   services.pangolin = {
     enable = true;
-    baseDomain = "gptdash.de";
-    dashboardDomain = "tunnel.gptdash.de";
+    baseDomain = domain;
+    inherit dashboardDomain dataDir;
     letsEncryptEmail = "me@kilian.io";
-    inherit dataDir;
     openFirewall = true;
     environmentFile = "/dev/null";
 
     settings = {
-      app = {
-        dashboard_url = "https://tunnel.gptdash.de";
-        log_level = "info";
-      };
-
-      domains.domain1 = {
-        base_domain = "gptdash.de";
-        cert_resolver = "letsencrypt";
-      };
+      app.log_level = "info";
 
       server = {
         secret = "@SERVER_SECRET@";
         cors = {
-          origins = [ "https://tunnel.gptdash.de" ];
+          origins = [ "https://${dashboardDomain}" ];
           methods = [
             "GET"
             "POST"
@@ -85,11 +87,6 @@ in
           credentials = false;
         };
         maxmind_db_path = "${dataDir}/config/GeoLite2-Country.mmdb";
-      };
-
-      gerbil = {
-        start_port = 51820;
-        base_endpoint = "tunnel.gptdash.de";
       };
 
       email = {
@@ -107,6 +104,7 @@ in
         disable_user_create_org = false;
         allow_raw_resources = true;
         allow_base_domain_resources = true;
+        disable_config_managed_domains = true;
       };
     };
   };
