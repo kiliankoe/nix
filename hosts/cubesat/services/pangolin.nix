@@ -10,11 +10,11 @@ let
 in
 {
   sops.secrets = {
-    "pangolin/server_secret" = { };
-    "pangolin/smtp_host" = { };
-    "pangolin/smtp_user" = { };
-    "pangolin/smtp_pass" = { };
-    "pangolin/no_reply" = { };
+    "pangolin/server_secret" = { owner = "pangolin"; };
+    "pangolin/smtp_host" = { owner = "pangolin"; };
+    "pangolin/smtp_user" = { owner = "pangolin"; };
+    "pangolin/smtp_pass" = { owner = "pangolin"; };
+    "pangolin/no_reply" = { owner = "pangolin"; };
     "maxmind/license_key" = { };
   };
 
