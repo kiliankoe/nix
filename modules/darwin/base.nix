@@ -4,11 +4,6 @@
     ./defaults.nix
   ];
 
-  # Darwin-specific secret definitions
-  sops.secrets = {
-    "env/homebrew_github_api_token" = { };
-  };
-
   # Using Determinate Nix on Darwin hosts
   nix.enable = false;
 

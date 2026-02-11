@@ -1,6 +1,5 @@
 {
   lib,
-  osConfig,
   ...
 }:
 {
@@ -17,17 +16,6 @@
 
   home.homeDirectory = lib.mkForce "/Users/kilian";
 
-  # Add darwin-specific secret exports to sops env.sh
-  home.activation.sopsEnvDarwin = lib.hm.dag.entryAfter [ "sopsEnvBase" ] ''
-        cat >> "$HOME/.config/sops/env.sh" << 'EOF'
-
-    # Darwin-specific secrets
-    export HOMEBREW_GITHUB_API_TOKEN="$(cat ${
-      osConfig.sops.secrets."env/homebrew_github_api_token".path
-    } 2>/dev/null || echo "")"
-    EOF
-  '';
-
   programs.zsh = {
     initContent = ''
       alias brewout="brew outdated"
@@ -38,6 +26,11 @@
       # BSD ls flags
       alias ls='ls -G'
       alias l='ls -lAhG'
+
+      # 1Password-managed secrets
+      if command -v op >/dev/null 2>&1; then
+        export HOMEBREW_GITHUB_API_TOKEN="$(op read 'op://Private/Homebrew GitHub API Token/Password' 2>/dev/null)"
+      fi
 
       # Homebrew
       eval "$(/opt/homebrew/bin/brew shellenv)"
