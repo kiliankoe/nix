@@ -48,6 +48,7 @@
     mitmproxy
     mitmproxy2swagger
     neofetch
+    opencode
     ripgrep
     ripgrep-all
     rustypaste-cli
