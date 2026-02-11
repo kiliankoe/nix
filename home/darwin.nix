@@ -27,11 +27,6 @@
       alias ls='ls -G'
       alias l='ls -lAhG'
 
-      # 1Password-managed secrets
-      if command -v op >/dev/null 2>&1; then
-        export HOMEBREW_GITHUB_API_TOKEN="$(op read 'op://Private/Homebrew GitHub API Token/Password' 2>/dev/null)"
-      fi
-
       # Homebrew
       eval "$(/opt/homebrew/bin/brew shellenv)"
     '';
