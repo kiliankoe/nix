@@ -77,17 +77,16 @@
     ];
 
     ignores = [
-      ".DS_Store"
-      "*.swp"
+      "*.local"
       "*.swo"
+      "*.swp"
       "*~"
-      ".vscode/"
-      "node_modules/"
-      ".env"
-      ".env.local"
-      ".texpadtmp"
+      ".DS_Store"
       ".swiftpm"
+      ".texpadtmp"
+      ".vscode/"
       "default.profraw"
+      "node_modules/"
     ];
   };
 }
