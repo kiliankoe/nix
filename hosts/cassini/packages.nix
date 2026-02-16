@@ -5,6 +5,7 @@
     devbox
     devenv
     emcee
+    glab
     k9s
     kubectl
     npm-check
