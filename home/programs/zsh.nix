@@ -47,6 +47,25 @@
       # Session variables
       export REPORTTIME="5"
       export LESS="--mouse"
+
+      glogs() {
+        local job_name="$1"
+
+        if [ -z "$job_name" ]; then
+          echo "Usage: glogs <job-name>"
+          return 1
+        fi
+
+        local mr_iid
+        mr_iid="$(glab mr view --output json | jq -r '.iid')" || return 1
+
+        local pipeline_id
+        pipeline_id="$(glab api "projects/:id/merge_requests/$mr_iid/pipelines" \
+          | jq -r 'max_by(.id).id')" || return 1
+
+        glab ci trace -p "$pipeline_id" "$job_name"
+      }
+
     ''
     + pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
       export ICLOUD_DRIVE="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
