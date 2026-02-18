@@ -1,4 +1,8 @@
 { pkgs, ... }:
+let
+  tmux-fzf = pkgs.tmuxPlugins.tmux-fzf;
+  tmux-fzf-scripts = "${tmux-fzf}/share/tmux-plugins/tmux-fzf/scripts";
+in
 {
   programs.tmux = {
     enable = true;
@@ -81,6 +85,9 @@
 
       # Copy last command's output to clipboard (uses OSC 133 markers from zsh)
       bind y run-shell "~/.local/bin/tmux-copy-last-output" \; display-message "Last output copied"
+
+      # Quick window switcher with fzf (prefix + f)
+      bind-key f run-shell -b "${tmux-fzf-scripts}/window.sh switch"
     '';
 
     plugins = with pkgs.tmuxPlugins; [
@@ -88,6 +95,13 @@
       yank
       resurrect
       continuum
+      {
+        plugin = tmux-fzf;
+        extraConfig = ''
+          TMUX_FZF_LAUNCH_KEY="F"
+          TMUX_FZF_OPTIONS="-p -w 62% -h 38%"
+        '';
+      }
     ];
   };
 }
