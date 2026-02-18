@@ -100,6 +100,7 @@ in
         extraConfig = ''
           TMUX_FZF_LAUNCH_KEY="F"
           TMUX_FZF_OPTIONS="-p -w 62% -h 38%"
+          TMUX_FZF_WINDOW_FORMAT="#{window_name} | #{pane_current_command} | #{pane_current_path} (#{window_panes} panes)"
         '';
       }
     ];
