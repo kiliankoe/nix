@@ -967,6 +967,7 @@ in
       security = {
         admin_user = "admin";
         admin_password = "$__file{/run/secrets/monitoring/grafana_admin_password}";
+        secret_key = "$__file{/run/secrets/monitoring/grafana_secret_key}";
         # Allow embedding in iframes (useful for status pages)
         allow_embedding = true;
       };
@@ -1015,6 +1016,9 @@ in
 
   # Declare secrets for grafana
   sops.secrets."monitoring/grafana_admin_password" = {
+    owner = "grafana";
+  };
+  sops.secrets."monitoring/grafana_secret_key" = {
     owner = "grafana";
   };
 }
