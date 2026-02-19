@@ -1,6 +1,6 @@
 { pkgs, ... }:
 let
-  tmux-fzf = pkgs.tmuxPlugins.tmux-fzf;
+  inherit (pkgs.tmuxPlugins) tmux-fzf;
   tmux-fzf-scripts = "${tmux-fzf}/share/tmux-plugins/tmux-fzf/scripts";
 in
 {
