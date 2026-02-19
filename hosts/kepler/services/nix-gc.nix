@@ -6,6 +6,7 @@ _: {
     enable = true;
     settings = {
       profile-policies.system = {
+        profile-paths = [ "/nix/var/nix/profiles/system" ];
         keep-latest-n = 5;
         keep-booted-system = true;
         keep-current-system = true;
