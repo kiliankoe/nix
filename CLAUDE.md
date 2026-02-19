@@ -71,7 +71,7 @@ User-level configurations are managed through Home Manager:
 
 Services on kepler live under `hosts/kepler/services/`:
 
-- **Native NixOS services**: freshrss, paperless, uptime-kuma, plex, cockpit (disabled), forgejo (disabled)
+- **Native NixOS services**: freshrss, paperless, uptime-kuma
 - **Docker services**: actual, changedetection, immich, lehmuese, linkding, mato, newsdiff, plausible, rustypaste, speedtest-tracker, swiftdebot, watchtower, wbbash
 - **Monitoring stack** (`services/monitoring/`): Prometheus, Grafana, AlertManager, exporters (node, PostgreSQL, Redis, systemd, blackbox), cAdvisor
 - Secrets managed through sops-nix integration

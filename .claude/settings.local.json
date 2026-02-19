@@ -19,7 +19,10 @@
       "WebFetch(domain:discourse.nixos.org)",
       "WebSearch",
       "Bash(journalctl:*)",
-      "Bash(systemctl status:*)"
+      "Bash(systemctl status:*)",
+      "Bash(gh run view:*)",
+      "Bash(head:*)",
+      "Bash(wc:*)"
     ],
     "deny": []
   }
