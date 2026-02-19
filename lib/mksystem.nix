@@ -17,6 +17,11 @@ let
   hmModule =
     if darwin then home-manager.darwinModules.home-manager else home-manager.nixosModules.home-manager;
   sopsModule = if darwin then sops-nix.darwinModules.sops else sops-nix.nixosModules.sops;
+  nixIndexModule =
+    if darwin then
+      inputs.nix-index-database.darwinModules.nix-index
+    else
+      inputs.nix-index-database.nixosModules.nix-index;
 in
 systemFunc {
   inherit system;
@@ -27,6 +32,7 @@ systemFunc {
     ../hosts/${name}
     sopsModule
     hmModule
+    nixIndexModule
     (
       if darwin then
         {

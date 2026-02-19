@@ -15,6 +15,8 @@
       url = "https://github.com/kiliankoe.keys";
       flake = false;
     };
+    nix-index-database.url = "github:nix-community/nix-index-database";
+    nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
     angrr.url = "github:linyinfeng/angrr";
     angrr.inputs.nixpkgs.follows = "nixpkgs";
     npr.url = "github:faukah/npr";
