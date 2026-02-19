@@ -2,7 +2,6 @@
 {
   imports = [
     # Native NixOS services
-    ./cockpit.nix
     ./freshrss.nix
     ./paperless.nix
     ./uptime-kuma.nix

@@ -3,7 +3,6 @@
   imports = [
     ./actual.nix
     ./changedetection.nix
-    ./fredy.nix
     ./immich.nix
     ./lehmuese.nix
     ./linkding.nix
