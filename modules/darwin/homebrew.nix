@@ -47,6 +47,7 @@ _: {
       "fork"
       "freecad"
       "ghostty"
+      "gimp"
       "godot"
       "gpg-suite"
       "hex-fiend"
