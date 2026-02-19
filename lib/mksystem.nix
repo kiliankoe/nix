@@ -40,5 +40,6 @@ systemFunc {
           home-manager.useUserPackages = true;
         }
     )
-  ];
+  ]
+  ++ nixpkgs.lib.optionals (!darwin) [ inputs.angrr.nixosModules.angrr ];
 }

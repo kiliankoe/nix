@@ -15,6 +15,8 @@
       url = "https://github.com/kiliankoe.keys";
       flake = false;
     };
+    angrr.url = "github:linyinfeng/angrr";
+    angrr.inputs.nixpkgs.follows = "nixpkgs";
     npr.url = "github:faukah/npr";
   };
 
