@@ -4,6 +4,7 @@
     openapi-tui
 
     # macOS-specific utilities
+    _1password-cli
     dedup-darwin
     terminal-notifier
 

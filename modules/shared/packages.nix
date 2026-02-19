@@ -18,7 +18,6 @@
     uv
 
     # tools
-    _1password-cli
     age
     atuin
     bat
