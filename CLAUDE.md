@@ -1,6 +1,10 @@
-# CLAUDE.md
+# nix
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+> **This is a living document.** Keep it updated as the project evolves: document new features, record _why_ decisions were made (not just what), and remove or revise anything that becomes outdated. The goal is that anyone (or any AI) can read this file cold and fully understand the project's current state, architecture, and the reasoning behind it.
+
+This is a unified Nix flake configuration managing multiple systems across macOS and NixOS platforms.
+
+See @README.md for the directory structure and host definitions.
 
 ## Build Commands
 
@@ -29,10 +33,6 @@ Filenames and attrs: lowercase, hyphenated where natural (e.g., `paperless.nix`)
 Keep modules small and composable; prefer `imports` over large files
 
 ## Architecture Overview
-
-This is a unified Nix flake configuration managing multiple systems across macOS and NixOS platforms.
-
-See @README.md for the directory structure and host definitions.
 
 ### Key Design Patterns
 
