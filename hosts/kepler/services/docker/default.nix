@@ -4,6 +4,7 @@
     ./actual.nix
     ./changedetection.nix
     ./immich.nix
+    ./jobfinder.nix
     ./lehmuese.nix
     ./linkding.nix
     ./mato.nix
