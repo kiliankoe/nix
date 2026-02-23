@@ -3,11 +3,11 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/shared/common.nix
+    ../../modules/shared/packages.nix
     ../../modules/shared/sops.nix
     ../../modules/nixos/base.nix
     ./services/pangolin.nix
     ./services/cubesat-backup.nix
-    ./packages.nix
   ];
 
   boot.loader.systemd-boot.enable = lib.mkForce false;

@@ -78,6 +78,10 @@
   services.tailscale.enable = true;
   virtualisation.docker.enable = true;
 
+  environment.systemPackages = with pkgs; [
+    systemctl-tui
+  ];
+
   programs.zsh.enable = true;
 
   # Used for backwards compatibility, don't touch.

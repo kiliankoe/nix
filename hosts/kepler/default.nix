@@ -9,7 +9,6 @@
 
     ../../modules/nixos/base.nix
 
-    ./packages.nix
     ./home.nix
     ./system.nix
     ./systemd.nix

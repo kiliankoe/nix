@@ -1,10 +1,45 @@
 { pkgs, inputs, ... }:
 {
   environment.systemPackages = with pkgs; [
-    openapi-tui
-    yt-dlp
+    # nix LSPs
+    nil
+    nixd
 
-    # macOS-specific utilities
+    # languages, package managers
+    bun
+    ni
+    nodejs_24
+    rustup
+    uv
+
+    # tools
+    biome
+    codex
+    ddate
+    dive
+    ffmpeg
+    genact
+    github-copilot-cli
+    gping
+    heh
+    helix
+    hyperfine
+    lucky-commit
+    lychee
+    mitmproxy
+    mitmproxy2swagger
+    neofetch
+    openapi-tui
+    opencode
+    ripgrep-all
+    tealdeer
+    tokei
+    witr
+    yazi
+    yt-dlp
+    zola
+
+    # macOS-specific
     _1password-cli
     dedup-darwin
     terminal-notifier
