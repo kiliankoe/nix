@@ -30,7 +30,6 @@
         rustypaste_http = 8401;
         actual_http = 8402;
         jobfinder_http = 8403;
-        jobfinder_pocketbase_http = 8404;
         plex_http = 32400;
       };
       description = ''

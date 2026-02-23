@@ -21,7 +21,6 @@ dockerService.mkDockerComposeService {
       container_name = "jobfinder-pocketbase";
       restart = "unless-stopped";
       volumes = [ "jobfinder-pb-data:/pb/pb_data" ];
-      ports = [ "${toString config.k.ports.jobfinder_pocketbase_http}:8090" ];
       env_file = [ "pocketbase.env" ];
       healthcheck = {
         test = [
@@ -49,7 +48,6 @@ dockerService.mkDockerComposeService {
       container_name = "jobfinder-frontend";
       restart = "unless-stopped";
       ports = [ "${toString config.k.ports.jobfinder_http}:5173" ];
-      env_file = [ "frontend.env" ];
       depends_on.pocketbase.condition = "service_started";
     };
     volumes.jobfinder-pb-data = { };
@@ -63,9 +61,6 @@ dockerService.mkDockerComposeService {
       POCKETBASE_URL = "http://pocketbase:8090";
       OPENAI_API_KEY.secret = "jobfinder/openai_api_key";
       KAGI_API_TOKEN.secret = "jobfinder/kagi_api_token";
-    };
-    frontend = {
-      VITE_POCKETBASE_URL = "https://jobfinder-api.kilko.de";
     };
   };
 }
