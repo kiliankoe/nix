@@ -20,6 +20,7 @@
     eza
     fd
     git
+    helix
     jq
     lazygit
     ripgrep
@@ -27,6 +28,8 @@
     sops
     tmux
     tree
+    uv
     vim
+    witr
   ];
 }

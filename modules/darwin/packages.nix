@@ -10,7 +10,6 @@
     ni
     nodejs_24
     rustup
-    uv
 
     # tools
     biome
@@ -22,7 +21,6 @@
     github-copilot-cli
     gping
     heh
-    helix
     hyperfine
     lucky-commit
     lychee
@@ -34,7 +32,6 @@
     ripgrep-all
     tealdeer
     tokei
-    witr
     yazi
     yt-dlp
     zola
