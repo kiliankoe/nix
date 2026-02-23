@@ -59,6 +59,8 @@ dockerService.mkDockerComposeService {
     };
     runner = {
       POCKETBASE_URL = "http://pocketbase:8090";
+      PB_ADMIN_EMAIL.secret = "jobfinder/pb_admin_email";
+      PB_ADMIN_PASSWORD.secret = "jobfinder/pb_admin_password";
       OPENAI_API_KEY.secret = "jobfinder/openai_api_key";
       KAGI_API_TOKEN.secret = "jobfinder/kagi_api_token";
     };
