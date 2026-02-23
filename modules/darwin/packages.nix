@@ -2,6 +2,7 @@
 {
   environment.systemPackages = with pkgs; [
     openapi-tui
+    yt-dlp
 
     # macOS-specific utilities
     _1password-cli

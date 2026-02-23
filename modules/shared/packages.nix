@@ -59,7 +59,6 @@
     vim
     witr
     yazi
-    yt-dlp
     zola
   ];
 }
