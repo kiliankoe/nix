@@ -21,6 +21,7 @@ _: {
       "affinity"
       "anki"
       "arq"
+      "audacity"
       "balenaetcher"
       "bambu-studio"
       "beeper"
