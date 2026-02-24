@@ -1,18 +1,12 @@
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
-    # nix LSPs
     nil
     nixd
 
-    # languages, package managers
     bun
-    ni
-    nodejs_24
     rustup
 
-    # tools
-    biome
     codex
     ddate
     dive

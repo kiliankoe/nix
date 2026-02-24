@@ -8,7 +8,6 @@
     glab
     k9s
     kubectl
-    npm-check
     pnpm
   ];
 }
