@@ -47,6 +47,7 @@
       # Session variables
       export REPORTTIME="5"
       export LESS="--mouse"
+      export NH_FLAKE="$HOME/nix"
 
       glogs() {
         local job_name="$1"
