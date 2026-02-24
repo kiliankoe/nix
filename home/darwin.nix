@@ -20,9 +20,6 @@
     initContent = ''
       alias brewout="brew outdated"
       alias brewup="brew upgrade && brew cleanup"
-      alias nu="cd ~/nix && nix flake update && cd -"
-      alias nhb="nh darwin build -H $(hostname -s) ~/nix"
-      alias nhs="nh darwin switch -H $(hostname -s) ~/nix"
       # BSD ls flags
       alias ls='ls -G'
       alias l='ls -lAhG'
