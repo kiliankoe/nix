@@ -19,8 +19,8 @@
     hyperfine
     lucky-commit
     lychee
-    mitmproxy
-    mitmproxy2swagger
+    # mitmproxy
+    # mitmproxy2swagger
     neofetch
     openapi-tui
     opencode
