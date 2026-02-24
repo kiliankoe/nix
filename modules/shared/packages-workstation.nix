@@ -7,6 +7,7 @@
     bun
     rustup
 
+    claude-code
     codex
     ddate
     dive

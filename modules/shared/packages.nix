@@ -13,7 +13,6 @@
     atuin
     bat
     btop
-    claude-code
     docker
     docker-compose
     dua
