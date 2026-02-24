@@ -30,7 +30,7 @@ nix flake check --no-build
 
 ## Deployment
 
-- **macOS hosts**: `darwin-rebuild switch --flake .#<host>` or `nhs`
+- **macOS hosts**: `darwin-rebuild switch --flake .#<host>`
 - **NixOS hosts**: `deploy-rs` is configured for remote deployment to kepler and cubesat
 - **Deploy with backup**: `./scripts/deploy-with-backup.sh <host>` creates a tagged restic snapshot before deploying
 
