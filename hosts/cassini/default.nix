@@ -3,6 +3,7 @@
   imports = [
     ../../modules/shared/common.nix
     ../../modules/shared/packages.nix
+    ../../modules/shared/packages-workstation.nix
     ../../modules/shared/package-overrides.nix
     ../../modules/shared/sops.nix
 
