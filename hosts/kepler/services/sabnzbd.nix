@@ -13,6 +13,10 @@
   services.sabnzbd = {
     enable = true;
     group = "media";
+    # Both default to legacy behavior on stateVersion < 26.05, which breaks
+    # first-run and ignores settings. Explicitly opt into the new mode.
+    configFile = null;
+    allowConfigWrite = false;
     settings.misc = {
       port = config.k.ports.sabnzbd_http;
       host = "0.0.0.0";
