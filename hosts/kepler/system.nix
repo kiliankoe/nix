@@ -32,6 +32,12 @@
     "synology/smb_password" = { };
   };
 
+  # Shared group for media services (sabnzbd, sonarr, radarr) to access NAS mount
+  users.groups.media = { };
+  users.users.sabnzbd.extraGroups = [ "media" ];
+  users.users.sonarr.extraGroups = [ "media" ];
+  users.users.radarr.extraGroups = [ "media" ];
+
   # Disable power management (server)
   powerManagement.enable = false;
   # Set CPU governor to performance for better responsiveness

@@ -16,6 +16,9 @@ let
   # Static paths for native NixOS services
   staticBackupPaths = [
     "/var/lib/paperless"
+    "/var/lib/radarr/.config/Radarr"
+    "/var/lib/sabnzbd"
+    "/var/lib/sonarr/.config/NzbDrone"
     "/var/lib/uptime-kuma"
     "/var/backup/postgresql"
   ];

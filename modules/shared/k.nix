@@ -30,6 +30,10 @@
         rustypaste_http = 8401;
         actual_http = 8402;
         jobfinder_http = 8403;
+        sabnzbd_http = 8404;
+        sonarr_http = 8405;
+        radarr_http = 8406;
+
         plex_http = 32400;
       };
       description = ''
