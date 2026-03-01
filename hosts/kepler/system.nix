@@ -33,7 +33,7 @@
   };
 
   # Shared group for media services (sabnzbd, sonarr, radarr) to access NAS mount
-  users.groups.media.gid = 1500;
+  users.groups.media.gid = 984;
   users.users.sabnzbd.extraGroups = [ "media" ];
   users.users.sonarr.extraGroups = [ "media" ];
   users.users.radarr.extraGroups = [ "media" ];
