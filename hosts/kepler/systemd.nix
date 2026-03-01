@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   systemd = {
     targets = {
@@ -115,10 +115,12 @@
             chmod 600 /run/secrets/synology_smb_credentials
           fi
 
-          MEDIA_GID=$(getent group media | cut -d: -f3)
           mount.cifs //marvin/Plex /mnt/media \
-            -o credentials=/run/secrets/synology_smb_credentials,vers=2.0,uid=0,gid="$MEDIA_GID",file_mode=0775,dir_mode=0775
+            -o credentials=/run/secrets/synology_smb_credentials,vers=2.0,uid=0,gid=${toString config.users.groups.media.gid},file_mode=0775,dir_mode=0775
           echo "Mount successful"
+
+          # Ensure download subdirectories exist
+          mkdir -p /mnt/media/download/complete /mnt/media/download/incomplete
         '';
         ExecStop = pkgs.writeShellScript "umount-media" ''
           umount /mnt/media 2>/dev/null || true
