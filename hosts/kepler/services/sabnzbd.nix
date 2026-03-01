@@ -16,7 +16,7 @@
     # Both default to legacy behavior on stateVersion < 26.05, which breaks
     # first-run and ignores settings. Explicitly opt into the new mode.
     configFile = null;
-    allowConfigWrite = false;
+    allowConfigWrite = true;
     settings.misc = {
       port = config.k.ports.sabnzbd_http;
       host = "0.0.0.0";
