@@ -102,7 +102,7 @@ dockerService.mkDockerComposeService {
 
   environment = {
     plausible-db = {
-      POSTGRES_PASSWORD = "postgres";
+      POSTGRES_PASSWORD.secret = "plausible/db_password";
       POSTGRES_USER = "postgres";
       POSTGRES_DB = "plausible_db";
     };
@@ -110,7 +110,7 @@ dockerService.mkDockerComposeService {
       BASE_URL = "https://t.kilko.de";
       SECRET_KEY_BASE.secret = "plausible/secret_key_base";
       DISABLE_REGISTRATION = "true";
-      DATABASE_URL = "postgres://postgres:postgres@plausible-db:5432/plausible_db";
+      DATABASE_URL.secret = "plausible/database_url";
       CLICKHOUSE_DATABASE_URL = "http://plausible-events-db:8123/plausible_events_db";
     };
   };

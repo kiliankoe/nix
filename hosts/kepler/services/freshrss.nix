@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, ... }:
 {
   k.monitoring = {
     httpEndpoints = [
@@ -25,7 +25,7 @@
     };
 
     defaultUser = "admin";
-    passwordFile = pkgs.writeText "freshrss-admin-pass" "admin"; # Default admin password
+    passwordFile = config.sops.secrets."freshrss/admin_password".path;
     # Use nginx and let the module configure the vhost; we'll override the listen port below.
     webserver = "nginx";
     virtualHost = "freshrss";
@@ -58,6 +58,10 @@
         port = config.k.ports.rssbridge_http;
       }
     ];
+  };
+
+  sops.secrets."freshrss/admin_password" = {
+    owner = "freshrss";
   };
 
   networking.firewall.allowedTCPPorts = [
