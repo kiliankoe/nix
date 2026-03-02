@@ -21,21 +21,6 @@
       ];
     };
 
-    # PostgreSQL metrics: connections, query stats, database sizes
-    postgres = {
-      enable = true;
-      dataSourceName = "user=postgres host=/run/postgresql dbname=postgres";
-      runAsLocalSuperUser = true;
-    };
-
-    # Redis metrics (used by paperless)
-    redis = {
-      enable = true;
-      extraFlags = [
-        "--redis.addr=redis://localhost:6379"
-      ];
-    };
-
     # Systemd service states and restart detection
     systemd = {
       enable = true;

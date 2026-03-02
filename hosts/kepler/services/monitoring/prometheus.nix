@@ -122,46 +122,6 @@ let
           ];
         }
         {
-          name = "kepler-database";
-          rules = [
-            # PostgreSQL connection pool
-            {
-              alert = "PostgresConnectionsHigh";
-              expr = "pg_stat_activity_count > 80";
-              for = "5m";
-              labels.severity = "warning";
-              annotations = {
-                summary = "PostgreSQL connections high (>80)";
-                description = "PostgreSQL has {{ $value }} active connections.";
-              };
-            }
-
-            # PostgreSQL connection pool critical
-            {
-              alert = "PostgresConnectionsCritical";
-              expr = "pg_stat_activity_count > 95";
-              for = "2m";
-              labels.severity = "critical";
-              annotations = {
-                summary = "PostgreSQL connections critical (>95)";
-                description = "PostgreSQL has {{ $value }} active connections, approaching max.";
-              };
-            }
-
-            # Redis down
-            {
-              alert = "RedisDown";
-              expr = "redis_up == 0";
-              for = "2m";
-              labels.severity = "critical";
-              annotations = {
-                summary = "Redis is down";
-                description = "Redis server is not responding. Paperless may be affected.";
-              };
-            }
-          ];
-        }
-        {
           name = "kepler-containers";
           rules = [
             # cAdvisor down - alerts when we can't scrape container metrics
@@ -240,32 +200,6 @@ in
         static_configs = [
           {
             targets = [ "localhost:9100" ];
-            labels = {
-              instance = "kepler";
-            };
-          }
-        ];
-      }
-
-      # PostgreSQL exporter
-      {
-        job_name = "postgres";
-        static_configs = [
-          {
-            targets = [ "localhost:9187" ];
-            labels = {
-              instance = "kepler";
-            };
-          }
-        ];
-      }
-
-      # Redis exporter
-      {
-        job_name = "redis";
-        static_configs = [
-          {
-            targets = [ "localhost:9121" ];
             labels = {
               instance = "kepler";
             };
