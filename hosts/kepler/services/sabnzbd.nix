@@ -4,7 +4,7 @@
     httpEndpoints = [
       {
         name = "sabnzbd";
-        url = "http://localhost:${toString config.k.ports.sabnzbd_http}/";
+        url = "http://127.0.0.1:${toString config.k.ports.sabnzbd_http}/";
       }
     ];
     systemdServices = [ "sabnzbd" ];
