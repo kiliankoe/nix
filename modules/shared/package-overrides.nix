@@ -21,6 +21,21 @@ _: {
     # Upstream fix: https://github.com/NixOS/nixpkgs/pull/485980
     # Remove this overlay once that PR is merged and our nixpkgs pin includes it.
     (_final: prev: {
+      pythonPackagesExtensions = (prev.pythonPackagesExtensions or [ ]) ++ [
+        (_pyFinal: pyPrev: {
+          # Work around flaky psycopg pool tests on recent nixpkgs revisions.
+          # Remove once nixpkgs includes the upstream skip for these tests.
+          psycopg = pyPrev.psycopg.overrideAttrs (old: {
+            disabledTestMarks = (old.disabledTestMarks or [ ]) ++ [
+              "slow"
+            ];
+            disabledTests = (old.disabledTests or [ ]) ++ [
+              "test_stats_connect"
+            ];
+          });
+        })
+      ];
+
       python313Packages = prev.python313Packages.overrideScope (
         _pyFinal: pyPrev: {
           jeepney = pyPrev.jeepney.overrideAttrs (_old: {
