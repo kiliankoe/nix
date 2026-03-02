@@ -219,7 +219,6 @@ in
     # 30 days retention
     extraFlags = [
       "--storage.tsdb.retention.time=30d"
-      "--web.enable-lifecycle"
     ];
 
     # Alert rules
