@@ -16,6 +16,7 @@ let
   # Static paths for native NixOS services
   staticBackupPaths = [
     "/var/lib/paperless"
+    "/var/lib/qBittorrent"
     "/var/lib/radarr/.config/Radarr"
     "/var/lib/sabnzbd"
     "/var/lib/sonarr/.config/NzbDrone"

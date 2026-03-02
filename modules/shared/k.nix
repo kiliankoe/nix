@@ -33,6 +33,7 @@
         sabnzbd_http = 8404;
         sonarr_http = 8405;
         radarr_http = 8406;
+        qbittorrent_http = 8407;
 
         plex_http = 32400;
       };

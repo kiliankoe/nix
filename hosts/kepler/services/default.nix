@@ -4,6 +4,7 @@
     # Native NixOS services
     ./freshrss.nix
     ./paperless.nix
+    ./qbittorrent.nix
     ./radarr.nix
     ./sabnzbd.nix
     ./sonarr.nix

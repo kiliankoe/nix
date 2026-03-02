@@ -37,6 +37,7 @@
   users.users.sabnzbd.extraGroups = [ "media" ];
   users.users.sonarr.extraGroups = [ "media" ];
   users.users.radarr.extraGroups = [ "media" ];
+  users.users.qbittorrent.extraGroups = [ "media" ];
 
   # Disable power management (server)
   powerManagement.enable = false;

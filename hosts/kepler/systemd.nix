@@ -37,6 +37,10 @@
       after = [ "media-mount.service" ];
       wants = [ "media-mount.service" ];
     };
+    services.qbittorrent = {
+      after = [ "media-mount.service" ];
+      wants = [ "media-mount.service" ];
+    };
 
     # Mount service that always succeeds (even if mount fails)
     services.immich-mount = {
