@@ -21,7 +21,6 @@
     lychee
     # mitmproxy
     # mitmproxy2swagger
-    neofetch
     openapi-tui
     opencode
     ripgrep-all
