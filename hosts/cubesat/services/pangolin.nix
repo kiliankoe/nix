@@ -7,7 +7,7 @@
 let
   dataDir = "/var/lib/pangolin";
   geoipDir = "/var/lib/GeoIP";
-  domain = "gptdash.de";
+  domain = "kilko.de";
   dashboardDomain = "tunnel.${domain}";
 in
 {
@@ -28,7 +28,16 @@ in
       owner = "pangolin";
     };
     "maxmind/license_key" = { };
+    "hetzner/api_token" = { };
   };
+
+  sops.templates."traefik-env".content = ''
+    HETZNER_API_TOKEN=${config.sops.placeholder."hetzner/api_token"}
+  '';
+
+  services.traefik.environmentFiles = [
+    config.sops.templates."traefik-env".path
+  ];
 
   services.geoipupdate = {
     enable = true;
@@ -62,12 +71,28 @@ in
     enable = true;
     baseDomain = domain;
     inherit dashboardDomain dataDir;
+    dnsProvider = "hetzner";
     letsEncryptEmail = "me@kilian.io";
     openFirewall = true;
     environmentFile = "/dev/null";
 
     settings = {
       app.log_level = "info";
+
+      domains = {
+        domain1 = {
+          base_domain = domain;
+          prefer_wildcard_cert = true;
+        };
+        domain2 = {
+          base_domain = "bsi.lol";
+          prefer_wildcard_cert = true;
+        };
+        domain3 = {
+          base_domain = "dresden.lol";
+          prefer_wildcard_cert = true;
+        };
+      };
 
       server = {
         secret = "@SERVER_SECRET@";
@@ -104,7 +129,6 @@ in
         disable_user_create_org = false;
         allow_raw_resources = true;
         allow_base_domain_resources = true;
-        disable_config_managed_domains = true;
       };
     };
   };
