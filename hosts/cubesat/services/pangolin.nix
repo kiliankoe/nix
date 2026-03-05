@@ -92,6 +92,10 @@ in
           base_domain = "dresden.lol";
           prefer_wildcard_cert = true;
         };
+        domain4 = {
+          base_domain = "dvbpcb.de";
+          prefer_wildcard_cert = true;
+        };
       };
 
       server = {
