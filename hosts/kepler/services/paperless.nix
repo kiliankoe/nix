@@ -29,6 +29,9 @@
       PAPERLESS_TIME_ZONE = config.time.timeZone;
       PAPERLESS_ADMIN_USER = "admin";
 
+      PAPERLESS_URL = "https://docs.kilko.de";
+      PAPERLESS_CSRF_TRUSTED_ORIGINS = "https://docs.kilko.de";
+
       PAPERLESS_REDIS = "redis://localhost:6379";
 
       PAPERLESS_DBENGINE = "postgresql";

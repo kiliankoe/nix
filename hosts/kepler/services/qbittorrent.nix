@@ -20,6 +20,11 @@
         TempPath = "/mnt/media/download/incomplete";
         TempPathEnabled = true;
       };
+      Preferences.WebUI = {
+        CSRFProtection = true;
+        HostHeaderValidation = true;
+        ServerDomains = "qbit.kilko.de";
+      };
     };
   };
 
