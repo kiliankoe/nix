@@ -22,6 +22,7 @@
       host = "0.0.0.0";
       host_whitelist = "kepler, kepler.local, localhost, sabnzbd.kilko.de";
       inet_exposure = "api+web (locally no auth)";
+      cache_limit = "1G";
       download_dir = "/mnt/media/download/incomplete";
       complete_dir = "/mnt/media/download/complete";
     };

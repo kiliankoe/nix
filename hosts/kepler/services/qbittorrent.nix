@@ -19,6 +19,9 @@
         DefaultSavePath = "/mnt/media/download/complete";
         TempPath = "/mnt/media/download/incomplete";
         TempPathEnabled = true;
+        GlobalMaxRatio = 2;
+        GlobalMaxSeedingMinutes = 50400;
+        ShareLimitAction = "Stop";
       };
       Preferences.WebUI = {
         CSRFProtection = true;
