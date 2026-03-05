@@ -41,6 +41,11 @@
 
     # unfortunately zsh.sessionVariables or zsh.localVariables doesn't appear to be working
     initContent = ''
+      # Auto-attach to tmux for interactive shells (set NO_TMUX=1 to bypass)
+      if command -v tmux &> /dev/null && [ -z "$TMUX" ] && [[ $- == *i* ]] && [ -z "$NO_TMUX" ]; then
+        exec tmux new-session -A -s main
+      fi
+
       # User-local binaries
       export PATH="$HOME/bin:$HOME/.bun/bin:$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
 
