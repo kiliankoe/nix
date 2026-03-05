@@ -13,8 +13,6 @@
     atuin
     bat
     btop
-    docker
-    docker-compose
     dua
     eza
     fd

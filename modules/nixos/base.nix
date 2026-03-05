@@ -31,7 +31,6 @@
     extraGroups = [
       "networkmanager"
       "wheel"
-      "docker"
     ];
     openssh.authorizedKeys.keys = [
       # Just in case
@@ -76,8 +75,6 @@
     };
   };
   services.tailscale.enable = true;
-  virtualisation.docker.enable = true;
-
   environment.systemPackages = with pkgs; [
     systemctl-tui
   ];

@@ -5,10 +5,12 @@
 
     ../../modules/shared/common.nix
     ../../modules/shared/packages.nix
+    ../../modules/shared/packages-docker.nix
     ../../modules/shared/package-overrides.nix
     ../../modules/shared/sops.nix
 
     ../../modules/nixos/base.nix
+    ../../modules/nixos/docker.nix
 
     ./home.nix
     ./system.nix
