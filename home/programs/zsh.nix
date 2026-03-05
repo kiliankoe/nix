@@ -49,6 +49,8 @@
       export LESS="--mouse"
       export NH_FLAKE="$HOME/nix"
 
+      export OPENCODE_ENABLE_EXA=1
+
       glogs() {
         local job_name="$1"
 
