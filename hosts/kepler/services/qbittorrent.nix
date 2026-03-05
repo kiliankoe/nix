@@ -24,6 +24,8 @@
         CSRFProtection = true;
         HostHeaderValidation = true;
         ServerDomains = "qbit.kilko.de";
+        AuthSubnetWhitelistEnabled = true;
+        AuthSubnetWhitelist = "127.0.0.1/32, 100.99.78.93/32";
       };
     };
   };
