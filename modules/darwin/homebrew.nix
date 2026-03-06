@@ -69,7 +69,6 @@ _: {
       "obsidian"
       "ogdesign-eagle"
       "ollama-app"
-      "opencode-desktop"
       "openscad@snapshot"
       "orbstack"
       "pictogram"
