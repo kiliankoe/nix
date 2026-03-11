@@ -40,64 +40,66 @@
     };
 
     # unfortunately zsh.sessionVariables or zsh.localVariables doesn't appear to be working
-    initContent = ''
-      # Auto-attach to tmux for interactive shells (set NO_TMUX=1 to bypass)
-      if command -v tmux &> /dev/null && [ -z "$TMUX" ] && [[ $- == *i* ]] && [ -z "$NO_TMUX" ]; then
-        exec tmux new-session -A -s main
-      fi
+    initContent =
+      pkgs.lib.optionalString (!pkgs.stdenv.isDarwin) ''
+        # Auto-attach to tmux for interactive shells (set NO_TMUX=1 to bypass)
+        if command -v tmux &> /dev/null && [ -z "$TMUX" ] && [[ $- == *i* ]] && [ -z "$NO_TMUX" ]; then
+          exec tmux new-session -A -s main
+        fi
+      ''
+      + ''
+        # User-local binaries
+        export PATH="$HOME/bin:$HOME/.bun/bin:$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
 
-      # User-local binaries
-      export PATH="$HOME/bin:$HOME/.bun/bin:$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
+        # Session variables
+        export REPORTTIME="5"
+        export LESS="--mouse"
+        export NH_FLAKE="$HOME/nix"
 
-      # Session variables
-      export REPORTTIME="5"
-      export LESS="--mouse"
-      export NH_FLAKE="$HOME/nix"
+        export OPENCODE_ENABLE_EXA=1
 
-      export OPENCODE_ENABLE_EXA=1
+        glogs() {
+          local job_name="$1"
 
-      glogs() {
-        local job_name="$1"
+          if [ -z "$job_name" ]; then
+            echo "Usage: glogs <job-name>"
+            return 1
+          fi
 
-        if [ -z "$job_name" ]; then
-          echo "Usage: glogs <job-name>"
-          return 1
+          local mr_iid
+          mr_iid="$(glab mr view --output json | jq -r '.iid')" || return 1
+
+          local pipeline_id
+          pipeline_id="$(glab api "projects/:id/merge_requests/$mr_iid/pipelines" \
+            | jq -r 'max_by(.id).id')" || return 1
+
+          glab ci trace -p "$pipeline_id" "$job_name"
+        }
+
+      ''
+      + pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
+        export ICLOUD_DRIVE="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
+      ''
+      + ''
+
+        # Load sops-managed environment variables
+        if [[ -f "$HOME/.config/sops/env.sh" ]]; then
+          source "$HOME/.config/sops/env.sh"
         fi
 
-        local mr_iid
-        mr_iid="$(glab mr view --output json | jq -r '.iid')" || return 1
+        # Load deno environment if it exists (will work for any user)
+        if [[ -f "$HOME/.deno/env" ]]; then
+          source "$HOME/.deno/env"
+        fi
 
-        local pipeline_id
-        pipeline_id="$(glab api "projects/:id/merge_requests/$mr_iid/pipelines" \
-          | jq -r 'max_by(.id).id')" || return 1
+        # Functions
+        function mkcd() { mkdir -p "$1" && cd "$1"; }
 
-        glab ci trace -p "$pipeline_id" "$job_name"
-      }
-
-    ''
-    + pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
-      export ICLOUD_DRIVE="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
-    ''
-    + ''
-
-      # Load sops-managed environment variables
-      if [[ -f "$HOME/.config/sops/env.sh" ]]; then
-        source "$HOME/.config/sops/env.sh"
-      fi
-
-      # Load deno environment if it exists (will work for any user)
-      if [[ -f "$HOME/.deno/env" ]]; then
-        source "$HOME/.deno/env"
-      fi
-
-      # Functions
-      function mkcd() { mkdir -p "$1" && cd "$1"; }
-
-      # atuin initialization
-      if command -v atuin >/dev/null 2>&1; then
-        eval "$(atuin init zsh --disable-up-arrow)"
-      fi
-    '';
+        # atuin initialization
+        if command -v atuin >/dev/null 2>&1; then
+          eval "$(atuin init zsh --disable-up-arrow)"
+        fi
+      '';
 
     # Platform-specific zsh opts are in darwin.nix and nixos.nix
   };
