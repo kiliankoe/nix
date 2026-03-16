@@ -8,12 +8,10 @@
     rustup
 
     claude-code
-    codex
     ddate
     dive
     ffmpeg
     genact
-    github-copilot-cli
     gping
     heh
     hyperfine
