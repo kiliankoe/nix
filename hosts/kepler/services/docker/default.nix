@@ -11,7 +11,6 @@
     ./newsdiff.nix
     ./plausible.nix
     ./rustypaste.nix
-    ./speedtest-tracker.nix
     ./swiftdebot.nix
     ./watchtower.nix
     ./wbbash.nix
