@@ -12,7 +12,7 @@
 let
   # Paths to back up
   backupPaths = [
-    "/var/lib/pangolin"
+    "/var/lib/pangolin/config"
   ];
 
   # Common environment setup for both backup and restore
