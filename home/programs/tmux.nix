@@ -65,14 +65,14 @@ in
       bind-key -n C-S-Left swap-window -t -1\; select-window -t -1
       bind-key -n C-S-Right swap-window -t +1\; select-window -t +1
 
-      # Format for active window: show directory name for zsh, command name otherwise, and Z if zoomed
-      set-window-option -g window-status-current-format " #I:#(if [ \"#{pane_current_command}\" = \"zsh\" ]; then basename \"#{pane_current_path}\" 2>/dev/null || echo \"?\"; else echo \"#{pane_current_command}\"; fi)#{?window_zoomed_flag, Z,} "
+      # Format for active window: always show directory, append |command when non-shell, and Z if zoomed
+      set-window-option -g window-status-current-format " #I:#(basename '#{pane_current_path}')#(if [ '#{pane_current_command}' != 'zsh' ]; then printf '|#{pane_current_command}'; fi)#{?window_zoomed_flag, Z,} "
 
       # Format for inactive windows: same logic as active
-      set-window-option -g window-status-format " #I:#(if [ \"#{pane_current_command}\" = \"zsh\" ]; then basename \"#{pane_current_path}\" 2>/dev/null || echo \"?\"; else echo \"#{pane_current_command}\"; fi)#{?window_zoomed_flag, Z,} "
+      set-window-option -g window-status-format " #I:#(basename '#{pane_current_path}')#(if [ '#{pane_current_command}' != 'zsh' ]; then printf '|#{pane_current_command}'; fi)#{?window_zoomed_flag, Z,} "
 
       # Set terminal window title to reflect current window
-      set-option -g set-titles-string "#I:#(if [ \"#{pane_current_command}\" = \"zsh\" ]; then basename \"#{pane_current_path}\" 2>/dev/null || echo \"?\"; else echo \"#{pane_current_command}\"; fi)#{?window_zoomed_flag, Z,}"
+      set-option -g set-titles-string "#I:#(basename '#{pane_current_path}')#(if [ '#{pane_current_command}' != 'zsh' ]; then printf '|#{pane_current_command}'; fi)#{?window_zoomed_flag, Z,}"
 
       # Reload config on prefix-r - is this even still necessary with nix/home-manager?
       bind r source-file ~/.config/tmux/tmux.conf \; display-message "Reloaded config..."
