@@ -12,7 +12,6 @@ _: {
       "docker-desktop"
       "figma"
       "font-open-sans"
-      "google-chrome"
       "microsoft-auto-update"
       "microsoft-outlook"
       "microsoft-teams"

@@ -48,6 +48,7 @@ _: {
       "freecad"
       "ghostty"
       "gimp"
+      "google-chrome"
       "godot"
       "gpg-suite"
       "hex-fiend"
