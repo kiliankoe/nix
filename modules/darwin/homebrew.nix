@@ -27,7 +27,6 @@ _: {
       "beeper"
       "bettermouse"
       "blender"
-      "chatgpt"
       "claude"
       "coconutbattery"
       "conductor"
@@ -64,8 +63,6 @@ _: {
       "macwhisper"
       "monitorcontrol"
       "mountain-duck"
-      "netnewswire"
-      "nvidia-geforce-now"
       "obsidian"
       "ogdesign-eagle"
       "ollama-app"
@@ -102,7 +99,6 @@ _: {
       "Keynote" = 409183694;
       "Lungo" = 1263070803;
       "Magnet" = 441258766;
-      "Navigator" = 1590354537;
       "Numbers" = 409203825;
       "Pages" = 409201541;
       "Shareful" = 1522267256;
