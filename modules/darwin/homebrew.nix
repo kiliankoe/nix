@@ -76,6 +76,7 @@ _: {
       "sloth"
       "soulver"
       "steam"
+      "studiolinkstandalone"
       "sublime-text"
       "suspicious-package"
       "tableplus"
