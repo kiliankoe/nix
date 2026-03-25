@@ -42,7 +42,6 @@
       wants = [ "media-mount.service" ];
     };
 
-    # Mount service that always succeeds (even if mount fails)
     services.immich-mount = {
       description = "Mount Synology NAS for Immich";
       after = [ "network-online.target" ];
@@ -54,28 +53,34 @@
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
+        Restart = "on-failure";
+        RestartSec = "10s";
+        # Allow retries during activation without failing the switch
+        StartLimitIntervalSec = 120;
+        StartLimitBurst = 5;
         ExecStart = pkgs.writeShellScript "mount-immich" ''
-          set -e
-
-          # Create mount point if needed
           mkdir -p /mnt/photos/immich
 
-          # Skip if already mounted
           if mountpoint -q /mnt/photos/immich; then
             echo "Already mounted"
             exit 0
           fi
 
-          # Generate credentials file from sops secrets
+          # Wait for sops secrets (may not be available immediately during activation)
+          for i in $(seq 1 30); do
+            [ -f /run/secrets/synology/smb_username ] && break
+            echo "Waiting for secrets... ($i/30)"
+            sleep 1
+          done
           if [ ! -f /run/secrets/synology/smb_username ]; then
-            echo "Secrets not available"
+            echo "Secrets not available after 30s"
             exit 1
           fi
+
           echo "username=$(cat /run/secrets/synology/smb_username)" > /run/secrets/synology_smb_credentials
           echo "password=$(cat /run/secrets/synology/smb_password)" >> /run/secrets/synology_smb_credentials
           chmod 600 /run/secrets/synology_smb_credentials
 
-          # Mount the NAS
           mount.cifs //marvin/photos/immich /mnt/photos/immich \
             -o credentials=/run/secrets/synology_smb_credentials,vers=2.0,uid=1000,gid=100,file_mode=0664,dir_mode=0775
           echo "Mount successful"
@@ -97,9 +102,11 @@
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
+        Restart = "on-failure";
+        RestartSec = "10s";
+        StartLimitIntervalSec = 120;
+        StartLimitBurst = 5;
         ExecStart = pkgs.writeShellScript "mount-media" ''
-          set -e
-
           mkdir -p /mnt/media
 
           if mountpoint -q /mnt/media; then
@@ -107,12 +114,17 @@
             exit 0
           fi
 
+          # Wait for sops secrets (may not be available immediately during activation)
+          for i in $(seq 1 30); do
+            [ -f /run/secrets/synology/smb_username ] && break
+            echo "Waiting for secrets... ($i/30)"
+            sleep 1
+          done
           if [ ! -f /run/secrets/synology/smb_username ]; then
-            echo "Secrets not available"
+            echo "Secrets not available after 30s"
             exit 1
           fi
 
-          # Reuse existing credentials file or create one
           if [ ! -f /run/secrets/synology_smb_credentials ]; then
             echo "username=$(cat /run/secrets/synology/smb_username)" > /run/secrets/synology_smb_credentials
             echo "password=$(cat /run/secrets/synology/smb_password)" >> /run/secrets/synology_smb_credentials
@@ -123,7 +135,6 @@
             -o credentials=/run/secrets/synology_smb_credentials,vers=2.0,uid=0,gid=${toString config.users.groups.media.gid},file_mode=0775,dir_mode=0775
           echo "Mount successful"
 
-          # Ensure download subdirectories exist
           mkdir -p /mnt/media/download/complete /mnt/media/download/incomplete
         '';
         ExecStop = pkgs.writeShellScript "umount-media" ''
