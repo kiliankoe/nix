@@ -5,6 +5,7 @@
     nixd
 
     bun
+    nodejs
     rustup
 
     claude-code
