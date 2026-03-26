@@ -43,6 +43,7 @@ in
         extensions = {
           ParserFunctions = null;
           VisualEditor = null;
+          Cite = null;
         };
 
         extraConfig = ''
