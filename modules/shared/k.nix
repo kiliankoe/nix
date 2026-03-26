@@ -34,6 +34,8 @@
         sonarr_http = 8405;
         radarr_http = 8406;
         qbittorrent_http = 8407;
+        mediawiki_personal_http = 8408;
+        mediawiki_family_http = 8409;
 
         plex_http = 32400;
       };
