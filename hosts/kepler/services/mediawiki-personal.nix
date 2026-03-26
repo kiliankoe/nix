@@ -42,7 +42,6 @@ in
 
         extensions = {
           ParserFunctions = null;
-          Interwiki = null;
         };
 
         extraConfig = ''
