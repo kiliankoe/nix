@@ -42,6 +42,7 @@ in
 
         extensions = {
           ParserFunctions = null;
+          VisualEditor = null;
         };
 
         extraConfig = ''
@@ -51,6 +52,9 @@ in
           $wgGroupPermissions['*']['createaccount'] = false;
 
           $wgPingback = false;
+
+          # Use bundled Parsoid for VisualEditor
+          $wgVisualEditorParsoidAutoConfig = true;
         '';
       };
 
