@@ -68,7 +68,9 @@ in
   };
 
   # Host-side: sops secret (decrypted to /run/secrets/mediawiki-personal/admin_password)
-  sops.secrets."mediawiki-personal/admin_password" = { };
+  sops.secrets."mediawiki-personal/admin_password" = {
+    mode = "0444";
+  };
 
   # Host-side: ensure bind-mount target directories exist
   systemd.tmpfiles.rules = [
