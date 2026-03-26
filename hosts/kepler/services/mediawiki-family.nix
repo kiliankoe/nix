@@ -58,6 +58,7 @@ in
           $wgGroupPermissions['user']['edit'] = true;
 
           $wgPingback = false;
+          $wgJobRunRate = 1;
 
           # Use bundled Parsoid for VisualEditor
           $wgVisualEditorParsoidAutoConfig = true;

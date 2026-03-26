@@ -53,6 +53,7 @@ in
           $wgGroupPermissions['*']['createaccount'] = false;
 
           $wgPingback = false;
+          $wgJobRunRate = 1;
 
           # Use bundled Parsoid for VisualEditor
           $wgVisualEditorParsoidAutoConfig = true;
