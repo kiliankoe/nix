@@ -51,6 +51,8 @@ in
           $wgGroupPermissions['*']['edit'] = false;
           $wgGroupPermissions['*']['createaccount'] = false;
 
+          $wgLanguageCode = 'de';
+
           # Registered users (family members) can edit
           $wgGroupPermissions['user']['edit'] = true;
 
