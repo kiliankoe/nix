@@ -85,6 +85,7 @@ in
       services.nginx.virtualHosts."wiki.kilko.de".extraConfig = ''
         client_max_body_size 100M;
       '';
+      services.nginx.virtualHosts."wiki.kilko.de".locations."/".return = "302 /wiki/";
       services.nginx.virtualHosts."wiki.kilko.de".listen = [
         {
           addr = "0.0.0.0";

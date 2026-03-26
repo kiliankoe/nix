@@ -33,7 +33,7 @@ in
         enable = true;
         name = "Költzsch Wiki";
         webserver = "nginx";
-        nginx.hostName = "wiki-family";
+        nginx.hostName = "wiki.koeltzs.ch";
         passwordFile = "/run/secrets/mediawiki-family/admin_password";
 
         database = {
@@ -42,6 +42,7 @@ in
 
         extensions = {
           ParserFunctions = null;
+          VisualEditor = null;
         };
 
         extraConfig = ''
@@ -54,10 +55,36 @@ in
           $wgGroupPermissions['user']['edit'] = true;
 
           $wgPingback = false;
+
+          # Use bundled Parsoid for VisualEditor
+          $wgVisualEditorParsoidAutoConfig = true;
+
+          $wgEnableUploads = true;
+          $wgFileExtensions = array_merge( $wgFileExtensions, [
+            'pdf', 'djvu',
+            'mp3', 'ogg', 'flac', 'wav',
+            'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'odt', 'ods', 'odp',
+          ] );
+          $wgMaxUploadSize = 50 * 1024 * 1024;
         '';
+
+        poolConfig = {
+          "pm" = "dynamic";
+          "pm.max_children" = 32;
+          "pm.start_servers" = 2;
+          "pm.min_spare_servers" = 2;
+          "pm.max_spare_servers" = 4;
+          "pm.max_requests" = 500;
+          "php_admin_value[upload_max_filesize]" = "50M";
+          "php_admin_value[post_max_size]" = "50M";
+        };
       };
 
-      services.nginx.virtualHosts.wiki-family.listen = [
+      services.nginx.virtualHosts."wiki.koeltzs.ch".extraConfig = ''
+        client_max_body_size 50M;
+      '';
+      services.nginx.virtualHosts."wiki.koeltzs.ch".locations."/".return = "302 /wiki/";
+      services.nginx.virtualHosts."wiki.koeltzs.ch".listen = [
         {
           addr = "0.0.0.0";
           inherit port;
