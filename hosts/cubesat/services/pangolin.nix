@@ -96,6 +96,10 @@ in
           base_domain = "dvbpcb.de";
           prefer_wildcard_cert = true;
         };
+        domain5 = {
+          base_domain = "koeltzs.ch";
+          prefer_wildcard_cert = true;
+        };
       };
 
       server = {
