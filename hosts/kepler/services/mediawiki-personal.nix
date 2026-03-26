@@ -55,9 +55,36 @@ in
 
           # Use bundled Parsoid for VisualEditor
           $wgVisualEditorParsoidAutoConfig = true;
+
+          $wgEnableUploads = true;
+          $wgFileExtensions = array_merge( $wgFileExtensions, [
+            'pdf', 'djvu',
+            'svg',
+            'mp3', 'ogg', 'flac', 'wav',
+            'mp4', 'webm', 'ogv', 'mov',
+            'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'odt', 'ods', 'odp',
+            'txt', 'csv', 'json', 'xml',
+            'zip', 'gz', 'bz2', 'xz', '7z', 'tar',
+            'webp', 'ico', 'bmp', 'tiff', 'tif',
+          ] );
+          $wgMaxUploadSize = 100 * 1024 * 1024;
         '';
+
+        poolConfig = {
+          "pm" = "dynamic";
+          "pm.max_children" = 32;
+          "pm.start_servers" = 2;
+          "pm.min_spare_servers" = 2;
+          "pm.max_spare_servers" = 4;
+          "pm.max_requests" = 500;
+          "php_admin_value[upload_max_filesize]" = "100M";
+          "php_admin_value[post_max_size]" = "100M";
+        };
       };
 
+      services.nginx.virtualHosts."wiki.kilko.de".extraConfig = ''
+        client_max_body_size 100M;
+      '';
       services.nginx.virtualHosts."wiki.kilko.de".listen = [
         {
           addr = "0.0.0.0";
