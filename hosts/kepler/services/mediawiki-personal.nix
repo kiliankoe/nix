@@ -28,91 +28,100 @@ in
       };
     };
 
-    config = _: {
-      services.mediawiki = {
-        enable = true;
-        name = "Kilian's Wiki";
-        webserver = "nginx";
-        nginx.hostName = "wiki.kilko.de";
-        url = "https://wiki.kilko.de";
-        passwordFile = "/run/secrets/mediawiki-personal/admin_password";
+    config =
+      { pkgs, ... }:
+      {
+        # PdfHandler needs poppler_utils for pdftotext / pdfinfo
+        environment.systemPackages = [ pkgs.poppler-utils ];
 
-        database = {
-          type = "sqlite";
+        services.mediawiki = {
+          enable = true;
+          name = "Kilian's Wiki";
+          webserver = "nginx";
+          nginx.hostName = "wiki.kilko.de";
+          url = "https://wiki.kilko.de";
+          passwordFile = "/run/secrets/mediawiki-personal/admin_password";
+
+          database = {
+            type = "sqlite";
+          };
+
+          extensions = {
+            ParserFunctions = null;
+            VisualEditor = null;
+            Cite = null;
+            SyntaxHighlight_GeSHi = null;
+            MultimediaViewer = null;
+            TextExtracts = null;
+            Math = null;
+            PdfHandler = null;
+          };
+
+          extraConfig = ''
+            # Private wiki — require login to read/edit
+            $wgGroupPermissions['*']['read'] = false;
+            $wgGroupPermissions['*']['edit'] = false;
+            $wgGroupPermissions['*']['createaccount'] = false;
+
+            $wgPingback = false;
+            $wgJobRunRate = 1;
+
+            # Use bundled Parsoid for VisualEditor
+            $wgVisualEditorParsoidAutoConfig = true;
+
+            $wgEnableUploads = true;
+            $wgFileExtensions = array_merge( $wgFileExtensions, [
+              'pdf', 'djvu',
+              'svg',
+              'mp3', 'ogg', 'flac', 'wav',
+              'mp4', 'webm', 'ogv', 'mov',
+              'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'odt', 'ods', 'odp',
+              'txt', 'csv', 'json', 'xml',
+              'zip', 'gz', 'bz2', 'xz', '7z', 'tar',
+              'webp', 'ico', 'bmp', 'tiff', 'tif',
+            ] );
+            $wgMaxUploadSize = 100 * 1024 * 1024;
+
+            # SMTP (port 465, implicit TLS)
+            $wgSMTP = [
+              'host'     => 'ssl://' . trim(file_get_contents('/run/secrets/mediawiki-personal/smtp_host')),
+              'IDHost'   => 'wiki.kilko.de',
+              'port'     => 465,
+              'auth'     => true,
+              'username' => trim(file_get_contents('/run/secrets/mediawiki-personal/smtp_username')),
+              'password' => trim(file_get_contents('/run/secrets/mediawiki-personal/smtp_password')),
+            ];
+            $wgPasswordSender = 'wiki@kilko.de';
+            $wgEmergencyContact = 'wiki@kilko.de';
+          '';
+
+          poolConfig = {
+            "pm" = "dynamic";
+            "pm.max_children" = 32;
+            "pm.start_servers" = 2;
+            "pm.min_spare_servers" = 2;
+            "pm.max_spare_servers" = 4;
+            "pm.max_requests" = 500;
+            "php_admin_value[upload_max_filesize]" = "100M";
+            "php_admin_value[post_max_size]" = "100M";
+          };
         };
 
-        extensions = {
-          ParserFunctions = null;
-          VisualEditor = null;
-          Cite = null;
-          SyntaxHighlight_GeSHi = null;
-        };
-
-        extraConfig = ''
-          # Private wiki — require login to read/edit
-          $wgGroupPermissions['*']['read'] = false;
-          $wgGroupPermissions['*']['edit'] = false;
-          $wgGroupPermissions['*']['createaccount'] = false;
-
-          $wgPingback = false;
-          $wgJobRunRate = 1;
-
-          # Use bundled Parsoid for VisualEditor
-          $wgVisualEditorParsoidAutoConfig = true;
-
-          $wgEnableUploads = true;
-          $wgFileExtensions = array_merge( $wgFileExtensions, [
-            'pdf', 'djvu',
-            'svg',
-            'mp3', 'ogg', 'flac', 'wav',
-            'mp4', 'webm', 'ogv', 'mov',
-            'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'odt', 'ods', 'odp',
-            'txt', 'csv', 'json', 'xml',
-            'zip', 'gz', 'bz2', 'xz', '7z', 'tar',
-            'webp', 'ico', 'bmp', 'tiff', 'tif',
-          ] );
-          $wgMaxUploadSize = 100 * 1024 * 1024;
-
-          # SMTP (port 465, implicit TLS)
-          $wgSMTP = [
-            'host'     => 'ssl://' . trim(file_get_contents('/run/secrets/mediawiki-personal/smtp_host')),
-            'IDHost'   => 'wiki.kilko.de',
-            'port'     => 465,
-            'auth'     => true,
-            'username' => trim(file_get_contents('/run/secrets/mediawiki-personal/smtp_username')),
-            'password' => trim(file_get_contents('/run/secrets/mediawiki-personal/smtp_password')),
-          ];
-          $wgPasswordSender = 'wiki@kilko.de';
-          $wgEmergencyContact = 'wiki@kilko.de';
+        services.nginx.virtualHosts."wiki.kilko.de".extraConfig = ''
+          absolute_redirect off;
+          client_max_body_size 100M;
         '';
+        services.nginx.virtualHosts."wiki.kilko.de".listen = [
+          {
+            addr = "0.0.0.0";
+            inherit port;
+          }
+        ];
 
-        poolConfig = {
-          "pm" = "dynamic";
-          "pm.max_children" = 32;
-          "pm.start_servers" = 2;
-          "pm.min_spare_servers" = 2;
-          "pm.max_spare_servers" = 4;
-          "pm.max_requests" = 500;
-          "php_admin_value[upload_max_filesize]" = "100M";
-          "php_admin_value[post_max_size]" = "100M";
-        };
+        networking.firewall.allowedTCPPorts = [ port ];
+
+        system.stateVersion = "24.11";
       };
-
-      services.nginx.virtualHosts."wiki.kilko.de".extraConfig = ''
-        absolute_redirect off;
-        client_max_body_size 100M;
-      '';
-      services.nginx.virtualHosts."wiki.kilko.de".listen = [
-        {
-          addr = "0.0.0.0";
-          inherit port;
-        }
-      ];
-
-      networking.firewall.allowedTCPPorts = [ port ];
-
-      system.stateVersion = "24.11";
-    };
   };
 
   # Host-side: sops secrets (decrypted to /run/secrets/mediawiki-personal/)
