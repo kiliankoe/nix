@@ -71,6 +71,18 @@ in
             'webp', 'ico', 'bmp', 'tiff', 'tif',
           ] );
           $wgMaxUploadSize = 100 * 1024 * 1024;
+
+          # SMTP (port 465, implicit TLS)
+          $wgSMTP = [
+            'host'     => 'ssl://' . trim(file_get_contents('/run/secrets/mediawiki-personal/smtp_host')),
+            'IDHost'   => 'wiki.kilko.de',
+            'port'     => 465,
+            'auth'     => true,
+            'username' => trim(file_get_contents('/run/secrets/mediawiki-personal/smtp_username')),
+            'password' => trim(file_get_contents('/run/secrets/mediawiki-personal/smtp_password')),
+          ];
+          $wgPasswordSender = 'wiki@kilko.de';
+          $wgEmergencyContact = 'wiki@kilko.de';
         '';
 
         poolConfig = {
@@ -102,8 +114,17 @@ in
     };
   };
 
-  # Host-side: sops secret (decrypted to /run/secrets/mediawiki-personal/admin_password)
+  # Host-side: sops secrets (decrypted to /run/secrets/mediawiki-personal/)
   sops.secrets."mediawiki-personal/admin_password" = {
+    mode = "0444";
+  };
+  sops.secrets."mediawiki-personal/smtp_host" = {
+    mode = "0444";
+  };
+  sops.secrets."mediawiki-personal/smtp_username" = {
+    mode = "0444";
+  };
+  sops.secrets."mediawiki-personal/smtp_password" = {
     mode = "0444";
   };
 

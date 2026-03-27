@@ -71,6 +71,18 @@ in
             'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'odt', 'ods', 'odp',
           ] );
           $wgMaxUploadSize = 50 * 1024 * 1024;
+
+          # SMTP (port 465, implicit TLS)
+          $wgSMTP = [
+            'host'     => 'ssl://' . trim(file_get_contents('/run/secrets/mediawiki-family/smtp_host')),
+            'IDHost'   => 'wiki.koeltzs.ch',
+            'port'     => 465,
+            'auth'     => true,
+            'username' => trim(file_get_contents('/run/secrets/mediawiki-family/smtp_username')),
+            'password' => trim(file_get_contents('/run/secrets/mediawiki-family/smtp_password')),
+          ];
+          $wgPasswordSender = 'wiki@koeltzs.ch';
+          $wgEmergencyContact = 'wiki@koeltzs.ch';
         '';
 
         poolConfig = {
@@ -102,8 +114,17 @@ in
     };
   };
 
-  # Host-side: sops secret (decrypted to /run/secrets/mediawiki-family/admin_password)
+  # Host-side: sops secrets (decrypted to /run/secrets/mediawiki-family/)
   sops.secrets."mediawiki-family/admin_password" = {
+    mode = "0444";
+  };
+  sops.secrets."mediawiki-family/smtp_host" = {
+    mode = "0444";
+  };
+  sops.secrets."mediawiki-family/smtp_username" = {
+    mode = "0444";
+  };
+  sops.secrets."mediawiki-family/smtp_password" = {
     mode = "0444";
   };
 
