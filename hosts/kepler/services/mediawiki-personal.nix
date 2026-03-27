@@ -45,6 +45,7 @@ in
           ParserFunctions = null;
           VisualEditor = null;
           Cite = null;
+          SyntaxHighlight_GeSHi = null;
         };
 
         extraConfig = ''
