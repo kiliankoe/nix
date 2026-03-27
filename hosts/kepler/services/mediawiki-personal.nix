@@ -34,6 +34,7 @@ in
         name = "Kilian's Wiki";
         webserver = "nginx";
         nginx.hostName = "wiki.kilko.de";
+        url = "https://wiki.kilko.de";
         passwordFile = "/run/secrets/mediawiki-personal/admin_password";
 
         database = {
@@ -85,9 +86,9 @@ in
       };
 
       services.nginx.virtualHosts."wiki.kilko.de".extraConfig = ''
+        absolute_redirect off;
         client_max_body_size 100M;
       '';
-      services.nginx.virtualHosts."wiki.kilko.de".locations."/".return = "302 /wiki/";
       services.nginx.virtualHosts."wiki.kilko.de".listen = [
         {
           addr = "0.0.0.0";

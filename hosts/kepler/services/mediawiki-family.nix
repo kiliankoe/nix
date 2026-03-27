@@ -34,6 +34,7 @@ in
         name = "Költzsch Wiki";
         webserver = "nginx";
         nginx.hostName = "wiki.koeltzs.ch";
+        url = "https://wiki.koeltzs.ch";
         passwordFile = "/run/secrets/mediawiki-family/admin_password";
 
         database = {
@@ -85,9 +86,9 @@ in
       };
 
       services.nginx.virtualHosts."wiki.koeltzs.ch".extraConfig = ''
+        absolute_redirect off;
         client_max_body_size 50M;
       '';
-      services.nginx.virtualHosts."wiki.koeltzs.ch".locations."/".return = "302 /wiki/";
       services.nginx.virtualHosts."wiki.koeltzs.ch".listen = [
         {
           addr = "0.0.0.0";
