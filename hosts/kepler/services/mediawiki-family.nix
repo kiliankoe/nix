@@ -32,7 +32,10 @@ in
       { pkgs, ... }:
       {
         # PdfHandler needs poppler_utils for pdftotext / pdfinfo
-        environment.systemPackages = [ pkgs.poppler-utils ];
+        environment.systemPackages = [
+          pkgs.poppler-utils
+          pkgs.ghostscript
+        ];
 
         services.mediawiki = {
           enable = true;
