@@ -85,6 +85,12 @@ in
             ] );
             $wgMaxUploadSize = 50 * 1024 * 1024;
 
+            # PdfHandler binary paths (NixOS has no /usr/bin)
+            $wgPdfProcessor = '${pkgs.ghostscript}/bin/gs';
+            $wgPdfPostProcessor = $wgImageMagickConvertCommand;
+            $wgPdfInfo = '${pkgs.poppler-utils}/bin/pdfinfo';
+            $wgPdftoText = '${pkgs.poppler-utils}/bin/pdftotext';
+
             # SMTP (port 465, implicit TLS)
             $wgSMTP = [
               'host'     => 'ssl://' . trim(file_get_contents('/run/secrets/mediawiki-family/smtp_host')),
