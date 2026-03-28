@@ -56,6 +56,8 @@ in
             SyntaxHighlight_GeSHi = null;
             MultimediaViewer = null;
             TextExtracts = null;
+            PageImages = null;
+            Popups = null;
             Math = null;
             PdfHandler = null;
           };
