@@ -50,20 +50,21 @@ in
           };
 
           extensions = {
-            ParserFunctions = null;
-            VisualEditor = null;
             Cite = null;
-            SyntaxHighlight_GeSHi = null;
+            Math = null;
             MultimediaViewer = null;
-            TextExtracts = null;
             PageImages = null;
+            ParserFunctions = null;
+            PdfHandler = null;
+            SyntaxHighlight_GeSHi = null;
+            TemplateData = null;
+            TextExtracts = null;
+            VisualEditor = null;
             # Not bundled with MediaWiki — pinned to REL1_45 branch, update when bumping MediaWiki
             Popups = pkgs.fetchzip {
               url = "https://github.com/wikimedia/mediawiki-extensions-Popups/archive/077e5d5d736350c317eb0e89d74cb865bec94be5.tar.gz";
               hash = "sha256-2pTf+tlaMv3zc0st8yYMPNRr2lQKO/ZgQCwQeWX4/cY=";
             };
-            Math = null;
-            PdfHandler = null;
           };
 
           extraConfig = ''
