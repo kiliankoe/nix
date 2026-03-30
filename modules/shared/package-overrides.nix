@@ -15,6 +15,17 @@ _: {
       });
     })
 
+    # Skip flaky upstream test in paperless-ngx 2.20.13.
+    # test_error_skip_rule fails with AssertionError: 1 != 2.
+    # Remove once nixpkgs updates paperless-ngx past this issue.
+    (_final: prev: {
+      paperless-ngx = prev.paperless-ngx.overrideAttrs (old: {
+        disabledTests = (old.disabledTests or [ ]) ++ [
+          "test_error_skip_rule"
+        ];
+      });
+    })
+
     # Fix jeepney build on Darwin: pythonImportsCheckPhase fails because
     # jeepney.io.trio requires the 'outcome' module which isn't available,
     # and installCheckPhase fails because dbus-run-session doesn't work on macOS.
