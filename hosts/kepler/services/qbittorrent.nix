@@ -22,6 +22,7 @@
         GlobalMaxRatio = 2;
         GlobalMaxSeedingMinutes = 50400;
         ShareLimitAction = "Stop";
+        QueueingSystemEnabled = false;
       };
       Preferences.WebUI = {
         CSRFProtection = true;
