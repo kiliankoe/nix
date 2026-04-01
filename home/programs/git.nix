@@ -10,6 +10,7 @@
     lfs.enable = true;
 
     signing.key = "24D7C6B4";
+    signing.format = "openpgp";
 
     settings = lib.mkMerge [
       {
