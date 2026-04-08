@@ -15,6 +15,7 @@ _: {
       "gh"
       "swift-outdated"
       "mas"
+      "nono"
     ];
     casks = [
       "1password"
