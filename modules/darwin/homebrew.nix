@@ -9,13 +9,15 @@ _: {
       upgrade = false;
     };
     taps = [
+      "Arthur-Ficial/tap"
       "kiliankoe/formulae"
     ];
     brews = [
+      "apfel"
       "gh"
-      "swift-outdated"
       "mas"
       "nono"
+      "swift-outdated"
     ];
     casks = [
       "1password"
