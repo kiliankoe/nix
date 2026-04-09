@@ -16,6 +16,7 @@ _: {
       "apfel"
       "gh"
       "mas"
+      "mole"
       "nono"
       "swift-outdated"
     ];
