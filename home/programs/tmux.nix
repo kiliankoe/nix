@@ -77,6 +77,9 @@ in
       # Reload config on prefix-r - is this even still necessary with nix/home-manager?
       bind r source-file ~/.config/tmux/tmux.conf \; display-message "Reloaded config..."
 
+      # Override sensible plugin's reattach-to-user-namespace wrapper (unnecessary since tmux 2.6+)
+      set -g default-command "$SHELL"
+
       # Enable OSC 52 clipboard (works through SSH/nested sessions)
       set -g set-clipboard on
 
