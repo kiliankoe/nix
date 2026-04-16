@@ -63,7 +63,6 @@ _: {
       "karabiner-elements"
       "kicad"
       "lightburn"
-      "macdependency"
       "macwhisper"
       "monitorcontrol"
       "mountain-duck"
