@@ -8,7 +8,7 @@
     nodejs
     rustup
 
-    claude-code
+    # claude-code
     ddate
     dive
     ffmpeg

@@ -32,6 +32,7 @@ _: {
       "bettermouse"
       "blender"
       "claude"
+      "claude-code@latest"
       "coconutbattery"
       "conductor"
       "crossover"
