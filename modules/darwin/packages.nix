@@ -5,6 +5,6 @@
     dedup-darwin
     terminal-notifier
 
-    inputs.npr.packages.${pkgs.system}.default
+    # inputs.npr.packages.${pkgs.system}.default
   ];
 }
