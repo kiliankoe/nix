@@ -36,6 +36,7 @@
         qbittorrent_http = 8407;
         mediawiki_personal_http = 8408;
         mediawiki_family_http = 8409;
+        pinchflat_http = 8410;
 
         plex_http = 32400;
       };

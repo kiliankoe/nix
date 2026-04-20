@@ -9,6 +9,7 @@
     ./linkding.nix
     ./mato.nix
     ./newsdiff.nix
+    ./pinchflat.nix
     ./plausible.nix
     ./rustypaste.nix
     ./swiftdebot.nix

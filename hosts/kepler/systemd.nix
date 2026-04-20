@@ -123,8 +123,9 @@ let
       "sonarr.service"
       "radarr.service"
       "qbittorrent.service"
+      "pinchflat.service"
     ];
-    postMount = "mkdir -p /mnt/media/download/complete /mnt/media/download/incomplete";
+    postMount = "mkdir -p /mnt/media/download/complete /mnt/media/download/incomplete /mnt/media/YouTube";
   };
 
   immichMount = mkCifsMount {
