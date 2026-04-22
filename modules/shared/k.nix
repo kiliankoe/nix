@@ -37,6 +37,7 @@
         mediawiki_personal_http = 8408;
         mediawiki_family_http = 8409;
         pinchflat_http = 8410;
+        lidarr_http = 8411;
 
         plex_http = 32400;
       };

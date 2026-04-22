@@ -3,6 +3,7 @@
   imports = [
     # Native NixOS services
     ./freshrss.nix
+    ./lidarr.nix
     ./mediawiki-personal.nix
     ./mediawiki-family.nix
     ./paperless.nix

@@ -15,6 +15,7 @@
 let
   # Static paths for native NixOS services
   staticBackupPaths = [
+    "/var/lib/lidarr/.config/Lidarr"
     "/var/lib/mediawiki-personal"
     "/var/lib/mediawiki-family"
     "/var/lib/paperless"
