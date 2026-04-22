@@ -9,6 +9,7 @@ _: {
       "forecast"
       "handbrake-app"
       "mullvad-vpn"
+      "musicbrainz-picard"
       "nault"
       "sketch"
       "tor-browser"
