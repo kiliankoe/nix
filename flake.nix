@@ -19,6 +19,7 @@
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
     angrr.url = "github:linyinfeng/angrr";
     angrr.inputs.nixpkgs.follows = "nixpkgs";
+    zen-browser.url = "github:0xc000022070/zen-browser-flake";
     # npr.url = "github:faukah/npr";
   };
 
@@ -59,6 +60,7 @@
       nixosConfigurations = {
         kepler = mkSystem "kepler" { system = "x86_64-linux"; };
         cubesat = mkSystem "cubesat" { system = "x86_64-linux"; };
+        phobos = mkSystem "phobos" { system = "aarch64-linux"; };
       };
 
       # Deploy with: nix run github:serokell/deploy-rs -- .#kepler
