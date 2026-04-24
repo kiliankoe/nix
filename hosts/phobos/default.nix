@@ -17,6 +17,7 @@
   services.desktopManager.plasma6.enable = true;
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
+  services.displayManager.sddm.settings.General.GreeterEnvironment = "QT_SCREEN_SCALE_FACTORS=2";
 
   # UTM/SPICE guest integration (auto-resize, clipboard sharing)
   services.spice-vdagentd.enable = true;
@@ -40,6 +41,13 @@
       inputs.zen-browser.packages.aarch64-linux.default
     ];
     home.sessionVariables.BROWSER = lib.mkForce "zen";
+    home.file.".config/autostart/natural-scroll.desktop".text = ''
+      [Desktop Entry]
+      Type=Application
+      Name=Natural Scrolling
+      Exec=${./natural-scroll.sh}
+      X-KDE-autostart-phase=2
+    '';
     programs.tmux.extraConfig = ''
       set -g status-bg cyan
       set -g status-fg black
