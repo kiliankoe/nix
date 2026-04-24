@@ -2,6 +2,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ./packages.nix
     ../../modules/shared/common.nix
     ../../modules/shared/packages.nix
     ../../modules/shared/packages-workstation.nix
