@@ -101,11 +101,11 @@ _: {
       "Deliveries" = 290986013;
       "Developer" = 640199958;
       "Home Assistant" = 1099568401; # is in brew, but more up to date in mas
-      "Keynote" = 409183694;
+      "Keynote" = 361285480;
       "Lungo" = 1263070803;
       "Magnet" = 441258766;
-      "Numbers" = 409203825;
-      "Pages" = 409201541;
+      "Numbers" = 361304891;
+      "Pages" = 361309726;
       "Shareful" = 1522267256;
       "SomaFM" = 449155338;
       "Speediness" = 1596706466;
