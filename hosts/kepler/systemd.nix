@@ -16,8 +16,15 @@ let
     {
       services.${name} = {
         inherit description;
-        after = [ "network-online.target" ];
-        wants = [ "network-online.target" ] ++ dependentServices;
+        after = [
+          "network-online.target"
+          "tailscaled.service"
+        ];
+        wants = [
+          "network-online.target"
+          "tailscaled.service"
+        ]
+        ++ dependentServices;
         path = [
           pkgs.util-linux
           pkgs.cifs-utils
@@ -54,8 +61,11 @@ let
               chmod 600 /run/secrets/synology_smb_credentials
             fi
 
-            mount.cifs ${share} ${mountPoint} \
-              -o credentials=/run/secrets/synology_smb_credentials,${mountOpts}
+            if ! mount.cifs ${share} ${mountPoint} \
+                -o credentials=/run/secrets/synology_smb_credentials,${mountOpts}; then
+              echo "Mount failed"
+              exit 1
+            fi
             echo "Mount successful"
             ${postMount}
           '';
