@@ -4,7 +4,7 @@
     httpEndpoints = [
       {
         name = "jellyfin";
-        url = "http://localhost:${toString config.k.ports.jellyfin_http}/web/";
+        url = "http://0.0.0.0:${toString config.k.ports.jellyfin_http}/web/";
       }
     ];
     systemdServices = [ "jellyfin" ];

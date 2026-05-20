@@ -30,6 +30,8 @@ nix flake check --no-build
 
 ## Deployment
 
+All hosts are reachable directly by their hostname (e.g. `ssh kepler`) over Tailscale — no IP addresses or `.local` suffixes needed.
+
 - **macOS hosts**: `darwin-rebuild switch --flake .#<host>`
 - **NixOS hosts**: `deploy-rs` is configured for remote deployment to kepler and cubesat
 - **Deploy with backup**: `./scripts/deploy-with-backup.sh <host>` creates a tagged restic snapshot before deploying
@@ -119,6 +121,8 @@ Prometheus + Grafana + AlertManager stack in `hosts/kepler/services/monitoring/`
 - **AlertManager**: email notifications for service failures
 - **Exporters**: node, PostgreSQL, Redis, systemd, blackbox (HTTP probing)
 - **cAdvisor**: Docker container resource metrics
+
+When registering a service's `httpEndpoints` in `k.monitoring`, use `0.0.0.0` or `127.0.0.1` in the probe URL — never `localhost`. The blackbox exporter's `http` prober prefers IPv6, so `localhost` resolves to `::1`; since nginx and the native services only listen on IPv4, the blackbox connection is refused and the `EndpointDown` alert fires for a service that is actually healthy. `ip_protocol_fallback` only covers DNS resolution, not a failed connection, so it does not rescue this case.
 
 #### Backups
 
