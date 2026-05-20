@@ -12,7 +12,9 @@ lib.recursiveUpdate
   (dockerService.mkDockerComposeService {
     serviceName = "watchtower";
     monitoring.enable = false;
-    auto_update = true;
+    # watchtower must not manage its own container: self-updates can cancel
+    # an in-flight update batch and leave other containers stopped.
+    auto_update = false;
     compose = {
       services.watchtower = {
         image = "nickfedor/watchtower";
