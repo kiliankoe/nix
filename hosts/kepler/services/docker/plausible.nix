@@ -23,7 +23,7 @@ dockerService.mkDockerComposeService {
   compose = {
     services.plausible-db = {
       # renovate
-      image = "postgres:16-alpine@sha256:23e88eb049fd5d54894d70100df61d38a49ed97909263f79d4ff4c30a5d5fca2";
+      image = "postgres:16-alpine@sha256:16bc17c64a573ef34162af9298258d1aec548232985b33ed7b1eac33ba35c229";
       container_name = "plausible-db";
       restart = "always";
       volumes = [ "plausible-db-data:/var/lib/postgresql/data" ];
