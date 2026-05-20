@@ -118,6 +118,11 @@ in
         requires = [ "docker.service" ];
         wantedBy = [ "multi-user.target" ];
 
+        # Restart the unit when the generated compose file or any env script
+        # changes; otherwise an image bump only updates the file on disk and
+        # `docker-compose up -d` is never re-run to apply it.
+        restartTriggers = [ composeFile ] ++ builtins.attrValues envScripts;
+
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;

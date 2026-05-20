@@ -90,6 +90,7 @@ Services on cubesat live under `hosts/cubesat/services/`:
 - `monitoring`: auto-registers containers, systemd units, and optional HTTP endpoints in `k.monitoring`
 - `backupVolumes`: registers Docker volume patterns in `k.backup`
 - `auto_update`: when `true`, adds watchtower labels to all containers; when `false`, the image should be Renovate-pinned (see Docker Image Updates)
+- Sets `restartTriggers` on the systemd unit, so a deploy that changes the compose file or env scripts restarts the service and actually applies the change (an image bump without this only rewrites the file on disk)
 
 Follow patterns in `hosts/kepler/services/docker/linkding.nix` when adding new Docker services.
 
