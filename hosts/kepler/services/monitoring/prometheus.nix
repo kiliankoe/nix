@@ -54,7 +54,7 @@ let
               labels.severity = "warning";
               annotations = {
                 summary = "Memory usage above 85%";
-                description = "System memory usage is at {{ printf \"%.1f\" $value }}%.";
+                description = ''System memory usage is at {{ printf "%.1f" ''$value }}%. Top containers: {{ range query "topk(3, container_memory_usage_bytes{name!=\"\"})" }}{{ .Labels.name }}={{ .Value | humanize1024 }}B {{ else }}n/a{{ end }}'';
               };
             }
             {
@@ -64,7 +64,7 @@ let
               labels.severity = "critical";
               annotations = {
                 summary = "Memory usage critical (>95%)";
-                description = "System memory usage is at {{ printf \"%.1f\" $value }}%. Services may be killed by OOM.";
+                description = ''System memory usage is at {{ printf "%.1f" ''$value }}%. Services may be killed by OOM. Top containers: {{ range query "topk(3, container_memory_usage_bytes{name!=\"\"})" }}{{ .Labels.name }}={{ .Value | humanize1024 }}B {{ else }}n/a{{ end }}'';
               };
             }
 
@@ -153,10 +153,13 @@ let
               };
             }
 
-            # Container high memory
+            # Container high memory — only fires for named containers with a real
+            # memory limit. The root cgroup (id="/") has a limit equal to total
+            # host RAM and would trip this on cache pressure; host-wide memory is
+            # already covered by MemoryPressure/MemoryCritical.
             {
               alert = "ContainerHighMemory";
-              expr = "(container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 90 and container_spec_memory_limit_bytes > 0";
+              expr = ''(container_memory_usage_bytes{name!=""} / container_spec_memory_limit_bytes{name!=""}) * 100 > 90 and container_spec_memory_limit_bytes{name!=""} > 0'';
               for = "5m";
               labels.severity = "warning";
               annotations = {
