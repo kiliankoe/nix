@@ -72,7 +72,7 @@ dockerService.mkDockerComposeService {
 
     services.plausible = {
       # renovate
-      image = "ghcr.io/plausible/community-edition:v3.1.0@sha256:9703f89e41f7109bda6ae4fc64298474e8bc11f559e791cdda4b04218a92acb1";
+      image = "ghcr.io/plausible/community-edition:v3.2.1@sha256:33e60bfb40f2df5da00f8753b76fad04f67dba3abe6d73eb516e440e3fb62985";
       container_name = "plausible";
       restart = "always";
       command = [
