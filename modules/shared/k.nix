@@ -38,6 +38,7 @@
         mediawiki_family_http = 8409;
         pinchflat_http = 8410;
         lidarr_http = 8411;
+        jellyfin_http = 8412;
 
         plex_http = 32400;
       };

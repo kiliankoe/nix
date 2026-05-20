@@ -15,6 +15,10 @@
 let
   # Static paths for native NixOS services
   staticBackupPaths = [
+    "/var/lib/jellyfin/config"
+    "/var/lib/jellyfin/data"
+    "/var/lib/jellyfin/plugins"
+    "/var/lib/jellyfin/root"
     "/var/lib/lidarr/.config/Lidarr"
     "/var/lib/mediawiki-personal"
     "/var/lib/mediawiki-family"

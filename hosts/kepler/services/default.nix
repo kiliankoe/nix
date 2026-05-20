@@ -3,6 +3,7 @@
   imports = [
     # Native NixOS services
     ./freshrss.nix
+    ./jellyfin.nix
     ./lidarr.nix
     ./mediawiki-personal.nix
     ./mediawiki-family.nix

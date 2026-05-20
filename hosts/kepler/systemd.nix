@@ -134,6 +134,7 @@ let
       "radarr.service"
       "qbittorrent.service"
       "pinchflat.service"
+      "jellyfin.service"
     ];
     postMount = "mkdir -p /mnt/media/download/complete /mnt/media/download/incomplete /mnt/media/YouTube";
   };
@@ -187,6 +188,10 @@ in
         bindsTo = [ "media-mount.service" ];
       };
       qbittorrent = {
+        after = [ "media-mount.service" ];
+        bindsTo = [ "media-mount.service" ];
+      };
+      jellyfin = {
         after = [ "media-mount.service" ];
         bindsTo = [ "media-mount.service" ];
       };
