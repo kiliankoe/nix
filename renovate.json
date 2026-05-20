@@ -1,0 +1,46 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "docker:pinDigests"
+  ],
+  "enabledManagers": [
+    "custom.regex"
+  ],
+  "prHourlyLimit": 0,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "hosts/kepler/services/docker/**/*.nix"
+      ],
+      "matchStrings": [
+        "#\\s*renovate\\s+image\\s*=\\s*\"(?<depName>[^\"@:]+):(?<currentValue>[^\"@]+)(?:@(?<currentDigest>sha256:[0-9a-f]+))?\""
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Keep immich server and machine-learning bumped together",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "ghcr.io/immich-app/immich-server",
+        "ghcr.io/immich-app/immich-machine-learning"
+      ],
+      "groupName": "immich"
+    },
+    {
+      "description": "Datastores: no automatic major bumps, those need a manual migration",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "postgres",
+        "clickhouse/clickhouse-server",
+        "docker.io/valkey/valkey",
+        "ghcr.io/immich-app/postgres"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    }
+  ]
+}

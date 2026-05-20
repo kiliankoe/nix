@@ -22,7 +22,8 @@ dockerService.mkDockerComposeService {
   };
   compose = {
     services.plausible-db = {
-      image = "postgres:16-alpine";
+      # renovate
+      image = "postgres:16-alpine@sha256:23e88eb049fd5d54894d70100df61d38a49ed97909263f79d4ff4c30a5d5fca2";
       container_name = "plausible-db";
       restart = "always";
       volumes = [ "plausible-db-data:/var/lib/postgresql/data" ];
@@ -40,7 +41,8 @@ dockerService.mkDockerComposeService {
     };
 
     services.plausible-events-db = {
-      image = "clickhouse/clickhouse-server:24.12-alpine";
+      # renovate
+      image = "clickhouse/clickhouse-server:24.12-alpine@sha256:cd450891db46cc6ffe313ca2b0fb7dbfb897a6873ca74a724cbe050a2cf62621";
       container_name = "plausible-events-db";
       restart = "always";
       environment = {
@@ -69,7 +71,8 @@ dockerService.mkDockerComposeService {
     };
 
     services.plausible = {
-      image = "ghcr.io/plausible/community-edition:v3.1.0";
+      # renovate
+      image = "ghcr.io/plausible/community-edition:v3.1.0@sha256:9703f89e41f7109bda6ae4fc64298474e8bc11f559e791cdda4b04218a92acb1";
       container_name = "plausible";
       restart = "always";
       command = [

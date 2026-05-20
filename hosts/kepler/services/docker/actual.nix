@@ -9,7 +9,8 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "actual";
-  auto_update = true;
+  # Pinned + updated via Renovate PRs (renovate.json) instead of watchtower.
+  auto_update = false;
   backupVolumes = [ "actual-data" ];
   monitoring.httpEndpoint = {
     name = "actual";
@@ -18,7 +19,8 @@ dockerService.mkDockerComposeService {
   compose = {
     services.actual = {
       container_name = "actual";
-      image = "docker.io/actualbudget/actual-server:latest";
+      # renovate
+      image = "docker.io/actualbudget/actual-server:26.5.2@sha256:1aeeb3985db55556e716dec25e08f6ce09308c2571b65cddbc6746ee6d5e0d45";
       restart = "unless-stopped";
       ports = [ "${toString config.k.ports.actual_http}:5006" ];
       volumes = [

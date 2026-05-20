@@ -9,7 +9,8 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "changedetection";
-  auto_update = true;
+  # Pinned + updated via Renovate PRs (renovate.json) instead of watchtower.
+  auto_update = false;
   backupVolumes = [ "changedetection-data" ];
   monitoring.httpEndpoint = {
     name = "changedetection";
@@ -17,7 +18,8 @@ dockerService.mkDockerComposeService {
   };
   compose = {
     services.changedetection = {
-      image = "ghcr.io/dgtlmoon/changedetection.io:latest";
+      # renovate
+      image = "ghcr.io/dgtlmoon/changedetection.io:0.55.5@sha256:d89d4187221206f7f9f2c7946e7483815db905ca7d122644081aebd5d23ba391";
       container_name = "changedetection";
       hostname = "changedetection";
       restart = "unless-stopped";
@@ -34,7 +36,8 @@ dockerService.mkDockerComposeService {
       depends_on.sockpuppetbrowser.condition = "service_started";
     };
     services.sockpuppetbrowser = {
-      image = "dgtlmoon/sockpuppetbrowser:latest";
+      # renovate
+      image = "dgtlmoon/sockpuppetbrowser:latest@sha256:7116c61ef9cfce3d48a7efd9355d2fbe19f593ea3cfb52a5ded40ecbcb0a3f9d";
       container_name = "changedetection-browser";
       hostname = "sockpuppetbrowser";
       restart = "unless-stopped";

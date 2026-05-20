@@ -11,14 +11,16 @@ in
 lib.mkMerge [
   (dockerService.mkDockerComposeService {
     serviceName = "rustypaste";
-    auto_update = true;
+    # Pinned + updated via Renovate PRs (renovate.json) instead of watchtower.
+    auto_update = false;
     monitoring.httpEndpoint = {
       name = "rustypaste";
       url = "http://localhost:${toString config.k.ports.rustypaste_http}/";
     };
     compose = {
       services.rustypaste = {
-        image = "docker.io/orhunp/rustypaste:latest";
+        # renovate
+        image = "docker.io/orhunp/rustypaste:latest@sha256:23c5733171d44a6a473ce6a6240dcaeb0e5eb380234c2b0337dbeddfc89b99e1";
         container_name = "rustypaste";
         restart = "unless-stopped";
         environment = [ "RUST_LOG=info" ];

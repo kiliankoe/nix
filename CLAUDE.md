@@ -36,10 +36,11 @@ nix flake check --no-build
 
 ### CI
 
-GitHub Actions (`.github/workflows/`) run on push to main and PRs:
+GitHub Actions (`.github/workflows/`):
 
-- `check.yml`: flake check, statix lint, nixfmt format check, deadnix
-- `ci.yml`: evaluates all darwin and nixos configurations
+- `check.yml`: flake check, statix lint, nixfmt format check, deadnix — on push to main and PRs
+- `ci.yml`: evaluates all darwin and nixos configurations — on push to main and PRs
+- `renovate.yml`: self-hosted Renovate; opens Docker image update PRs weekly + on manual dispatch (see [Docker Image Updates](#docker-image-updates) below)
 
 ## Architecture Overview
 
@@ -72,7 +73,7 @@ User-level configurations are managed through Home Manager:
 Services on kepler live under `hosts/kepler/services/`:
 
 - **Native NixOS services**: freshrss, paperless, uptime-kuma
-- **Docker services**: actual, changedetection, immich, lehmuese, linkding, mato, newsdiff, plausible, rustypaste, swiftdebot, watchtower, wbbash
+- **Docker services**: actual, changedetection, immich, jobfinder, lehmuese, linkding, mato, newsdiff, pinchflat, plausible, rustypaste, swiftdebot, watchtower, wbbash
 - **Monitoring stack** (`services/monitoring/`): Prometheus, Grafana, AlertManager, exporters (node, PostgreSQL, Redis, systemd, blackbox), cAdvisor
 - Secrets managed through sops-nix integration
 
@@ -88,9 +89,18 @@ Services on cubesat live under `hosts/cubesat/services/`:
 - `environment`: per-container env vars; use `{ secret = "sops_key"; }` for secrets (auto-declares `sops.secrets`)
 - `monitoring`: auto-registers containers, systemd units, and optional HTTP endpoints in `k.monitoring`
 - `backupVolumes`: registers Docker volume patterns in `k.backup`
-- `auto_update`: adds watchtower labels to all containers
+- `auto_update`: when `true`, adds watchtower labels to all containers; when `false`, the image should be Renovate-pinned (see Docker Image Updates)
 
 Follow patterns in `hosts/kepler/services/docker/linkding.nix` when adding new Docker services.
+
+#### Docker Image Updates
+
+Two mechanisms keep Docker images current; each service uses exactly one.
+
+- **watchtower** (`auto_update = true`): watchtower auto-pulls new images for labelled containers. Used for first-party `kiliankoe/*` images (swiftdebot, newsdiff, lehmuese, wbbash, mato, jobfinder). watchtower's own service must stay `auto_update = false` — if it updates its own container it can cancel an in-flight update batch and leave other containers stopped.
+- **Renovate** (`auto_update = false` + pinned image): third-party images are pinned to `repo:tag@sha256:digest` and bumped via PRs. Renovate-managed services: changedetection, pinchflat, actual, rustypaste, immich, plausible, watchtower.
+
+To place an image under Renovate: set `auto_update = false`, pin the image to `repo:tag@sha256:digest`, and add a `# renovate` comment line directly above the `image =` line. `renovate.json` (repo root) has a customManager that only matches `image =` lines carrying that marker, so it is opt-in per image. `.github/workflows/renovate.yml` runs self-hosted Renovate weekly + on manual dispatch; it needs a `RENOVATE_TOKEN` **repository secret** (a PAT, so Renovate's PRs trigger `check.yml`/`ci.yml`). Database images (postgres, clickhouse, valkey) are pinned to a major line — Renovate will not auto-propose major bumps.
 
 #### Secrets Management
 

@@ -9,7 +9,8 @@ let
 in
 dockerService.mkDockerComposeService {
   serviceName = "pinchflat";
-  auto_update = true;
+  # Pinned + updated via Renovate PRs (renovate.json) instead of watchtower.
+  auto_update = false;
   backupVolumes = [ "pinchflat-config" ];
   monitoring.httpEndpoint = {
     name = "pinchflat";
@@ -18,7 +19,8 @@ dockerService.mkDockerComposeService {
   compose = {
     services.pinchflat = {
       container_name = "pinchflat";
-      image = "ghcr.io/kieraneglin/pinchflat:latest";
+      # renovate
+      image = "ghcr.io/kieraneglin/pinchflat:latest@sha256:01b4f98aabaf3f5fe394213f7a32578c9e84e42080f52e2f8334021a4473b202";
       restart = "unless-stopped";
       environment = [
         "TZ=${config.time.timeZone}"
