@@ -17,12 +17,20 @@ jobs:
   renovate:
     runs-on: ubuntu-latest
     steps:
+      # Mint a short-lived installation token from the Renovate GitHub App.
+      # PRs are then authored by the app's bot identity (so notifications work)
+      # and still trigger the check/ci workflows (unlike the default GITHUB_TOKEN).
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@v3.2.0
+        with:
+          app-id: ${{ secrets.RENOVATE_APP_ID }}
+          private-key: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
+
       - name: Run Renovate
         uses: renovatebot/github-action@v46.1.14
         with:
-          # PAT (repo secret) so Renovate's PRs trigger the check/ci workflows.
-          # The default GITHUB_TOKEN would not trigger them.
-          token: ${{ secrets.RENOVATE_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
         env:
           RENOVATE_REPOSITORIES: ${{ github.repository }}
           LOG_LEVEL: info
