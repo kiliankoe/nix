@@ -40,7 +40,7 @@ GitHub Actions (`.github/workflows/`):
 
 - `check.yml`: flake check, statix lint, nixfmt format check, deadnix — on push to main and PRs
 - `ci.yml`: evaluates all darwin and nixos configurations — on push to main and PRs
-- `renovate.yml`: self-hosted Renovate; opens Docker image update PRs weekly + on manual dispatch (see [Docker Image Updates](#docker-image-updates) below)
+- `renovate.yml`: self-hosted Renovate; opens Docker image update PRs daily + on manual dispatch (see [Docker Image Updates](#docker-image-updates) below)
 
 ## Architecture Overview
 
@@ -100,7 +100,7 @@ Two mechanisms keep Docker images current; each service uses exactly one.
 - **watchtower** (`auto_update = true`): watchtower auto-pulls new images for labelled containers. Used for first-party `kiliankoe/*` images (swiftdebot, newsdiff, lehmuese, wbbash, mato, jobfinder). watchtower's own service must stay `auto_update = false` — if it updates its own container it can cancel an in-flight update batch and leave other containers stopped.
 - **Renovate** (`auto_update = false` + pinned image): third-party images are pinned to `repo:tag@sha256:digest` and bumped via PRs. Renovate-managed services: changedetection, pinchflat, actual, rustypaste, immich, plausible, watchtower.
 
-To place an image under Renovate: set `auto_update = false`, pin the image to `repo:tag@sha256:digest`, and add a `# renovate` comment line directly above the `image =` line. `renovate.json` (repo root) has a customManager that only matches `image =` lines carrying that marker, so it is opt-in per image. `.github/workflows/renovate.yml` runs self-hosted Renovate weekly + on manual dispatch; it needs a `RENOVATE_TOKEN` **repository secret** (a PAT, so Renovate's PRs trigger `check.yml`/`ci.yml`). Database images (postgres, clickhouse, valkey) are pinned to a major line — Renovate will not auto-propose major bumps.
+To place an image under Renovate: set `auto_update = false`, pin the image to `repo:tag@sha256:digest`, and add a `# renovate` comment line directly above the `image =` line. `renovate.json` (repo root) has a customManager that only matches `image =` lines carrying that marker, so it is opt-in per image. `.github/workflows/renovate.yml` runs self-hosted Renovate daily + on manual dispatch. It authenticates as a private GitHub App via `actions/create-github-app-token`, minting a short-lived token per run from the `RENOVATE_APP_ID` and `RENOVATE_APP_PRIVATE_KEY` **repository secrets**; the App identity means Renovate's PRs trigger `check.yml`/`ci.yml` and notify watchers. Database images (postgres, clickhouse, valkey) are pinned to a major line — Renovate will not auto-propose major bumps.
 
 #### Secrets Management
 
