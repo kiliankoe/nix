@@ -76,7 +76,7 @@ let
               labels.severity = "warning";
               annotations = {
                 summary = "High CPU load (5min avg > 4)";
-                description = "5-minute load average is {{ printf \"%.2f\" $value }}.";
+                description = ''5-minute load average is {{ printf "%.2f" ''$value }}. Top containers by CPU: {{ range query "topk(3, rate(container_cpu_usage_seconds_total{name!=\"\"}[5m]) * 100)" }}{{ .Labels.name }}={{ printf "%.0f" .Value }}% {{ else }}n/a{{ end }}'';
               };
             }
           ];
