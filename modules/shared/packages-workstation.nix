@@ -22,7 +22,7 @@
       # mitmproxy
       # mitmproxy2swagger
       openapi-tui
-      opencode
+      # opencode
       ripgrep-all
       tealdeer
       tokei

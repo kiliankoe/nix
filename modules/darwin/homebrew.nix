@@ -18,6 +18,7 @@ _: {
       "mas"
       "mole"
       "nono"
+      "opencode"
       "swift-outdated"
     ];
     casks = [
