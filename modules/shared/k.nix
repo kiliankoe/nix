@@ -39,6 +39,7 @@
         pinchflat_http = 8410;
         lidarr_http = 8411;
         jellyfin_http = 8412;
+        watchstate_http = 8413;
 
         plex_http = 32400;
       };
