@@ -13,7 +13,6 @@
     ./plausible.nix
     ./rustypaste.nix
     ./swiftdebot.nix
-    ./watchstate.nix
     ./watchtower.nix
     ./wbbash.nix
     ./yamtrack.nix
