@@ -52,6 +52,7 @@ lib.mkMerge [
     environment = {
       yamtrack = {
         SECRET.secret = "yamtrack/secret";
+        STEAM_API_KEY.secret = "yamtrack/steam_api_key";
       };
     };
   })
