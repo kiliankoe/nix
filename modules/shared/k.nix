@@ -40,6 +40,7 @@
         lidarr_http = 8411;
         jellyfin_http = 8412;
         watchstate_http = 8413;
+        yamtrack_http = 8414;
 
         plex_http = 32400;
       };

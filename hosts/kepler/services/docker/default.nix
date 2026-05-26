@@ -16,5 +16,6 @@
     ./watchstate.nix
     ./watchtower.nix
     ./wbbash.nix
+    ./yamtrack.nix
   ];
 }
