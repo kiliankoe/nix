@@ -19,7 +19,7 @@ dockerService.mkDockerComposeService {
   compose = {
     services.changedetection = {
       # renovate
-      image = "ghcr.io/dgtlmoon/changedetection.io:0.55.5@sha256:d89d4187221206f7f9f2c7946e7483815db905ca7d122644081aebd5d23ba391";
+      image = "ghcr.io/dgtlmoon/changedetection.io:0.55.7@sha256:736331d2787f94d3201b64aa641e090f67e28577ba505bd7ba5d7c1841e1e0ca";
       container_name = "changedetection";
       hostname = "changedetection";
       restart = "unless-stopped";
