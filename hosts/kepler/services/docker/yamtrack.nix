@@ -32,6 +32,7 @@ lib.mkMerge [
           "URLS=https://yamtrack.kilko.de"
           # Single-tenant instance; existing users invite via admin.
           "REGISTRATION=False"
+          "ADMIN_ENABLED=True"
         ];
         env_file = [ "yamtrack.env" ];
         volumes = [ "yamtrack-db:/yamtrack/db" ];
