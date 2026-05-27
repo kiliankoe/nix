@@ -32,6 +32,7 @@ _: {
       "beeper"
       "bettermouse"
       "blender"
+      "cardhop"
       "claude"
       "claude-code@latest"
       "coconutbattery"
