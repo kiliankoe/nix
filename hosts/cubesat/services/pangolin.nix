@@ -16,15 +16,14 @@ in
   # https://github.com/fosrl/pangolin/issues/3159
   nixpkgs.overlays = [
     (_final: prev: {
-      fosrl-pangolin = prev.fosrl-pangolin.overrideAttrs (old: rec {
+      fosrl-pangolin = prev.fosrl-pangolin.overrideAttrs (_old: {
         version = "1.18.4";
         src = prev.fetchFromGitHub {
           owner = "fosrl";
           repo = "pangolin";
-          tag = version;
+          tag = "1.18.4";
           hash = "sha256-b8fXjjsPAN8KI0jxshGJGJSLcRTG5x8bBwlZjxKOdP0=";
         };
-        patches = (old.patches or [ ]) ++ [ ./pangolin-pagination.patch ];
       });
     })
   ];
