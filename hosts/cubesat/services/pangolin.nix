@@ -11,10 +11,12 @@ let
   dashboardDomain = "tunnel.${domain}";
 in
 {
-  # nixpkgs#524531 (fosrl-pangolin 1.18.4) until it reaches nixos-unstable
+  # Pin 1.18.4 ahead of nixos-unstable (nixpkgs#524531) and patch the two public/
+  # private resource list pages, which are capped at 20 rows.
+  # https://github.com/fosrl/pangolin/issues/3159
   nixpkgs.overlays = [
     (_final: prev: {
-      fosrl-pangolin = prev.fosrl-pangolin.overrideAttrs (_old: rec {
+      fosrl-pangolin = prev.fosrl-pangolin.overrideAttrs (old: rec {
         version = "1.18.4";
         src = prev.fetchFromGitHub {
           owner = "fosrl";
@@ -22,6 +24,7 @@ in
           tag = version;
           hash = "sha256-b8fXjjsPAN8KI0jxshGJGJSLcRTG5x8bBwlZjxKOdP0=";
         };
+        patches = (old.patches or [ ]) ++ [ ./pangolin-pagination.patch ];
       });
     })
   ];

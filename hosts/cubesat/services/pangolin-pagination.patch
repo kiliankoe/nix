@@ -1,0 +1,26 @@
+diff --git a/src/app/[orgId]/settings/resources/client/page.tsx b/src/app/[orgId]/settings/resources/client/page.tsx
+index 42d4e69e..3764cdbc 100644
+--- a/src/app/[orgId]/settings/resources/client/page.tsx
++++ b/src/app/[orgId]/settings/resources/client/page.tsx
+@@ -19,6 +19,8 @@ export const metadata: Metadata = {
+     title: "Private Resources"
+ };
+ 
++export const dynamic = "force-dynamic";
++
+ export interface ClientResourcesPageProps {
+     params: Promise<{ orgId: string }>;
+     searchParams: Promise<Record<string, string>>;
+diff --git a/src/app/[orgId]/settings/resources/proxy/page.tsx b/src/app/[orgId]/settings/resources/proxy/page.tsx
+index b94c4daf..f73346a9 100644
+--- a/src/app/[orgId]/settings/resources/proxy/page.tsx
++++ b/src/app/[orgId]/settings/resources/proxy/page.tsx
+@@ -20,6 +20,8 @@ export const metadata: Metadata = {
+     title: "Public Resources"
+ };
+ 
++export const dynamic = "force-dynamic";
++
+ export interface ProxyResourcesPageProps {
+     params: Promise<{ orgId: string }>;
+     searchParams: Promise<Record<string, string>>;
