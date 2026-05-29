@@ -103,6 +103,7 @@ _: {
       "Deliveries" = 290986013;
       "Developer" = 640199958;
       "Home Assistant" = 1099568401; # is in brew, but more up to date in mas
+      "Infuse" = 1136220934;
       "Keynote" = 361285480;
       "Lungo" = 1263070803;
       "Magnet" = 441258766;
