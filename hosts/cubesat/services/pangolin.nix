@@ -11,6 +11,21 @@ let
   dashboardDomain = "tunnel.${domain}";
 in
 {
+  # nixpkgs#524531 (fosrl-pangolin 1.18.4) until it reaches nixos-unstable
+  nixpkgs.overlays = [
+    (_final: prev: {
+      fosrl-pangolin = prev.fosrl-pangolin.overrideAttrs (_old: rec {
+        version = "1.18.4";
+        src = prev.fetchFromGitHub {
+          owner = "fosrl";
+          repo = "pangolin";
+          tag = version;
+          hash = "sha256-b8fXjjsPAN8KI0jxshGJGJSLcRTG5x8bBwlZjxKOdP0=";
+        };
+      });
+    })
+  ];
+
   sops.secrets = {
     "pangolin/server_secret" = {
       owner = "pangolin";
