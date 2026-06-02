@@ -114,6 +114,7 @@ _: {
       "Speediness" = 1596706466;
       "Stempel" = 1638437641;
       "StopTheMadness" = 1376402589;
+      "Sweet Home 3D" = 669289700;
       "TestFlight" = 899247664;
       "WireGuard" = 1451685025;
       "Yomu" = 562211012;
