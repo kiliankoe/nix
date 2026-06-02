@@ -23,6 +23,7 @@
     ripgrep
     rustypaste-cli
     sops
+    sqlite
     tmux
     tree
     uv
