@@ -11,23 +11,6 @@ let
   dashboardDomain = "tunnel.${domain}";
 in
 {
-  # Pin 1.18.4 ahead of nixos-unstable (nixpkgs#524531) and patch the two public/
-  # private resource list pages, which are capped at 20 rows.
-  # https://github.com/fosrl/pangolin/issues/3159
-  nixpkgs.overlays = [
-    (_final: prev: {
-      fosrl-pangolin = prev.fosrl-pangolin.overrideAttrs (_old: {
-        version = "1.18.4";
-        src = prev.fetchFromGitHub {
-          owner = "fosrl";
-          repo = "pangolin";
-          tag = "1.18.4";
-          hash = "sha256-b8fXjjsPAN8KI0jxshGJGJSLcRTG5x8bBwlZjxKOdP0=";
-        };
-      });
-    })
-  ];
-
   sops.secrets = {
     "pangolin/server_secret" = {
       owner = "pangolin";
