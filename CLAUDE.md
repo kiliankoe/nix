@@ -106,6 +106,20 @@ Two mechanisms keep Docker images current; each service uses exactly one.
 
 To place an image under Renovate: set `auto_update = false`, pin the image to `repo:tag@sha256:digest`, and add a `# renovate` comment line directly above the `image =` line. `renovate.json` (repo root) has a customManager that only matches `image =` lines carrying that marker, so it is opt-in per image. Renovate itself runs as the hosted [Mend Renovate](https://github.com/apps/renovate) GitHub App, event-driven on the App's own schedule — there is no in-repo workflow or App secret to maintain. Database images (postgres, clickhouse, valkey) are pinned to a major line — Renovate will not auto-propose major bumps.
 
+#### NAS Mounts on kepler (`hosts/kepler/systemd.nix`)
+
+kepler mounts CIFS shares from the Synology NAS (`marvin`, reached over Tailscale) for media and photos. These are the project's historically flakiest piece, so the wiring is centralized in `mkCifsMount`, which builds three things per share: the mount unit, a 5-minute health watchdog that remounts a stale/dropped share, and the dependency edges to every consuming service.
+
+**Adding a service that reads or writes a NAS path: just add its systemd unit name to the mount's `consumers` list** (`mediaMount` for `/mnt/media`, `immichMount` for `/mnt/photos/immich`). Do not hand-write `after`/`bindsTo`/`wants` on the service — `mkCifsMount` derives all of it from that one list. For Docker services the unit name is the `serviceName` passed to `mkDockerComposeService`; the generated `after`/`bindsTo` merge with the helper's `after = docker.service`.
+
+The reasoning the list encodes, so it isn't re-broken:
+
+- **consumer → mount** (`after` + `bindsTo`): the service is ordered after the mount and stopped if the mount drops, so nothing ever writes into an unmounted directory. This matters most for Docker bind mounts — a container started before the share is mounted captures the empty local dir and stays blind to the share even after it mounts (downloads silently land on the system disk).
+- **mount → consumer** (`upholds`): while the mount is active systemd keeps the consumers started, so the watchdog remounting a dropped share auto-restarts them. `bindsTo` only propagates _stop_, not _start_ — without `upholds`, a transient NAS/Tailscale blip left consumers dead until the next switch (and a switch could need running twice).
+- **Tailscale reachability gate**: the mount's `ExecStart` pings `nasHost` (up to 60s) before `mount.cifs`. `After=tailscaled.service` only orders after the daemon _starts_, not after the tunnel reconverges, so a Tailscale package bump in the same switch otherwise races the mount and fails the first attempt.
+
+A single `consumers` list is the source of truth — there is intentionally no second list to keep in sync. If you find yourself adding mount ordering anywhere outside `mkCifsMount`, that's the smell that caused the original drift (a service writing to `/mnt/media` with no mount dependency at all).
+
 #### Secrets Management
 
 - Legacy host-specific secrets stored in `~/.config/secrets/env`
@@ -155,6 +169,7 @@ To add new services:
 
 - For Docker services: Use `lib/docker-service.nix` helper, following patterns in `hosts/kepler/services/docker/linkding.nix`
 - For native NixOS services: Follow patterns in `hosts/kepler/services/freshrss.nix` or `hosts/kepler/services/paperless.nix`
+- If the service touches a NAS path (`/mnt/media`, `/mnt/photos/immich`): add its unit name to the relevant `consumers` list in `hosts/kepler/systemd.nix` — see [NAS Mounts on kepler](#nas-mounts-on-kepler-hostskeplersystemdnix). Don't hand-wire mount ordering.
 
 ### Package Management
 
