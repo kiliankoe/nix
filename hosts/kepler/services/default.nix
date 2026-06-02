@@ -12,7 +12,6 @@
     ./radarr.nix
     ./sabnzbd.nix
     ./sonarr.nix
-    ./uptime-kuma.nix
 
     # Unified backup for all services
     ./backup.nix

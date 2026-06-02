@@ -13,6 +13,7 @@ let
   # Paths to back up
   backupPaths = [
     "/var/lib/pangolin/config"
+    "/var/lib/uptime-kuma"
   ];
 
   # Common environment setup for both backup and restore

@@ -27,7 +27,6 @@ let
     "/var/lib/radarr/.config/Radarr"
     "/var/lib/sabnzbd"
     "/var/lib/sonarr/.config/NzbDrone"
-    "/var/lib/uptime-kuma"
     "/var/backup/postgresql"
   ];
 
@@ -191,7 +190,6 @@ let
         echo ""
         echo "To restore specific services, copy files to their original locations:"
         echo "  - Paperless: cp -r $RESTORE_DIR/var/lib/paperless/* /var/lib/paperless/"
-        echo "  - Uptime Kuma: cp -r $RESTORE_DIR/var/lib/uptime-kuma/* /var/lib/uptime-kuma/"
         echo "  - Docker volumes: cp -r $RESTORE_DIR/var/lib/docker/volumes/* /var/lib/docker/volumes/"
         echo ""
         echo "For PostgreSQL databases, use: kepler-backup-restore restore-db $SNAPSHOT"
