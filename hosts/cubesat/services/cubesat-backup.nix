@@ -14,6 +14,7 @@ let
   backupPaths = [
     "/var/lib/pangolin/config"
     "/var/lib/uptime-kuma"
+    "/var/lib/kanidm/backups"
   ];
 
   # Common environment setup for both backup and restore

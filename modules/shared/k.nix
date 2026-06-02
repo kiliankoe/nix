@@ -42,6 +42,10 @@
         watchstate_http = 8413;
         yamtrack_http = 8414;
 
+        # cubesat
+        webfinger_http = 8380;
+        kanidm_https = 8443;
+
         plex_http = 32400;
       };
       description = ''

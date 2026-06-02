@@ -673,8 +673,23 @@ in
       server = {
         http_port = config.k.ports.grafana_http;
         http_addr = "0.0.0.0";
-        domain = "kepler";
-        root_url = "http://kepler:${toString config.k.ports.grafana_http}/";
+        domain = "grafana.kilko.de";
+        root_url = "https://grafana.kilko.de/";
+      };
+
+      # OIDC login against the self-hosted Kanidm IdP on cubesat.
+      "auth.generic_oauth" = {
+        enabled = true;
+        name = "Kanidm";
+        client_id = "grafana";
+        client_secret = "$__file{${config.sops.secrets."kanidm/oauth2/grafana_secret".path}}";
+        scopes = "openid email profile";
+        auth_url = "https://auth.kilko.de/ui/oauth2";
+        token_url = "https://auth.kilko.de/oauth2/token";
+        api_url = "https://auth.kilko.de/oauth2/openid/grafana/userinfo";
+        use_pkce = true;
+        login_attribute_path = "preferred_username";
+        allow_sign_up = true;
       };
 
       security = {
@@ -727,11 +742,13 @@ in
     };
   };
 
-  # Declare secrets for grafana
   sops.secrets."monitoring/grafana_admin_password" = {
     owner = "grafana";
   };
   sops.secrets."monitoring/grafana_secret_key" = {
+    owner = "grafana";
+  };
+  sops.secrets."kanidm/oauth2/grafana_secret" = {
     owner = "grafana";
   };
 }

@@ -9,6 +9,8 @@
     ../../modules/nixos/base.nix
     ./services/pangolin.nix
     ./services/uptime-kuma.nix
+    ./services/kanidm.nix
+    ./services/webfinger.nix
     ./services/cubesat-backup.nix
   ];
 
