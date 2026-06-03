@@ -79,6 +79,7 @@ _: {
       "raspberry-pi-imager"
       "raycast"
       "sf-symbols"
+      "shadow"
       "sloth"
       "soulver"
       "steam"
