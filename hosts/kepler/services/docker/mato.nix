@@ -53,6 +53,7 @@ dockerService.mkDockerComposeService {
       KAGI_API_TOKEN.secret = "mato/kagi_api_token";
       PSYCHJOBS_RECIPIENT.secret = "mato/psychjobs_recipient";
       OPENAI_API_KEY.secret = "mato/openai_api_key";
+      VHS_TOKEN.secret = "mato/vhs_token";
     };
   };
 }
