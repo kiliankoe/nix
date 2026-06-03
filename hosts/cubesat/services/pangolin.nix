@@ -144,15 +144,32 @@ in
   systemd.services.pangolin = {
     after = [ "pangolin-geoip-link.service" ];
     requires = [ "pangolin-geoip-link.service" ];
-    preStart = lib.mkAfter ''
-      ${pkgs.gnused}/bin/sed -i \
-        -e "s|@SERVER_SECRET@|$(cat ${config.sops.secrets."pangolin/server_secret".path})|" \
-        -e "s|@SMTP_HOST@|$(cat ${config.sops.secrets."pangolin/smtp_host".path})|" \
-        -e "s|@SMTP_USER@|$(cat ${config.sops.secrets."pangolin/smtp_user".path})|" \
-        -e "s|@SMTP_PASS@|$(cat ${config.sops.secrets."pangolin/smtp_pass".path})|" \
-        -e "s|@NO_REPLY@|$(cat ${config.sops.secrets."pangolin/no_reply".path})|" \
-        ${dataDir}/config/config.yml
-    '';
+    preStart = lib.mkMerge [
+      # Stopgap until nixpkgs stops copying pangolin's .next read-only (which
+      # freezes the frontend across upgrades and breaks the Next.js cache).
+      # This maintains a writable .next, refreshed when the package changes,
+      # and sets .nix_skip_setup so the package's own wrapper leaves it alone.
+      # Remove this (and ${dataDir}/.next/.nix_skip_setup) once fixed upstream.
+      (lib.mkBefore ''
+        if [ "$(cat ${dataDir}/.next/.nix_pkg 2>/dev/null || true)" != "${config.services.pangolin.package}" ]; then
+          chmod -R u+w ${dataDir}/.next 2>/dev/null || true
+          rm -rf ${dataDir}/.next
+          cp -r ${config.services.pangolin.package}/share/pangolin/.next ${dataDir}/.next
+          chmod -R u+w ${dataDir}/.next
+          touch ${dataDir}/.next/.nix_skip_setup
+          printf '%s' "${config.services.pangolin.package}" > ${dataDir}/.next/.nix_pkg
+        fi
+      '')
+      (lib.mkAfter ''
+        ${pkgs.gnused}/bin/sed -i \
+          -e "s|@SERVER_SECRET@|$(cat ${config.sops.secrets."pangolin/server_secret".path})|" \
+          -e "s|@SMTP_HOST@|$(cat ${config.sops.secrets."pangolin/smtp_host".path})|" \
+          -e "s|@SMTP_USER@|$(cat ${config.sops.secrets."pangolin/smtp_user".path})|" \
+          -e "s|@SMTP_PASS@|$(cat ${config.sops.secrets."pangolin/smtp_pass".path})|" \
+          -e "s|@NO_REPLY@|$(cat ${config.sops.secrets."pangolin/no_reply".path})|" \
+          ${dataDir}/config/config.yml
+      '')
+    ];
   };
 
   # CrowdSec is disabled for initial deployment due to NixOS module issues.
