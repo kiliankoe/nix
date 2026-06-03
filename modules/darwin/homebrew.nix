@@ -7,6 +7,9 @@ _: {
       autoUpdate = false;
       # Whether to enable Homebrew to upgrade outdated formulae and Mac App Store apps during nix-darwin system activation.
       upgrade = false;
+      # Homebrew 5.1+ refuses `brew bundle --cleanup` without an explicit confirmation flag; current nix-darwin
+      # still emits the bare `--cleanup`, so force it through non-interactively.
+      extraFlags = [ "--force" ];
     };
     taps = [
       "Arthur-Ficial/tap"
