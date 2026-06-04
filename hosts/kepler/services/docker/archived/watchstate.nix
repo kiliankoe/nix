@@ -20,7 +20,7 @@ lib.mkMerge [
       services.watchstate = {
         container_name = "watchstate";
         # renovate
-        image = "ghcr.io/arabcoders/watchstate:latest@sha256:124f4ceaf2a8f098d1dd9b027b12664a7ff1e712e273e11ee8d98365b4a2f7b4";
+        image = "ghcr.io/arabcoders/watchstate:latest@sha256:050672c88ba06e9d8cf5948d3c5d592b96c8c64842892a3aae4767c71b865093";
         # watchstate runs rootless; pinning the uid keeps the docker volume's
         # ownership deterministic across image rebuilds.
         user = "1000:1000";
