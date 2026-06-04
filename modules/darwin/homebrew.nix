@@ -22,6 +22,7 @@ _: {
       "mole"
       "nono"
       "opencode"
+      "pi-coding-agent"
       "swift-outdated"
     ];
     casks = [
