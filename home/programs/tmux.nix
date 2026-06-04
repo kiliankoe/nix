@@ -86,6 +86,10 @@ in
       # Allow escape sequences to pass through to the outer terminal (needed for nested tmux)
       set -g allow-passthrough on
 
+      # Send extended key sequences so apps can distinguish e.g. C-i from Tab, S-Enter, etc.
+      set -g extended-keys on
+      set -s extended-keys-format csi-u
+
       # Copy last command's output to clipboard (uses OSC 133 markers from zsh)
       bind y run-shell "~/.local/bin/tmux-copy-last-output" \; display-message "Last output copied"
 
