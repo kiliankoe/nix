@@ -1,12 +1,12 @@
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
+    acli
     delta
     devbox
     devenv
     emcee
     glab
-    jira-cli-go
     k9s
     kubectl
     pnpm
