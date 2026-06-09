@@ -8,7 +8,6 @@
     ./lehmuese.nix
     ./linkding.nix
     ./mato.nix
-    ./newsdiff.nix
     ./pinchflat.nix
     ./plausible.nix
     ./rustypaste.nix
