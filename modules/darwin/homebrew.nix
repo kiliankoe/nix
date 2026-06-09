@@ -73,6 +73,7 @@ _: {
       "macwhisper"
       "monitorcontrol"
       "mountain-duck"
+      "mouseless"
       "obsidian"
       "ogdesign-eagle"
       "ollama-app"
