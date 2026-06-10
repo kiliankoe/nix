@@ -40,7 +40,6 @@ _: {
       "claude"
       "claude-code@latest"
       "coconutbattery"
-      "conductor"
       "crossover"
       "cyberduck"
       "daisydisk"
