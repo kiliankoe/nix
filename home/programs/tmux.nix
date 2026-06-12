@@ -2,6 +2,11 @@
 let
   inherit (pkgs.tmuxPlugins) tmux-fzf;
   tmux-fzf-scripts = "${tmux-fzf}/share/tmux-plugins/tmux-fzf/scripts";
+  # Window title: directory, with |command appended when non-shell and Z when
+  # zoomed. A manual rename (prefix+,) turns automatic-rename off for that
+  # window, in which case the manual name (#W) is shown instead.
+  # Note: boolean options expand to 1/0 in formats, so use the plain #{?} test
+  windowTitle = "#{?automatic-rename,#{b:pane_current_path}#{?#{==:#{pane_current_command},zsh},,|#{pane_current_command}},#W}#{?window_zoomed_flag, Z,}";
 in
 {
   programs.tmux = {
@@ -50,9 +55,15 @@ in
       unbind-key l
       bind-key l select-pane -R
 
-      # Set title and disable automatic renaming
+      # Set terminal titles. automatic-rename stays on so the auto format below
+      # is used by default; a manual rename (prefix+,) turns it off for that
+      # window and the manual name wins.
       set -g set-titles on
-      set-window-option -g automatic-rename off
+      set-window-option -g automatic-rename on
+
+      # Renaming a window to an empty name (prefix+, then clear) goes back to
+      # the automatic title (stock tmux would keep an empty manual name)
+      set-hook -g after-rename-window 'if -F "#{==:#{window_name},}" "setw automatic-rename on"'
 
       # Styling
       set -g status-bg magenta
@@ -65,14 +76,14 @@ in
       bind-key -n C-S-Left swap-window -t -1\; select-window -t -1
       bind-key -n C-S-Right swap-window -t +1\; select-window -t +1
 
-      # Format for active window: always show directory, append |command when non-shell, and Z if zoomed
-      set-window-option -g window-status-current-format " #I:#(basename '#{pane_current_path}')#(if [ '#{pane_current_command}' != 'zsh' ]; then printf '|#{pane_current_command}'; fi)#{?window_zoomed_flag, Z,} "
+      # Format for active window: directory|command (or the manual name), see windowTitle above
+      set-window-option -g window-status-current-format " #I:${windowTitle} "
 
       # Format for inactive windows: same logic as active
-      set-window-option -g window-status-format " #I:#(basename '#{pane_current_path}')#(if [ '#{pane_current_command}' != 'zsh' ]; then printf '|#{pane_current_command}'; fi)#{?window_zoomed_flag, Z,} "
+      set-window-option -g window-status-format " #I:${windowTitle} "
 
       # Set terminal window title to reflect current window
-      set-option -g set-titles-string "#I:#(basename '#{pane_current_path}')#(if [ '#{pane_current_command}' != 'zsh' ]; then printf '|#{pane_current_command}'; fi)#{?window_zoomed_flag, Z,}"
+      set-option -g set-titles-string "#I:${windowTitle}"
 
       # Reload config on prefix-r - is this even still necessary with nix/home-manager?
       bind r source-file ~/.config/tmux/tmux.conf \; display-message "Reloaded config..."
