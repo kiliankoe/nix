@@ -13,6 +13,14 @@
 
   system.primaryUser = "kilian";
 
+  # nix-darwin runs compinit in /etc/zshrc by default, and home-manager runs it
+  # again in ~/.zshrc. Each run sees a different fpath, so they invalidate each
+  # other's ~/.zcompdump and the completion cache is fully rebuilt twice on
+  # every shell start (~1s+). Let home-manager's compinit (which runs last,
+  # with the complete fpath) own completion exclusively.
+  programs.zsh.enableCompletion = false;
+  programs.zsh.enableBashCompletion = false;
+
   home-manager.backupFileExtension = "backup";
   home-manager.users.kilian = {
     imports = [

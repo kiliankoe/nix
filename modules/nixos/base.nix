@@ -80,6 +80,10 @@
   ];
 
   programs.zsh.enable = true;
+  # home-manager's compinit in ~/.zshrc owns completion; a second system-level
+  # compinit invalidates the ~/.zcompdump cache on every shell start (see
+  # modules/darwin/base.nix for the full story).
+  programs.zsh.enableCompletion = false;
 
   # Used for backwards compatibility, don't touch.
   system.stateVersion = "24.11";
