@@ -26,6 +26,7 @@
       ripgrep-all
       tealdeer
       tokei
+      typst
       yazi
       yt-dlp
       zola
