@@ -24,6 +24,11 @@ let
     SFTP_PASS=$(cat /run/secrets/cubesat_backup/password)
     export RESTIC_PASSWORD=$(cat /run/secrets/cubesat_backup/restic_password)
 
+    # systemd services run without $HOME; restic 0.19+ treats a missing cache
+    # directory as a fatal error (older versions only warned), so point it at a
+    # stable cache path explicitly. restic creates the dir if absent.
+    export RESTIC_CACHE_DIR=/var/cache/restic
+
     # Set up rclone SFTP backend via environment variables
     export RCLONE_CONFIG_BACKUP_TYPE=sftp
     export RCLONE_CONFIG_BACKUP_HOST="$SFTP_HOST"
@@ -64,10 +69,21 @@ let
 
     ${setupEnvScript}
 
-    # Initialize repo if needed
-    if ! ${pkgs.restic}/bin/restic -r "$REPO" snapshots &>/dev/null; then
+    # Initialize repo only if it genuinely doesn't exist yet.
+    # `restic cat config` exits 10 specifically when the repo is missing; any
+    # other non-zero (transient network blip, lock, wrong password) must NOT
+    # trigger `init` — doing so aborts the whole run with "config file already
+    # exists" under `set -e` and skips the healthcheck success ping.
+    set +e
+    ${pkgs.restic}/bin/restic -r "$REPO" cat config &>/dev/null
+    repo_rc=$?
+    set -e
+    if [ "$repo_rc" -eq 10 ]; then
       echo "Initializing restic repository..."
       ${pkgs.restic}/bin/restic -r "$REPO" init
+    elif [ "$repo_rc" -ne 0 ]; then
+      echo "ERROR: cannot reach restic repository (restic exit $repo_rc); aborting without init"
+      exit 1
     fi
 
     # Build list of paths to back up
