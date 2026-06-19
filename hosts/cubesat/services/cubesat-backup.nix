@@ -104,13 +104,25 @@ let
       exit 1
     fi
 
-    # Run backup
+    # Run backup.
+    # restic exits 3 when the snapshot was created but some source files could
+    # not be read (e.g. a file vanished mid-scan). That is a benign race, not a
+    # backup failure, so treat exit 3 as success.
     echo "Running restic backup..."
+    set +e
     ${pkgs.restic}/bin/restic -r "$REPO" backup \
       --verbose \
       --exclude-caches \
       $TAGS \
       $PATHS_TO_BACKUP
+    backup_rc=$?
+    set -e
+    if [ "$backup_rc" -eq 3 ]; then
+      echo "WARNING: some source files could not be read (restic exit 3); snapshot was still created. Continuing."
+    elif [ "$backup_rc" -ne 0 ]; then
+      echo "ERROR: restic backup failed (exit $backup_rc)"
+      exit "$backup_rc"
+    fi
 
     # Prune old snapshots (keep pre-upgrade tagged snapshots longer)
     echo "Pruning old snapshots..."

@@ -131,12 +131,25 @@ let
       exit 1
     fi
 
-    # Run backup
+    # Run backup.
+    # restic exits 3 when the snapshot was created successfully but some source
+    # files could not be read — e.g. ClickHouse (plausible event-data) merges
+    # and deletes data parts mid-scan, so files vanish between scan and read.
+    # That is a benign race, not a backup failure, so treat exit 3 as success.
     echo "Running restic backup..."
+    set +e
     ${pkgs.restic}/bin/restic -r "$REPO" backup \
       --verbose \
       --exclude-caches \
       $PATHS_TO_BACKUP
+    backup_rc=$?
+    set -e
+    if [ "$backup_rc" -eq 3 ]; then
+      echo "WARNING: some source files could not be read (restic exit 3); snapshot was still created. Continuing."
+    elif [ "$backup_rc" -ne 0 ]; then
+      echo "ERROR: restic backup failed (exit $backup_rc)"
+      exit "$backup_rc"
+    fi
 
     # Prune old snapshots
     echo "Pruning old snapshots..."
