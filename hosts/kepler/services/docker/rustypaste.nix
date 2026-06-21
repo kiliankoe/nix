@@ -20,7 +20,7 @@ lib.mkMerge [
     compose = {
       services.rustypaste = {
         # renovate
-        image = "docker.io/orhunp/rustypaste:latest@sha256:03fc606ce6298513d652fcf32dc8b8602cafcb4e5621912567883b1ef93f78aa";
+        image = "docker.io/orhunp/rustypaste:latest@sha256:c9ecdaadae8ded2ad8fcf0768f135d39cf99688e6edd0689b7f4844a3497683b";
         container_name = "rustypaste";
         restart = "unless-stopped";
         environment = [ "RUST_LOG=info" ];
