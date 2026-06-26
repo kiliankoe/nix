@@ -88,6 +88,8 @@
       ".vscode/"
       "default.profraw"
       "node_modules/"
+      ".claude/"
+      ".direnv/"
     ];
   };
 }
