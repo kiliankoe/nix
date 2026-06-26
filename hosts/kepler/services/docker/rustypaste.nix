@@ -11,7 +11,6 @@ in
 lib.mkMerge [
   (dockerService.mkDockerComposeService {
     serviceName = "rustypaste";
-    # Pinned + updated via Renovate PRs (renovate.json) instead of watchtower.
     auto_update = false;
     monitoring.httpEndpoint = {
       name = "rustypaste";
