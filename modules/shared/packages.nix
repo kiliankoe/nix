@@ -29,5 +29,6 @@
     uv
     vim
     witr
+    yq
   ];
 }
