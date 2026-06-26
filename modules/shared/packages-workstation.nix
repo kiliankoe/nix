@@ -7,7 +7,7 @@
       nixd
 
       bun
-      nodejs
+      # nodejs
       rustup
 
       ddate
