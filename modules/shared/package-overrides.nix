@@ -15,6 +15,17 @@ _: {
       });
     })
 
+    # Skip statix's broken checkPhase. statix 0.5.8-unstable-2026-06-22 ships an
+    # out-of-sync insta snapshot (collapsible_let_in ..._fix) that fails its own
+    # test suite; insta stops at the first failed snapshot so others may be broken
+    # too. These are statix's self-tests and don't affect the installed binary.
+    # Remove once nixpkgs ships a statix whose snapshots are in sync.
+    (_final: prev: {
+      statix = prev.statix.overrideAttrs (_old: {
+        doCheck = false;
+      });
+    })
+
     # Skip flaky upstream test in paperless-ngx 2.20.13.
     # test_error_skip_rule fails with AssertionError: 1 != 2.
     # Remove once nixpkgs updates paperless-ngx past this issue.
