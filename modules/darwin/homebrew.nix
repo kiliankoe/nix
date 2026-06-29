@@ -14,6 +14,7 @@ _: {
     taps = [
       "Arthur-Ficial/tap"
       "kiliankoe/formulae"
+      "skiptools/skip"
     ];
     brews = [
       "apfel"
@@ -84,6 +85,7 @@ _: {
       "raycast"
       "sf-symbols"
       "shadow"
+      "skip"
       "sloth"
       "soulver"
       "steam"
