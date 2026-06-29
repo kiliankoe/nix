@@ -45,6 +45,8 @@ dockerService.mkDockerComposeService {
     pocketbase = {
       ALLOWED_DOMAINS.secret = "wbbash/allowed_domains";
       ADMIN_EMAILS.secret = "wbbash/admin_emails";
+      APP_NAME.secret = "wbbash/miniqdb_name";
+      BASE_URL.secret = "wbbash/base_url";
       SMTP_HOST.secret = "wbbash/email_server_host";
       SMTP_PORT.secret = "wbbash/email_server_port";
       SMTP_USERNAME.secret = "wbbash/email_server_user";
