@@ -21,7 +21,7 @@ dockerService.mkDockerComposeService {
   compose = {
     services.immich-server = {
       # renovate
-      image = "ghcr.io/immich-app/immich-server:release@sha256:685ba5c93337058ff8a189d3ed89f0ba470ef966b1c94d2eace1a3d991f9816e";
+      image = "ghcr.io/immich-app/immich-server:release@sha256:46dedfc5848f7313bd6b584ea9f2648057430307aad6de56de968f6710a72cae";
       container_name = "immich-server";
       volumes = [
         "/mnt/photos/immich:/usr/src/app/upload"
@@ -38,7 +38,7 @@ dockerService.mkDockerComposeService {
 
     services.immich-machine-learning = {
       # renovate
-      image = "ghcr.io/immich-app/immich-machine-learning:release@sha256:5b480e92a2b77618d9ccae8c8110b0eae144ec9daf86715d246ec6d39cb7a553";
+      image = "ghcr.io/immich-app/immich-machine-learning:release@sha256:cb2128c5cbc554fdaa2a036fb4419c808a9f3e0f27170e569dd9e727243da909";
       container_name = "immich-machine-learning";
       volumes = [ "immich-model-cache:/cache" ];
       env_file = [ "immich-machine-learning.env" ];
