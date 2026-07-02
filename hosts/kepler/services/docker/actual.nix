@@ -20,7 +20,7 @@ dockerService.mkDockerComposeService {
     services.actual = {
       container_name = "actual";
       # renovate
-      image = "docker.io/actualbudget/actual-server:26.6.0@sha256:74385f8067f401e61f0be9e343c471705c42dfaa195295c40c5b2f15f4dcc9d4";
+      image = "docker.io/actualbudget/actual-server:26.7.0@sha256:e18b7fbfec6157a368fad4146563f397502e9da70a120aeaeac63b4977405d1c";
       restart = "unless-stopped";
       ports = [ "${toString config.k.ports.actual_http}:5006" ];
       volumes = [
