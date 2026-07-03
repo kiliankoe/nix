@@ -41,6 +41,7 @@
         jellyfin_http = 8412;
         watchstate_http = 8413;
         yamtrack_http = 8414;
+        openclaw_http = 8415;
 
         plex_http = 32400;
       };
