@@ -18,7 +18,6 @@
 
     # Periodic cleanup
     ./docker-prune.nix
-    ./nix-gc.nix
 
     # Monitoring stack (Prometheus + Grafana + AlertManager)
     ./monitoring

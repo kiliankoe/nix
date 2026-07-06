@@ -1,5 +1,7 @@
 { pkgs, inputs, ... }:
 {
+  imports = [ ./nix-gc.nix ];
+
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
