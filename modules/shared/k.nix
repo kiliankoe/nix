@@ -42,6 +42,7 @@
         watchstate_http = 8413;
         yamtrack_http = 8414;
         openclaw_http = 8415;
+        hister_http = 8416;
 
         plex_http = 32400;
       };
