@@ -85,7 +85,7 @@ _: {
       "raycast"
       "sf-symbols"
       "shadow"
-      "skip"
+      "skiptools/skip/skip"
       "sloth"
       "soulver"
       "steam"
