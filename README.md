@@ -75,53 +75,34 @@ This is intentional to keep container logs separate and avoid interleaving multi
 
 ## Backups
 
-Both kepler and cubesat use restic for backups to an SFTP server.
-
-### Kepler
-
-Kepler backs up all services (native NixOS + Docker) daily at 4 AM.
+Both kepler and cubesat use restic for backups to an SFTP server, driven by
+the same shared tooling (`lib/restic-backup.nix`) so both hosts are operated
+identically — same systemd unit names, same restore CLI.
 
 ```bash
 # Run backup manually
-sudo systemctl start kepler-backup
+sudo systemctl start restic-backup
+
+# Run pre-upgrade backup (tagged for easy identification/rollback)
+sudo systemctl start restic-backup-preupgrade
 
 # Check backup status/logs
-journalctl -u kepler-backup -f
+journalctl -u restic-backup -f
 ```
 
-The `kepler-backup-restore` command is available on kepler:
+The `backup-restore` command is available on both hosts:
 
 ```bash
-kepler-backup-restore list                      # List all snapshots
-kepler-backup-restore files latest              # Browse files in a snapshot
-kepler-backup-restore restore latest            # Restore to /var/restore/
-kepler-backup-restore restore-db latest         # Extract PostgreSQL dumps
-kepler-backup-restore shell                     # Interactive restic shell
+backup-restore list                      # List all snapshots
+backup-restore files latest              # Browse files in a snapshot
+backup-restore restore latest            # Restore to /var/restore/
+backup-restore restore-db latest         # Extract PostgreSQL dumps (kepler only)
+backup-restore verify                    # Non-destructively verify repo integrity + restorability
+backup-restore shell                     # Interactive restic shell
 ```
 
-### Cubesat
-
-Cubesat backs up pangolin data (`/var/lib/pangolin`) daily at 3 AM.
-
-```bash
-# Run backup manually
-sudo systemctl start cubesat-backup
-
-# Run pre-upgrade backup (tagged for easy identification)
-sudo systemctl start cubesat-backup-preupgrade
-
-# Check backup status/logs
-journalctl -u cubesat-backup -f
-```
-
-The `cubesat-backup-restore` command is available on cubesat:
-
-```bash
-cubesat-backup-restore list                     # List all snapshots
-cubesat-backup-restore files latest             # Browse files in a snapshot
-cubesat-backup-restore restore latest           # Restore to /var/restore/
-cubesat-backup-restore shell                    # Interactive restic shell
-```
+- **Kepler** backs up all services (native NixOS + Docker) daily at 4 AM.
+- **Cubesat** backs up pangolin data (`/var/lib/pangolin`) and uptime-kuma daily at 3 AM.
 
 #### Deploy with Backup
 
@@ -133,10 +114,19 @@ Use the deploy script to automatically create a pre-upgrade backup before deploy
 
 This creates a tagged snapshot that can be used for rollback if needed.
 
+### Verifying Backups Work
+
+`backup-restore verify` runs a full round-trip check without touching any
+live data: it runs `restic check` against the repo, restores the latest
+snapshot into a throwaway scratch directory (deleted automatically
+afterward), and — on kepler — loads each PostgreSQL dump into a throwaway
+database that's dropped immediately after a sanity check. Run it any time you
+want confidence backups are actually restorable, on either host, the same way.
+
 ### Restore Workflow
 
-1. `<host>-backup-restore list` - find the snapshot you want
-2. `<host>-backup-restore restore <snapshot-id>` - extract to `/var/restore/`
+1. `backup-restore list` - find the snapshot you want
+2. `backup-restore restore <snapshot-id>` - extract to `/var/restore/`
 3. Stop the relevant service: `sudo systemctl stop <service>`
 4. Copy files from restore dir to original location
 5. For PostgreSQL databases (kepler only): `sudo -u postgres psql <dbname> < /path/to/dump.sql`

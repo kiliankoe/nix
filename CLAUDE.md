@@ -143,8 +143,9 @@ When registering a service's `httpEndpoints` in `k.monitoring`, use `0.0.0.0` or
 
 See @README.md for full backup and restore documentation.
 
-- **Kepler**: daily restic backup at 4 AM — native services, Docker volumes (from `k.backup`), PostgreSQL dumps. Restore tool: `kepler-backup-restore`
-- **Cubesat**: daily restic backup at 3 AM — Pangolin data. Restore tool: `cubesat-backup-restore`
+- Shared tooling in `lib/restic-backup.nix` (`mkResticBackupService`) drives both hosts identically: `systemd.services.restic-backup`/`restic-backup-preupgrade`/`restic-backup-failure`, `systemd.timers.restic-backup`, and the `backup-restore` CLI (including `backup-restore verify` for a non-destructive restore check) — same names on kepler and cubesat, only the per-host paths/databases passed into the function differ.
+- **Kepler**: daily restic backup at 4 AM — native services, Docker volumes (from `k.backup`), PostgreSQL dumps.
+- **Cubesat**: daily restic backup at 3 AM — Pangolin data.
 - Both use SFTP backend, healthchecks.io failure notifications, 7 daily / 4 weekly / 6 monthly retention
 
 ### Service Development on kepler

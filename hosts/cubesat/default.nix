@@ -9,7 +9,7 @@
     ../../modules/nixos/base.nix
     ./services/pangolin.nix
     ./services/uptime-kuma.nix
-    ./services/cubesat-backup.nix
+    ./services/backup.nix
   ];
 
   boot.loader.systemd-boot.enable = lib.mkForce false;

@@ -25,9 +25,6 @@
   };
 
   sops.secrets = {
-    "kepler_backup/server" = { };
-    "kepler_backup/username" = { };
-    "kepler_backup/password" = { };
     "synology/smb_username" = { };
     "synology/smb_password" = { };
   };
