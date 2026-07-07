@@ -17,7 +17,7 @@ _: {
       "skiptools/skip"
     ];
     brews = [
-      "apfel"
+      "arthur-ficial/tap/apfel"
       "gh"
       "mas"
       "mole"
