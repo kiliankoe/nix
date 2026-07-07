@@ -8,6 +8,7 @@
     "custom.regex"
   ],
   "prHourlyLimit": 0,
+  "minimumReleaseAge": "7 days",
   "customManagers": [
     {
       "customType": "regex",
