@@ -25,6 +25,10 @@
     environmentFile = config.sops.templates."hister-env".path;
 
     settings = {
+      app = {
+        search_url = "https://kagi.com/search?q={query}";
+      };
+
       server = {
         address = "0.0.0.0:${toString config.k.ports.hister_http}";
         base_url = "http://kepler:${toString config.k.ports.hister_http}";
