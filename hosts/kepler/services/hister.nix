@@ -29,6 +29,11 @@
         address = "0.0.0.0:${toString config.k.ports.hister_http}";
         base_url = "http://kepler:${toString config.k.ports.hister_http}";
       };
+
+      extractors.ytdlp = {
+        enable = true;
+        options.fetch_subtitles = true;
+      };
     };
   };
 
