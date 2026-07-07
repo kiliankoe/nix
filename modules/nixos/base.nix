@@ -77,8 +77,23 @@
     };
   };
   services.tailscale.enable = true;
+
+  programs.mosh = {
+    enable = true;
+    # never expose the UDP range on WAN, opened on tailscale0 only
+    openFirewall = false;
+  };
+  networking.firewall.interfaces."tailscale0".allowedUDPPortRanges = [
+    {
+      from = 60000;
+      to = 61000;
+    }
+  ];
+
   environment.systemPackages = with pkgs; [
     systemctl-tui
+    # mosh-server refuses to start if the client's TERM has no terminfo entry on the server
+    ghostty.terminfo
   ];
 
   programs.zsh.enable = true;

@@ -30,7 +30,7 @@ nix flake check --no-build
 
 ## Deployment
 
-All hosts are reachable directly by their hostname (e.g. `ssh kepler`) over Tailscale — no IP addresses or `.local` suffixes needed.
+All hosts are reachable directly by their hostname (e.g. `ssh kepler`) over Tailscale — no IP addresses or `.local` suffixes needed. mosh is also available everywhere (`mosh kepler`); its UDP range is opened on `tailscale0` only, since cubesat is WAN-exposed.
 
 - **macOS hosts**: `darwin-rebuild switch --flake .#<host>`
 - **NixOS hosts**: `deploy-rs` is configured for remote deployment to kepler and cubesat
