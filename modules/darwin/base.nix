@@ -7,11 +7,6 @@
   # Using Determinate Nix on Darwin hosts
   nix.enable = false;
 
-  # nixpkgs 2026-07-05 renamed nixos-render-docs' --toc-depth to --sidebar-depth,
-  # remove these two lines once https://github.com/nix-darwin/nix-darwin/pull/1818 lands
-  documentation.doc.enable = false;
-  system.tools.darwin-uninstaller.enable = false;
-
   # Touch ID for sudo
   security.pam.services.sudo_local.touchIdAuth = true;
   security.pam.services.sudo_local.reattach = true;
