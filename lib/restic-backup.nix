@@ -207,6 +207,14 @@ in
       restoreScript = pkgs.writeShellScriptBin "backup-restore" ''
         set -euo pipefail
 
+        # Everything this tool touches is root-only (/run/secrets/*,
+        # /var/restore), so escalate up front rather than failing with a
+        # permission error mid-script. /run/wrappers/bin holds the setuid
+        # sudo; the plain nix store binary can't elevate.
+        if [ "$(id -u)" -ne 0 ]; then
+          exec /run/wrappers/bin/sudo "$0" "$@"
+        fi
+
         ${setupEnvScript}
 
         usage() {
