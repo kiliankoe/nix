@@ -48,6 +48,8 @@ dockerService.mkDockerComposeService {
       ];
       ports = [ "${toString config.k.ports.openclaw_http}:18789" ];
       env_file = [ "openclaw.env" ];
+      # Lets the agent reach host-bound services (e.g. hister) without hardcoding the bridge gateway IP.
+      extra_hosts = [ "host.docker.internal:host-gateway" ];
     };
     services.obsidian-sync = {
       container_name = "obsidian-sync";
@@ -75,6 +77,9 @@ dockerService.mkDockerComposeService {
       openclaw-vault = { };
       obsidian-sync-state = { };
     };
+    # Fixed interface name so the host firewall can allow-list this network
+    # (dockerd otherwise names bridges after a hash of the network id).
+    networks.default.driver_opts."com.docker.network.bridge.name" = "br-openclaw";
   };
   environment = {
     openclaw = {

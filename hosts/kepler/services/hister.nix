@@ -38,8 +38,12 @@
     "d /var/lib/hister 0750 hister hister -"
   ];
 
-  # tailnet-only
+  # tailnet
   networking.firewall.interfaces."tailscale0".allowedTCPPorts = [
+    config.k.ports.hister_http
+  ];
+  # openclaw's docker network
+  networking.firewall.interfaces."br-openclaw".allowedTCPPorts = [
     config.k.ports.hister_http
   ];
 }
