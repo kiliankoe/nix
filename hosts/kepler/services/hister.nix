@@ -12,17 +12,10 @@
     systemdServices = [ "hister" ];
   };
 
-  sops.secrets."hister/access_token" = { };
-
-  sops.templates."hister-env".content = ''
-    HISTER__APP__ACCESS_TOKEN=${config.sops.placeholder."hister/access_token"}
-  '';
-
   services.hister = {
     enable = true;
 
     dataDir = "/var/lib/hister";
-    environmentFile = config.sops.templates."hister-env".path;
 
     settings = {
       app = {
