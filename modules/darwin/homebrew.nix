@@ -21,7 +21,7 @@ _: {
       "gh"
       "mas"
       "mole"
-      "nono"
+      # "nono"
       # "opencode"
       # "pi-coding-agent"
       "swift-outdated"
