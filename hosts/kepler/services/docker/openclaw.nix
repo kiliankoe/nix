@@ -54,7 +54,7 @@ dockerService.mkDockerComposeService {
     services.obsidian-sync = {
       container_name = "obsidian-sync";
       # renovate
-      image = "node:24-bookworm-slim@sha256:39a4259b6f744868a8228742ad45aa3026f97302e5eec2fa4a38b30ca0a66e12";
+      image = "node:24-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d";
       restart = "unless-stopped";
       # obsidian-headless is version-pinned here since it's installed at
       # container start and invisible to Renovate. The retry loop keeps the
