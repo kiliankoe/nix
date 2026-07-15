@@ -54,6 +54,9 @@ dockerService.mkDockerComposeService {
       PSYCHJOBS_RECIPIENT.secret = "mato/psychjobs_recipient";
       OPENAI_API_KEY.secret = "mato/openai_api_key";
       VHS_TOKEN.secret = "mato/vhs_token";
+      ARA_REFRESH_TOKEN.secret = "mato/ara_refresh_token";
+      ARA_TENANT_UNIT_ID.secret = "mato/ara_tenant_unit_id";
+      ARA_AREA.secret = "mato/ara_area";
     };
   };
 }
