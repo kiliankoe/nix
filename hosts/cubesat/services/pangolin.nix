@@ -69,6 +69,8 @@ in
 
   services.pangolin = {
     enable = true;
+    # License key activation happens in the dashboard (/admin/license), not here.
+    package = pkgs.fosrl-pangolin.override { edition = "enterprise"; };
     baseDomain = domain;
     inherit dashboardDomain dataDir;
     dnsProvider = "hetzner";
