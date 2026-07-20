@@ -22,7 +22,6 @@
       # mitmproxy
       # mitmproxy2swagger
       openapi-tui
-      opencode
       pi-coding-agent
       ripgrep-all
       tealdeer

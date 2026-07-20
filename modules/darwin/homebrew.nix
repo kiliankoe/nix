@@ -22,7 +22,6 @@ _: {
       "mas"
       "mole"
       # "nono"
-      # "opencode"
       # "pi-coding-agent"
       "kiliankoe/formulae/swift-outdated"
     ];
