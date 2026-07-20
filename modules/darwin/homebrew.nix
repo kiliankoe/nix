@@ -78,6 +78,7 @@ _: {
       "ollama-app"
       "openscad@snapshot"
       "orbstack"
+      "orion"
       "pictogram"
       "proxyman"
       "raspberry-pi-imager"
