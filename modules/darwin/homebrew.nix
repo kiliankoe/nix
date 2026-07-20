@@ -24,7 +24,7 @@ _: {
       # "nono"
       # "opencode"
       # "pi-coding-agent"
-      "swift-outdated"
+      "kiliankoe/formulae/swift-outdated"
     ];
     casks = [
       "1password"
