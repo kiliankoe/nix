@@ -28,6 +28,7 @@
       "....." = "cd ../../../../";
       dockerpwd = "docker run --rm -it -v $(PWD):/src";
       zshreload = "exec zsh -l";
+      clp = "CLAUDE_CONFIG_DIR=~/.claude-personal claude";
     };
 
     history = {
