@@ -1,0 +1,102 @@
+{
+  "cli_default_open_behavior": "new_window",
+  "project_panel": {
+    "dock": "right"
+  },
+  "git_panel": {
+    "dock": "right"
+  },
+  "terminal": {
+    "shell": "system",
+    "dock": "bottom",
+    "env": {
+      "NO_TMUX": "1",
+    },
+  },
+  "edit_predictions": {
+    "provider": "copilot",
+  },
+  "languages": {
+    "Nix": {
+      "language_servers": ["nixd", "!nil"],
+    },
+  },
+  "lsp": {
+    "nixd": {
+      "settings": {
+        "nixpkgs": {
+          "expr": "import (builtins.getFlake \"/Users/kilian/nix\").inputs.nixpkgs { }",
+        },
+        "options": {
+          "nix-darwin": {
+            "expr": "(builtins.getFlake \"/Users/kilian/nix\").darwinConfigurations.cassini.options",
+          },
+          "nixos": {
+            "expr": "(builtins.getFlake \"/Users/kilian/nix\").nixosConfigurations.kepler.options",
+          },
+          "home-manager": {
+            "expr": "(builtins.getFlake \"/Users/kilian/nix\").darwinConfigurations.cassini.options.home-manager.users.type.getSubOptions [ ]",
+          },
+        },
+      },
+      "initialization_options": {
+        "formatting": {
+          "command": ["nixfmt"],
+        },
+      },
+    },
+    "vtsls": {
+      "settings": {
+        "typescript": {
+          "updateImportsOnFileMove": {
+            "enabled": "always",
+          },
+        },
+        "javascript": {
+          "updateImportsOnFileMove": {
+            "enabled": "always",
+          },
+        },
+      },
+      "enable_lsp_tasks": true,
+    },
+  },
+  "collaboration_panel": {
+    "dock": "right",
+    "button": false,
+  },
+  "minimap": {
+    "max_width_columns": 80,
+  },
+  "outline_panel": {
+    "dock": "right",
+  },
+  "disable_ai": false,
+  "icon_theme": "Colored Zed Icons Theme Light",
+  "agent": {
+    "dock": "left",
+    "default_model": {
+      "enable_thinking": true,
+      "model": "claude-opus-4.8",
+      "provider": "copilot_chat",
+    },
+  },
+  "autosave": "on_window_change",
+  "buffer_font_size": 12,
+  "code_actions_on_format": {
+    "source.organizeImports": true,
+    "source.removeUnusedImports": true,
+  },
+  "ensure_final_newline_on_save": true,
+  "format_on_save": "on",
+  "remove_trailing_whitespace_on_save": true,
+  "telemetry": {
+    "metrics": false,
+  },
+  "theme": {
+    "dark": "Fleet Dark Purple",
+    "light": "Fleet Light",
+    "mode": "system",
+  },
+  "ui_font_size": 12,
+}

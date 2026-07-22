@@ -43,6 +43,10 @@ Key is stored in `~/.config/sops/age.key`, make sure that exists.
 sops secrets/secrets.yaml
 ```
 
+## Unmanaged Dotfiles
+
+`dotfiles/` holds reference copies of config files home-manager deliberately doesn't own, currently Zed's. They're snapshots, not evaluated by the flake, so they drift and need manual syncing. See `dotfiles/README.md` for why each app is there and how to sync it.
+
 ## Services
 
 Services are defined as native NixOS or docker services. Not everything has been migrated to native yet.
