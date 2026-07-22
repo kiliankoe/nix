@@ -16,6 +16,7 @@
     dua
     eza
     fd
+    fzf
     git
     helix
     jq

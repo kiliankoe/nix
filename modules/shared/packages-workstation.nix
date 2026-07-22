@@ -3,8 +3,9 @@
   environment.systemPackages =
     with pkgs;
     [
-      nil
+      # language servers
       nixd
+      vscode-langservers-extracted # json/html/css/eslint
 
       bun
       # nodejs
