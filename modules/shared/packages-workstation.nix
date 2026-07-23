@@ -4,7 +4,9 @@
     with pkgs;
     [
       # language servers
+      marksman # markdown
       nixd
+      typescript-language-server
       vscode-langservers-extracted # json/html/css/eslint
 
       bun

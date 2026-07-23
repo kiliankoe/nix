@@ -14,6 +14,7 @@ in
         line-number = "relative";
         mouse = true;
         scrolloff = 5;
+        trim-trailing-whitespace = true;
         shell = [
           "zsh"
           "-c"
@@ -32,6 +33,15 @@ in
         indent-guides = {
           render = true;
           character = "│";
+        };
+
+        soft-wrap = {
+          enable = true;
+        };
+
+        # Mirrors Zed's autosave = "on_window_change".
+        auto-save = {
+          focus-lost = true;
         };
       };
     };
