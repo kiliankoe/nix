@@ -8,7 +8,7 @@ in
     enable = true;
 
     settings = {
-      theme = "onedark";
+      theme = "ao";
 
       editor = {
         line-number = "relative";
@@ -32,14 +32,13 @@ in
 
         indent-guides = {
           render = true;
-          character = "│";
+          character = ".";
         };
 
         soft-wrap = {
           enable = true;
         };
 
-        # Mirrors Zed's autosave = "on_window_change".
         auto-save = {
           focus-lost = true;
         };
