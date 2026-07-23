@@ -59,7 +59,7 @@
           prune = "!git fetch -p && git for-each-ref --format '%(refname:short) %(upstream:track)' | awk '$2 == \"[gone]\" {print $1}' | xargs -r git branch -D";
           recent = "for-each-ref --sort=-committerdate --format='%(committerdate:short) %(refname:short)' refs/heads/";
           show-files = "show --name-only";
-          st = "status";
+          st = "status --porcelain";
           standup = "!git log --all --author=$USER --since='9am yesterday' --format=%s";
           undo = "reset --soft HEAD^";
           unstage = "reset HEAD --";
