@@ -10,6 +10,10 @@
     settings = {
       font-size = 10;
       window-decoration = false;
+      # The shell integration's cursor feature makes zsh switch to a blinking
+      # bar at the prompt, overriding cursor-style. Omitted features keep their
+      # default, so this only turns off the cursor part.
+      shell-integration-features = "no-cursor";
     };
   };
 }
