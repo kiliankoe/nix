@@ -114,6 +114,21 @@ in
       resurrect
       continuum
       {
+        # prefix + space
+        plugin = tmux-thumbs;
+        extraConfig = ''
+          # Replaces the default next-layout binding
+          set -g @thumbs-key space
+          # set-buffer -w puts the pick in the system clipboard (via OSC 52,
+          # so it also works over SSH), not just in the tmux buffer. Don't use
+          # @thumbs-osc52 for this: it writes the escape sequence to stdout of
+          # the run-shell job driving thumbs, and tmux shows any such output in
+          # view mode instead of forwarding it, which blanks the pane.
+          set -g @thumbs-command 'tmux set-buffer -w -- "{}" && tmux display-message "Copied {}"'
+          set -g @thumbs-upcase-command 'tmux set-buffer -w -- "{}" && tmux paste-buffer && tmux display-message "Copied {}"'
+        '';
+      }
+      {
         plugin = tmux-fzf;
         extraConfig = ''
           TMUX_FZF_LAUNCH_KEY="F"
