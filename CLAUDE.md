@@ -67,7 +67,7 @@ Services reference ports via `config.k.ports.<name>` rather than hardcoding valu
 
 User-level configurations are managed through Home Manager:
 
-- Programs (zsh, tmux, git, helix, k9s, zed, starship, direnv, zoxide, sops-env) in `home/programs/`
+- Programs (zsh, tmux, git, ghostty, helix, k9s, zed, starship, direnv, zoxide, sops-env) in `home/programs/`
 - Platform-specific adaptations in `home/darwin.nix` and `home/nixos.nix`
 - Per-host customizations (e.g., git email) configured in each host
 
