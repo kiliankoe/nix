@@ -101,7 +101,7 @@ in
       set -g extended-keys on
       set -s extended-keys-format csi-u
 
-      # Copy last command's output to clipboard (uses OSC 133 markers from zsh)
+      # Copy last command's output to clipboard (detects the starship prompt glyph)
       bind y run-shell "~/.local/bin/tmux-copy-last-output" \; display-message "Last output copied"
 
       # Quick window switcher with fzf (prefix + f)
