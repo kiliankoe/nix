@@ -41,7 +41,7 @@ lib.mkMerge [
       services.yamtrack-redis = {
         container_name = "yamtrack-redis";
         # renovate
-        image = "redis:8-alpine@sha256:9d317178eceac8454a2284a9e6df2466b93c745529947f0cd42a0fa9609d7005";
+        image = "redis:8-alpine@sha256:300e3d24d1a6aeeed5adb42d54735cdd2bcee1107509946adeaeb33b0e1697ad";
         restart = "unless-stopped";
         volumes = [ "yamtrack-redis-data:/data" ];
       };
