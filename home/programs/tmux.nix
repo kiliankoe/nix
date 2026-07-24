@@ -1,7 +1,21 @@
-{ pkgs, ... }:
+{
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (pkgs.tmuxPlugins) tmux-fzf;
-  tmux-fzf-scripts = "${tmux-fzf}/share/tmux-plugins/tmux-fzf/scripts";
+
+  tmux-window-search = pkgs.writeShellApplication {
+    name = "tmux-window-search";
+    runtimeInputs = [
+      pkgs.fzf
+      pkgs.gnugrep
+      pkgs.tmux
+    ];
+    text = builtins.readFile ./scripts/tmux-window-search.sh;
+  };
+
   # Window title: directory, with |command appended when non-shell and Z when
   # zoomed. A manual rename (prefix+,) turns automatic-rename off for that
   # window, in which case the manual name (#W) is shown instead.
@@ -104,8 +118,9 @@ in
       # Copy last command's output to clipboard (detects the starship prompt glyph)
       bind y run-shell "~/.local/bin/tmux-copy-last-output" \; display-message "Last output copied"
 
-      # Quick window switcher with fzf (prefix + f)
-      bind-key f run-shell -b "${tmux-fzf-scripts}/window.sh switch"
+      # Quick window switcher (prefix + f): fuzzy-matches window labels and,
+      # additionally, the text currently visible in each window's panes
+      bind-key f display-popup -E -w 80% -h 60% "${lib.getExe tmux-window-search}"
     '';
 
     plugins = with pkgs.tmuxPlugins; [
