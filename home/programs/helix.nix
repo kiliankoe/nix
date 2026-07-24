@@ -1,4 +1,9 @@
-{ config, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   # nixd evaluates real flake outputs, so the exprs below have to point at this repo.
   flake = "${config.home.homeDirectory}/nix";
@@ -41,6 +46,21 @@ in
 
         auto-save = {
           focus-lost = true;
+        };
+      }
+      // lib.optionalAttrs pkgs.stdenv.isDarwin {
+        # A mouse selection is auto-yanked to the primary register (`*`), but both
+        # providers helix picks on macOS (tmux, pasteboard) leave primary unset, so
+        # that yank is silently dropped. Aliasing primary to pbcopy makes selecting
+        # with the mouse behave like copy-on-select in the terminal.
+        # Darwin only — the Linux hosts have no pbcopy and their autodetected
+        # provider (tmux/OSC 52) is the one that gets text back to this machine.
+        # Note the naming: `yank` reads the clipboard, `paste` writes to it.
+        clipboard-provider.custom = {
+          yank.command = "pbpaste";
+          paste.command = "pbcopy";
+          yank-primary.command = "pbpaste";
+          paste-primary.command = "pbcopy";
         };
       };
     };
