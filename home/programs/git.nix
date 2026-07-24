@@ -48,7 +48,7 @@
           cam = "commit -am";
           co = "checkout";
           d = "diff";
-          dc = "diff --cached";
+          ds = "diff --staged";
           find-merge = "!sh -c 'commit=$0 && branch=\${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 -s | uniq -f1 -d | sort -n | tail -1 | cut -f2'";
           fuck = "reset HEAD --hard";
           last = "log -1 HEAD";
