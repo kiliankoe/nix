@@ -52,6 +52,9 @@
         # User-local binaries
         export PATH="$HOME/bin:$HOME/.bun/bin:$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
 
+        # Case-insensitive completion, plus partial-word and substring matching.
+        zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+
         # Session variables
         export REPORTTIME="5"
         export LESS="--mouse"
