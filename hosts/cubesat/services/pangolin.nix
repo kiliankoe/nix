@@ -1,3 +1,9 @@
+# Pangolin runs in "tailnet mode": no newt/WireGuard site tunnels. The
+# dashboard has a single local site ("Tailnet") and all resource targets are
+# tailnet hostnames (kepler:<port>, homeassistant:8123, ...), so traefik on
+# cubesat reaches backends directly over Tailscale. Newt-dependent features
+# (site tunnels, cert push, Network Logs) are inert in this mode.
+# Revisit them if ever migrating to newt-based sites.
 {
   config,
   lib,
@@ -9,6 +15,14 @@ let
   geoipDir = "/var/lib/GeoIP";
   domain = "kilko.de";
   dashboardDomain = "tunnel.${domain}";
+  # Enterprise-only settings live in privateConfig.yml, which the NixOS module
+  # doesn't manage. acme_cert_sync imports traefik's acme.json to push certs to
+  # newt site agents — this tunnels over Tailscale instead of newt, so the sync
+  # is useless here and only spams the journal every 5s with EACCES warnings
+  # (traefik's letsencrypt dir is 0700, unreadable for the pangolin user).
+  privateConfig = (pkgs.formats.yaml { }).generate "privateConfig.yml" {
+    flags.enable_acme_cert_sync = false;
+  };
 in
 {
   sops.secrets = {
@@ -163,6 +177,7 @@ in
         fi
       '')
       (lib.mkAfter ''
+        cp -f ${privateConfig} ${dataDir}/config/privateConfig.yml
         ${pkgs.gnused}/bin/sed -i \
           -e "s|@SERVER_SECRET@|$(cat ${config.sops.secrets."pangolin/server_secret".path})|" \
           -e "s|@SMTP_HOST@|$(cat ${config.sops.secrets."pangolin/smtp_host".path})|" \

@@ -82,7 +82,10 @@ Services on kepler live under `hosts/kepler/services/`:
 
 Services on cubesat live under `hosts/cubesat/services/`:
 
-- **Pangolin**: API server with GeoIP, email, CORS configuration
+- **Pangolin**: reverse proxy / tunnel dashboard (enterprise edition; license is activated in the dashboard, not in nix). Runs in "tailnet mode" instead of pangolin's own newt/WireGuard site tunnels: a single local site ("Tailnet") holds all resources, and each target points at a tailnet hostname (`kepler:<port>` from the `k.ports` registry, `homeassistant:8123`, ...), so traefik on cubesat reaches backends directly over Tailscale. This is deliberate and should not be broken. Consequences:
+  - Newt-dependent features are inert: `acme_cert_sync` is disabled via `privateConfig.yml` (it would only spam EACCES warnings), and the dashboard's "Network Logs" stay empty (they record newt connection sessions).
+  - Authentication/Admin Action/Network log pages are gated by per-org Log Retention settings (Org Settings → General → Security, stored in the DB); retention 0 = logging disabled.
+  - If migrating to newt-based sites later, revisit both points above.
 
 #### Docker Service Helper (`lib/docker-service.nix`)
 
