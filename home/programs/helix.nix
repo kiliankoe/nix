@@ -7,6 +7,14 @@
 let
   # nixd evaluates real flake outputs, so the exprs below have to point at this repo.
   flake = "${config.home.homeDirectory}/nix";
+
+  # Helix has no inline blame yet (https://github.com/helix-editor/helix/pull/13133), so blame is
+  # on demand: this prints author/date/commit for one line to the statusline.
+  hx-blame-line = pkgs.writeShellApplication {
+    name = "hx-blame-line";
+    runtimeInputs = [ pkgs.git ];
+    text = builtins.readFile ./scripts/hx-blame-line.sh;
+  };
 in
 {
   programs.helix = {
@@ -63,6 +71,8 @@ in
           paste-primary.command = "pbcopy";
         };
       };
+
+      keys.normal.space.B = ":echo %sh{${lib.getExe hx-blame-line} '%{buffer_name}' %{cursor_line}}";
     };
 
     languages = {
