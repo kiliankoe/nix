@@ -14,6 +14,9 @@
       # bar at the prompt, overriding cursor-style. Omitted features keep their
       # default, so this only turns off the cursor part.
       shell-integration-features = "no-cursor";
+
+      # Right opt for navigation, left opt for input
+      macos-option-as-alt = "right";
     };
   };
 }
