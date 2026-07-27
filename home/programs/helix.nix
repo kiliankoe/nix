@@ -8,21 +8,28 @@ let
   # nixd evaluates real flake outputs, so the exprs below have to point at this repo.
   flake = "${config.home.homeDirectory}/nix";
 
-  # Helix has no inline blame yet (https://github.com/helix-editor/helix/pull/13133), so blame is
-  # on demand: this prints author/date/commit for one line to the statusline.
-  hx-blame-line = pkgs.writeShellApplication {
-    name = "hx-blame-line";
-    runtimeInputs = [ pkgs.git ];
-    text = builtins.readFile ./scripts/hx-blame-line.sh;
+  # Helix has no inline blame yet (https://github.com/helix-editor/helix/pull/13133).
+  # Space B opens tig show for the commit that last touched the cursor line: full
+  # diff, author, and message.
+  hx-tig-show = pkgs.writeShellApplication {
+    name = "hx-tig-show";
+    # git resolves the blamed commit here; tig runs inside the popup and resolves
+    # from the interactive PATH there.
+    runtimeInputs = [
+      pkgs.git
+      pkgs.tmux
+    ];
+    text = builtins.readFile ./scripts/hx-tig-show.sh;
   };
 
-  # Space B only shows the last commit; this walks the line's whole history.
-  hx-line-log = pkgs.writeShellApplication {
-    name = "hx-line-log";
-    # Only tmux is invoked by the script itself; git/delta/less run inside the
-    # popup and resolve from the interactive PATH there.
+  # Space L opens tig blame so you can walk the line back through its history
+  # (`,` reblames the parent).
+  hx-tig-blame = pkgs.writeShellApplication {
+    name = "hx-tig-blame";
+    # Only tmux is invoked by the script itself; tig runs inside the popup and
+    # resolves from the interactive PATH there.
     runtimeInputs = [ pkgs.tmux ];
-    text = builtins.readFile ./scripts/hx-line-log.sh;
+    text = builtins.readFile ./scripts/hx-tig-blame.sh;
   };
 in
 {
@@ -90,8 +97,8 @@ in
       };
 
       keys.normal.space = {
-        B = ":echo %sh{${lib.getExe hx-blame-line} '%{buffer_name}' %{cursor_line}}";
-        L = ":sh ${lib.getExe hx-line-log} '%{buffer_name}' %{cursor_line}";
+        B = ":sh ${lib.getExe hx-tig-show} '%{buffer_name}' %{cursor_line}";
+        L = ":sh ${lib.getExe hx-tig-blame} '%{buffer_name}' %{cursor_line}";
       };
     };
 
