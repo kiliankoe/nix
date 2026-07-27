@@ -15,6 +15,15 @@ let
     runtimeInputs = [ pkgs.git ];
     text = builtins.readFile ./scripts/hx-blame-line.sh;
   };
+
+  # Space B only shows the last commit; this walks the line's whole history.
+  hx-line-log = pkgs.writeShellApplication {
+    name = "hx-line-log";
+    # Only tmux is invoked by the script itself; git/delta/less run inside the
+    # popup and resolve from the interactive PATH there.
+    runtimeInputs = [ pkgs.tmux ];
+    text = builtins.readFile ./scripts/hx-line-log.sh;
+  };
 in
 {
   programs.helix = {
@@ -80,7 +89,10 @@ in
         };
       };
 
-      keys.normal.space.B = ":echo %sh{${lib.getExe hx-blame-line} '%{buffer_name}' %{cursor_line}}";
+      keys.normal.space = {
+        B = ":echo %sh{${lib.getExe hx-blame-line} '%{buffer_name}' %{cursor_line}}";
+        L = ":sh ${lib.getExe hx-line-log} '%{buffer_name}' %{cursor_line}";
+      };
     };
 
     languages = {
