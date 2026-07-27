@@ -20,8 +20,16 @@ in
   programs.helix = {
     enable = true;
 
+    # ao is great, but show directories and files in the explorer in different colors
+    themes.kilko = {
+      inherits = "ao";
+      "ui.text.directory" = {
+        fg = "sky_blue";
+      };
+    };
+
     settings = {
-      theme = "ao";
+      theme = "kilko";
 
       editor = {
         line-number = "relative";
