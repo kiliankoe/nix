@@ -16,7 +16,6 @@
       ta = "tmux attach || tmux new";
       df = "df -H";
       du = "du -ch";
-      lg = "lazygit";
       nch = "nixfmt **/*.nix && statix check . && deadnix --fail";
       rsync = "rsync --progress";
       cdtmp = "cd $TMPDIR";
