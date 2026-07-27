@@ -10,6 +10,10 @@ _: {
         # Use custom icons for files and PR indicators
         nerdFontsVersion = "3";
       };
+
+      services = {
+        "code.wabo.run" = "gitlab:code.wabo.run";
+      };
     };
   };
 }
