@@ -5,15 +5,23 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/nix-installer-action@v19
 
-      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
+        with:
+          # We're not on FlakeHub; left opportunistic it errors on every run
+          # before falling back to the GitHub Actions cache anyway.
+          use-flakehub: "disabled"
 
       - name: Check flake
         run: nix flake check --no-build
@@ -22,10 +30,9 @@ jobs:
         run: nix run nixpkgs#statix -- check .
 
       - name: Check formatting
-        run: |
-          nix run nixpkgs#nixfmt -- --check **/*.nix || {
-            echo "::warning::Some files need formatting. Run: nixfmt **/*.nix"
-          }
+        # nixfmt takes files, not directories, and bash only recurses on `**`
+        # with globstar enabled, so feed it the tracked file list explicitly.
+        run: git ls-files '*.nix' | xargs nix run nixpkgs#nixfmt -- --check
 
       - name: Check for dead code
         run: nix run nixpkgs#deadnix -- --fail .
