@@ -11,5 +11,7 @@ _: {
     color title-blur  default default
 
     set line-graphics = utf-8
+
+    set mouse = yes
   '';
 }
