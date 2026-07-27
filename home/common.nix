@@ -7,6 +7,7 @@
     ./programs/lazygit.nix
     ./programs/sops-env.nix
     ./programs/starship.nix
+    ./programs/tig.nix
     ./programs/tmux.nix
     ./programs/zoxide.nix
     ./programs/zsh.nix

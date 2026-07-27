@@ -25,6 +25,7 @@
     rustypaste-cli
     sops
     sqlite
+    tig
     tmux
     tree
     uv
