@@ -108,6 +108,15 @@ in
       # Enable OSC 52 clipboard (works through SSH/nested sessions)
       set -g set-clipboard on
 
+      # Allow select -> copy over mosh:
+      # Name the clipboard selection explicitly. tmux leaves the selection
+      # field empty when copying (OSC 52;;<data>), which every real terminal
+      # accepts, but mosh's emulator only recognizes the literal "52;c;" form
+      # and silently drops anything else — so copies never reach the local
+      # clipboard over mosh. %p1 stays in the format because tparm refuses to
+      # expand a capability that skips a parameter; it expands to nothing.
+      set -as terminal-overrides ',*:Ms=\E]52;c%p1%s;%p2%s\007'
+
       # Allow escape sequences to pass through to the outer terminal (needed for nested tmux)
       set -g allow-passthrough on
 
