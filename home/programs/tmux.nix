@@ -126,8 +126,24 @@ in
     plugins = with pkgs.tmuxPlugins; [
       sensible
       yank
-      resurrect
-      continuum
+      {
+        plugin = resurrect;
+        extraConfig = ''
+          # Restore visible scrollback along with the layout
+          set -g @resurrect-capture-pane-contents 'on'
+          # Beyond resurrect's default whitelist (vim, less, top, ...). Tilde
+          # relaxes matching to a substring.
+          set -g @resurrect-processes '"~hx" "~lazygit" "~btop"'
+        '';
+      }
+      {
+        # Must stay after resurrect, continuum drives its save/restore scripts
+        plugin = continuum;
+        extraConfig = ''
+          # Restore the last snapshot when the tmux server starts.
+          set -g @continuum-restore 'on'
+        '';
+      }
       {
         # prefix + space
         plugin = tmux-thumbs;
