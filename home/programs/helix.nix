@@ -31,6 +31,14 @@ let
     runtimeInputs = [ pkgs.tmux ];
     text = builtins.readFile ./scripts/hx-tig-blame.sh;
   };
+
+  hx-yazi = pkgs.writeShellApplication {
+    name = "hx-yazi";
+    # Only tmux is invoked by the script itself; yazi runs inside the popup and
+    # resolves from the interactive PATH there.
+    runtimeInputs = [ pkgs.tmux ];
+    text = builtins.readFile ./scripts/hx-yazi.sh;
+  };
 in
 {
   programs.helix = {
@@ -99,6 +107,7 @@ in
       keys.normal.space = {
         B = ":sh ${lib.getExe hx-tig-show} '%{buffer_name}' %{cursor_line}";
         L = ":sh ${lib.getExe hx-tig-blame} '%{buffer_name}' %{cursor_line}";
+        M = ":sh ${lib.getExe hx-yazi} '%{buffer_name}'";
       };
     };
 
