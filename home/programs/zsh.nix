@@ -12,6 +12,44 @@
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
+    # A plain `compinit` runs compaudit, which stats every file in $fpath. That
+    # is ~80% of rc-phase startup cost and the main reason cold starts took
+    # seconds. `-C` skips both compaudit and the dump staleness check, so the
+    # dump filename carries what would otherwise be rechecked every time:
+    #
+    #   - $ZSH_VERSION, because $fpath is version-interpolated and macOS ships
+    #     5.9 as the login shell while nix provides 5.9.2. Sharing one dump made
+    #     the two versions invalidate each other's on every alternation.
+    #   - the system generation, since nix store paths all carry epoch mtimes
+    #     and so can't be compared with -nt.
+    #
+    # A rebuild then costs one shell per switch (or brew completion change)
+    # instead of one fpath walk per shell.
+    completionInit =
+      let
+        # brew installs completions without changing the nix generation, so this
+        # one needs a real mtime check; every other $fpath source is nix-managed
+        # and so already covered by the generation in the dump name.
+        brewCompletions = "/opt/homebrew/share/zsh/site-functions";
+      in
+      ''
+        _zcompdump_dir="''${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+        _zcompdump="$_zcompdump_dir/zcompdump-$ZSH_VERSION-''${''${:-/run/current-system}:A:t}"
+        [[ -d $_zcompdump_dir ]] || mkdir -p $_zcompdump_dir
+
+        autoload -U compinit
+        if [[ -f $_zcompdump && ( ! -e ${brewCompletions} || $_zcompdump -nt ${brewCompletions} ) ]]; then
+          compinit -C -d "$_zcompdump"
+        else
+          # Scoped to this zsh version: wiping every dump would delete the dump
+          # the other version just built for this generation, and the two would
+          # rebuild each other's away on every alternation.
+          rm -f "$_zcompdump_dir"/zcompdump-$ZSH_VERSION-*(N)
+          compinit -d "$_zcompdump"
+        fi
+        unset _zcompdump_dir _zcompdump
+      '';
+
     shellAliases = {
       ta = "tmux attach || tmux new";
       df = "df -H";
