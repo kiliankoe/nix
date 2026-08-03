@@ -41,7 +41,6 @@ resticBackup.mkResticBackupService {
 
   postgresDatabases = [
     "freshrss"
-    "paperless"
   ];
 
   restoreHints = [

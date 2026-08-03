@@ -10,15 +10,10 @@
     # Ensure all required databases and users exist
     ensureDatabases = [
       "freshrss"
-      "paperless"
     ];
     ensureUsers = [
       {
         name = "freshrss";
-        ensureDBOwnership = true;
-      }
-      {
-        name = "paperless";
         ensureDBOwnership = true;
       }
     ];

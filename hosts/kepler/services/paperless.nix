@@ -34,13 +34,9 @@
 
       PAPERLESS_REDIS = "redis://localhost:6379";
 
-      PAPERLESS_DBENGINE = "postgresql";
-      PAPERLESS_DBNAME = "paperless";
-      PAPERLESS_DBUSER = "paperless";
+      PAPERLESS_DBENGINE = "sqlite";
     };
   };
-
-  # PostgreSQL is configured globally in the host configuration
 
   services.redis.servers.paperless = {
     enable = true;
