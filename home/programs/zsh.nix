@@ -1,4 +1,8 @@
-{ pkgs, ... }:
+{
+  lib,
+  pkgs,
+  ...
+}:
 {
   # Install tmux helper script for copying last command output
   home.file.".local/bin/tmux-copy-last-output" = {
@@ -12,24 +16,29 @@
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
-    # A plain `compinit` runs compaudit, which stats every file in $fpath. That
-    # is ~80% of rc-phase startup cost and the main reason cold starts took
-    # seconds. `-C` skips both compaudit and the dump staleness check, so the
-    # dump filename carries what would otherwise be rechecked every time:
+    # compinit is the expensive part of startup: a plain run compaudits every
+    # file in $fpath (~1300 here) and rebuilds the dump. `-C` skips all of
+    # that but trusts the dump blindly, so validity is guaranteed by the dump
+    # filename instead. Nix store mtimes are all epoch, so `-nt` checks can't
+    # detect staleness; the name carries what could invalidate the dump:
     #
-    #   - $ZSH_VERSION, because $fpath is version-interpolated and macOS ships
-    #     5.9 as the login shell while nix provides 5.9.2. Sharing one dump made
-    #     the two versions invalidate each other's on every alternation.
-    #   - the system generation, since nix store paths all carry epoch mtimes
-    #     and so can't be compared with -nt.
+    #   - the system generation, which changes whenever nix-managed
+    #     completions can change
+    #   - $ZSH_VERSION, because $fpath is version-interpolated and macOS's
+    #     /bin/zsh coexists with nix's zsh, each needing its own dump
     #
-    # A rebuild then costs one shell per switch (or brew completion change)
-    # instead of one fpath walk per shell.
+    # When the exact dump is missing or stale (typically the first shell
+    # after a switch, historically a multi-second blank pane right when the
+    # machine is busiest), the shell starts instantly from the newest
+    # previous dump and rebuilds the real one in a disowned subshell. A
+    # forked subshell inherits the exact interactive $fpath, which a
+    # re-exec'd zsh would not reliably reproduce. Only a shell that finds no
+    # dump at all pays a full foreground rebuild.
     completionInit =
       let
-        # brew installs completions without changing the nix generation, so this
-        # one needs a real mtime check; every other $fpath source is nix-managed
-        # and so already covered by the generation in the dump name.
+        # brew installs completions without changing the nix generation, so
+        # this one $fpath source needs a real mtime check (brew bumps the dir
+        # mtime on install/uninstall).
         brewCompletions = "/opt/homebrew/share/zsh/site-functions";
       in
       ''
@@ -39,15 +48,34 @@
 
         autoload -U compinit
         if [[ -f $_zcompdump && ( ! -e ${brewCompletions} || $_zcompdump -nt ${brewCompletions} ) ]]; then
+          _zsh_startup_compinit_mode=fast
           compinit -C -d "$_zcompdump"
         else
-          # Scoped to this zsh version: wiping every dump would delete the dump
-          # the other version just built for this generation, and the two would
-          # rebuild each other's away on every alternation.
-          rm -f "$_zcompdump_dir"/zcompdump-$ZSH_VERSION-*(N)
-          compinit -d "$_zcompdump"
+          _zcompdump_stale=("$_zcompdump_dir"/zcompdump-$ZSH_VERSION-*(N.om))
+          if (( $#_zcompdump_stale )); then
+            _zsh_startup_compinit_mode=stale
+            compinit -C -d "$_zcompdump_stale[1]"
+            (
+              # Loading the stale dump above populated the comp tables; clear
+              # them so its entries can't leak into the fresh dump.
+              _comps=() _services=() _patcomps=() _postpatcomps=() _compautos=()
+              compinit -d "$_zcompdump"
+              # Old dumps are this fast path, so drop them only once the new
+              # one exists. compdump writes tempfile+mv, so a concurrent shell
+              # never sees a partial dump.
+              if [[ -f $_zcompdump ]]; then
+                for _f in "$_zcompdump_dir"/zcompdump-$ZSH_VERSION-*(N); do
+                  [[ $_f == $_zcompdump ]] || rm -f "$_f"
+                done
+              fi
+            ) < /dev/null &> /dev/null &!
+          else
+            _zsh_startup_compinit_mode=full
+            compinit -d "$_zcompdump"
+          fi
         fi
-        unset _zcompdump_dir _zcompdump
+        unset _zcompdump_dir _zcompdump _zcompdump_stale
+        typeset -gF _zsh_startup_t_compinit=$EPOCHREALTIME
       '';
 
     shellAliases = {
@@ -78,67 +106,110 @@
     };
 
     # unfortunately zsh.sessionVariables or zsh.localVariables doesn't appear to be working
-    initContent =
-      pkgs.lib.optionalString (!pkgs.stdenv.isDarwin) ''
-        # Auto-attach to tmux for interactive shells (set NO_TMUX=1 to bypass)
-        if command -v tmux &> /dev/null && [ -z "$TMUX" ] && [[ $- == *i* ]] && [ -z "$NO_TMUX" ]; then
-          exec tmux new-session -A -s main
-        fi
-      ''
-      + ''
-        # User-local binaries
-        export PATH="$HOME/bin:$HOME/.bun/bin:$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
+    initContent = lib.mkMerge [
+      # Startup instrumentation, part 1: t0 as early as the rc allows (order
+      # 500 lands before completionInit). Slow startups here have been
+      # intermittent and hard to reproduce after the fact, so every shell
+      # measures itself and only slow ones leave a trace.
+      (lib.mkOrder 500 ''
+        zmodload zsh/datetime
+        typeset -gF _zsh_startup_t0=$EPOCHREALTIME
+        typeset -gF _zsh_startup_t_compinit=$_zsh_startup_t0 _zsh_startup_t_rc=$_zsh_startup_t0
+        typeset -g _zsh_startup_compinit_mode=none
+      '')
 
-        # Case-insensitive completion, plus partial-word and substring matching.
-        zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+      (
+        lib.optionalString (!pkgs.stdenv.isDarwin) ''
+          # Auto-attach to tmux for interactive shells (set NO_TMUX=1 to bypass)
+          if command -v tmux &> /dev/null && [ -z "$TMUX" ] && [[ $- == *i* ]] && [ -z "$NO_TMUX" ]; then
+            exec tmux new-session -A -s main
+          fi
+        ''
+        + ''
+          # User-local binaries
+          export PATH="$HOME/bin:$HOME/.bun/bin:$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
 
-        # Session variables
-        export REPORTTIME="5"
-        export LESS="--mouse"
-        export NH_FLAKE="$HOME/nix"
+          # Case-insensitive completion, plus partial-word and substring matching.
+          zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 
-        glogs() {
-          local job_name="$1"
+          # Session variables
+          export REPORTTIME="5"
+          export LESS="--mouse"
+          export NH_FLAKE="$HOME/nix"
 
-          if [ -z "$job_name" ]; then
-            echo "Usage: glogs <job-name>"
-            return 1
+          glogs() {
+            local job_name="$1"
+
+            if [ -z "$job_name" ]; then
+              echo "Usage: glogs <job-name>"
+              return 1
+            fi
+
+            local mr_iid
+            mr_iid="$(glab mr view --output json | jq -r '.iid')" || return 1
+
+            local pipeline_id
+            pipeline_id="$(glab api "projects/:id/merge_requests/$mr_iid/pipelines" \
+              | jq -r 'max_by(.id).id')" || return 1
+
+            glab ci trace -p "$pipeline_id" "$job_name"
+          }
+
+        ''
+        + lib.optionalString pkgs.stdenv.isDarwin ''
+          export ICLOUD_DRIVE="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
+        ''
+        + ''
+
+          # Load sops-managed environment variables
+          if [[ -f "$HOME/.config/sops/env.sh" ]]; then
+            source "$HOME/.config/sops/env.sh"
           fi
 
-          local mr_iid
-          mr_iid="$(glab mr view --output json | jq -r '.iid')" || return 1
+          # Load deno environment if it exists (will work for any user)
+          if [[ -f "$HOME/.deno/env" ]]; then
+            source "$HOME/.deno/env"
+          fi
 
-          local pipeline_id
-          pipeline_id="$(glab api "projects/:id/merge_requests/$mr_iid/pipelines" \
-            | jq -r 'max_by(.id).id')" || return 1
+          # Functions
+          function mkcd() { mkdir -p "$1" && cd "$1"; }
 
-          glab ci trace -p "$pipeline_id" "$job_name"
+          # atuin initialization
+          if command -v atuin >/dev/null 2>&1; then
+            eval "$(atuin init zsh --disable-up-arrow)"
+          fi
+        ''
+      )
+
+      # Startup instrumentation, part 2: order 3000 lands after the tool
+      # integrations (starship, direnv, ...), so the one-shot precmd below is
+      # registered last and runs after their first hooks. Shells slower than
+      # ZSH_STARTUP_LOG_MS (default 1000) to the first prompt append a phase
+      # breakdown to ~/.cache/zsh/slow-start.log: "compinit" is the completion
+      # setup, "rc" the rest of the rc files, "prompt" the first round of
+      # precmd hooks including starship's initial render.
+      (lib.mkOrder 3000 ''
+        typeset -gF _zsh_startup_t_rc=$EPOCHREALTIME
+        _zsh_startup_report() {
+          local -F now=$EPOCHREALTIME
+          add-zsh-hook -d precmd _zsh_startup_report
+          local -i total_ms=$(( (now - _zsh_startup_t0) * 1000 ))
+          if (( total_ms >= ''${ZSH_STARTUP_LOG_MS:-1000} )); then
+            local -i compinit_ms=$(( (_zsh_startup_t_compinit - _zsh_startup_t0) * 1000 ))
+            local -i rc_ms=$(( (_zsh_startup_t_rc - _zsh_startup_t_compinit) * 1000 ))
+            local -i prompt_ms=$(( (now - _zsh_startup_t_rc) * 1000 ))
+            local ts
+            strftime -s ts '%F %T' $EPOCHSECONDS
+            print -r -- "$ts pid=$$''${TMUX:+ tmux} gen=''${''${:-/run/current-system}:A:t} mode=$_zsh_startup_compinit_mode total=''${total_ms}ms compinit=''${compinit_ms}ms rc=''${rc_ms}ms prompt=''${prompt_ms}ms" \
+              >> "''${XDG_CACHE_HOME:-$HOME/.cache}/zsh/slow-start.log"
+          fi
+          unset _zsh_startup_t0 _zsh_startup_t_compinit _zsh_startup_t_rc _zsh_startup_compinit_mode
+          unfunction _zsh_startup_report
         }
-
-      ''
-      + pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
-        export ICLOUD_DRIVE="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
-      ''
-      + ''
-
-        # Load sops-managed environment variables
-        if [[ -f "$HOME/.config/sops/env.sh" ]]; then
-          source "$HOME/.config/sops/env.sh"
-        fi
-
-        # Load deno environment if it exists (will work for any user)
-        if [[ -f "$HOME/.deno/env" ]]; then
-          source "$HOME/.deno/env"
-        fi
-
-        # Functions
-        function mkcd() { mkdir -p "$1" && cd "$1"; }
-
-        # atuin initialization
-        if command -v atuin >/dev/null 2>&1; then
-          eval "$(atuin init zsh --disable-up-arrow)"
-        fi
-      '';
+        autoload -U add-zsh-hook
+        add-zsh-hook precmd _zsh_startup_report
+      '')
+    ];
 
     # Platform-specific zsh opts are in darwin.nix and nixos.nix
   };
