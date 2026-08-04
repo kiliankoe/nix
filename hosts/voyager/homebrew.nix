@@ -10,8 +10,6 @@ _: {
       "handbrake-app"
       "mullvad-vpn"
       "musicbrainz-picard"
-      "nault"
-      "sketch"
       "tor-browser"
       "transmission"
       # "wacom-tablet" # install when necessary
