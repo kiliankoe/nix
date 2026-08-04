@@ -9,8 +9,8 @@
     dedup-darwin
     mosh
 
-    inputs.hister.packages.${pkgs.system}.default
+    inputs.hister.packages.${pkgs.stdenv.hostPlatform.system}.default
 
-    # inputs.npr.packages.${pkgs.system}.default
+    # inputs.npr.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }
