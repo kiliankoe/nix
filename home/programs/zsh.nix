@@ -100,7 +100,6 @@
       # when -f follows, so `rm -rf` still prompts on darwin; GNU rm lets the
       # later -f win, so on the linux hosts this only covers deletes without -f.
       rm = "rm -I";
-      pcl = "CLAUDE_CONFIG_DIR=~/.claude-personal claude";
     };
 
     history = {

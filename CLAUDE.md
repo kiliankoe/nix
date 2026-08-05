@@ -67,7 +67,11 @@ Services reference ports via `config.k.ports.<name>` rather than hardcoding valu
 
 User-level configurations are managed through Home Manager:
 
-- Programs (zsh, tmux, git, ghostty, helix, k9s, lazygit, zed, starship, direnv, zoxide, sops-env) in `home/programs/`
+- Programs (zsh, tmux, git, ghostty, helix, k9s, lazygit, zed, starship, direnv, zoxide, sops-env, claude) in `home/programs/`
+- `claude.nix` writes the account-independent Claude Code config (CLAUDE.md, commands, skills) from one source into every config dir the host has, so the two accounts can't drift. `settings.json` stays unmanaged because Claude Code rewrites it itself. Details worth not re-deriving:
+  - `~/.claude` is always the host's _primary_ account, never an unused placeholder. Shell aliases only exist in interactive zsh, so a bare `claude` from a script, editor extension, or launchd job has to land somewhere logged in. It's also a special case in Claude Code itself: the default dir keeps its state in `~/.claude.json` and its credentials under the bare `Claude Code-credentials` keychain entry, while every other dir gets `<dir>/.claude.json` and a keychain entry suffixed with a hash of its path. Renaming it therefore costs a re-login.
+  - Hosts whose primary account isn't the personal one set `k.claude.personalConfigDir` (only cassini, the work machine). Everywhere else the personal account _is_ `~/.claude` and `pcl` passes through to plain `claude`, so `pcl` means "the personal account" on every host and can never open an unauthenticated dir.
+  - `--manual` is a zsh global alias, so it composes with either entry point (`claude --manual`, `pcl --manual`) rather than needing a variant of each. It denies the edit tools via `--settings` and appends `claude/manual-mode.md` to the system prompt, for sessions where every change should be shown rather than applied.
 - Platform-specific adaptations in `home/darwin.nix` and `home/nixos.nix`
 - Per-host customizations (e.g., git email) configured in each host
 

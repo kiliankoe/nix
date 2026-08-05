@@ -24,6 +24,9 @@
   home-manager.users.kilian = {
     imports = [ ../../home/programs/k9s.nix ];
 
+    # The only host where the primary Claude Code account isn't the personal one.
+    k.claude.personalConfigDir = ".claude-personal";
+
     programs.git.settings.user.email = "kilian.koeltzsch@wandelbots.com";
 
     programs.git.includes = [

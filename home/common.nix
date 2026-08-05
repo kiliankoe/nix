@@ -1,6 +1,7 @@
 { lib, pkgs, ... }:
 {
   imports = [
+    ./programs/claude.nix
     ./programs/direnv.nix
     ./programs/git.nix
     ./programs/helix.nix
