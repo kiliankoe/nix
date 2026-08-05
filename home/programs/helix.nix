@@ -80,6 +80,10 @@ in
           character = ".";
         };
 
+        lsp = {
+          display-inlay-hints = true;
+        };
+
         soft-wrap = {
           enable = true;
         };
