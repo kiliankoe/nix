@@ -104,6 +104,20 @@ in
         };
       };
 
+      keys.normal = {
+        "C-j" = [
+          "extend_to_line_bounds"
+          "delete_selection"
+          "paste_after"
+        ];
+        "C-k" = [
+          "extend_to_line_bounds"
+          "delete_selection"
+          "move_line_up"
+          "paste_before"
+        ];
+      };
+
       keys.normal.space = {
         B = ":sh ${lib.getExe hx-tig-show} '%{buffer_name}' %{cursor_line}";
         L = ":sh ${lib.getExe hx-tig-blame} '%{buffer_name}' %{cursor_line}";
@@ -115,7 +129,7 @@ in
       # nixd over nil: it evaluates the flake, so it completes nixpkgs attrs and
       # NixOS/nix-darwin/home-manager option paths. nil can't do either.
       # Helix answers workspace/configuration by indexing `config` with the section
-      # the server asks for, and nixd asks for "nixd" — hence the doubled nesting.language
+      # the server asks for, and nixd asks for "nixd" — hence the doubled nesting.
       language-server.nixd.config.nixd = {
         nixpkgs.expr = ''import (builtins.getFlake "${flake}").inputs.nixpkgs { }'';
         options = {
