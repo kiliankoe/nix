@@ -167,11 +167,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785923723,
-        "narHash": "sha256-IJ/65/vNssjSX+KqTP1lmv591HYeTAXAWREJBxm5t/k=",
+        "lastModified": 1785941673,
+        "narHash": "sha256-aNUGJ1Uvjy7z13B0s3gmcgQCvOYxUwiZYGx/o7xWCY0=",
         "owner": "kiliankoe",
         "repo": "miniqdb",
-        "rev": "11587b818a01bd85e0e8bd2658724222ce3c2f86",
+        "rev": "be171f6b37193cf7dc527606decbf235b38c5f3d",
         "type": "github"
       },
       "original": {
