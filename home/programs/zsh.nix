@@ -65,7 +65,9 @@
               # never sees a partial dump.
               if [[ -f $_zcompdump ]]; then
                 for _f in "$_zcompdump_dir"/zcompdump-$ZSH_VERSION-*(N); do
-                  [[ $_f == $_zcompdump ]] || rm -f "$_f"
+                  # `command` so this stays independent of where home-manager
+                  # emits the interactive `rm -I` alias relative to this block.
+                  [[ $_f == $_zcompdump ]] || command rm -f "$_f"
                 done
               fi
             ) < /dev/null &> /dev/null &!
@@ -93,6 +95,11 @@
       "....." = "cd ../../../../";
       dockerpwd = "docker run --rm -it -v $(PWD):/src";
       zshreload = "exec zsh -l";
+      # One confirmation for a recursive delete or >3 files, instead of -i's
+      # per-file nagging that just trains reflexive `y`. BSD rm honours -I even
+      # when -f follows, so `rm -rf` still prompts on darwin; GNU rm lets the
+      # later -f win, so on the linux hosts this only covers deletes without -f.
+      rm = "rm -I";
       pcl = "CLAUDE_CONFIG_DIR=~/.claude-personal claude";
     };
 
@@ -131,6 +138,12 @@
 
           # Case-insensitive completion, plus partial-word and substring matching.
           zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+
+          # zsh already queries before `rm *` / `rm path/*`; this also makes it
+          # discard keystrokes for ten seconds, so a queued or pasted `y` can't
+          # answer the prompt before it's been read. Tab-expanding the `*` skips
+          # both the wait and the query.
+          setopt RM_STAR_WAIT
 
           # Session variables
           export REPORTTIME="5"
