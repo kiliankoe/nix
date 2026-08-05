@@ -5,13 +5,23 @@ let
   # Claude Code runs under two accounts that only differ by CLAUDE_CONFIG_DIR.
   # Everything below is meant to be identical for both, so it's generated from
   # one source.
-  # settings.json is deliberately unmanaged: Claude Code rewrites it itself
-  # (/config, model switches, plugin toggles), which a read-only store symlink
-  # would break.
   sharedFiles = {
     "CLAUDE.md".source = ./claude/CLAUDE.md;
     "commands/review-mr.md".source = ./claude/commands/review-mr.md;
     "skills/humanizer".source = ./claude/skills/humanizer;
+
+    # Out-of-store, unlike everything above, because Claude Code rewrites this
+    # file itself (/config, model switches, plugin toggles) and the store is
+    # read-only. Pointing at the working copy means those writes land straight
+    # in git; both accounts share the one file, so they can't drift.
+    #
+    # This relies on Claude Code passing `allowSymlink: true` when writing user
+    # settings — it resolves the link and renames onto the real target. Project
+    # and local settings get `allowSymlink: false` instead, so if an upgrade
+    # ever flips user settings too, writes start failing with "Refusing to
+    # write through symlink" and this has to go back to a plain copy.
+    "settings.json".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/dotfiles/claude/settings.json";
   };
 
   # ~/.claude is whatever account this machine primarily uses, so it stays the
