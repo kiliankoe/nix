@@ -17,7 +17,6 @@ _: {
 
     masApps = {
       "AusweisApp" = 948660805;
-      "Bluetooth Inspector" = 1509085044;
       "CustomSymbols" = 1566662030;
       "Gifski" = 1351639930;
       "Logic Pro" = 634148309;
