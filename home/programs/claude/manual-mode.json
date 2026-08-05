@@ -1,5 +1,6 @@
 {
   "permissions": {
+    "defaultMode": "default",
     "deny": ["Edit", "Write", "NotebookEdit"]
   }
 }

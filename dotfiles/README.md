@@ -9,6 +9,7 @@ Home-manager writes `home.file` entries as read-only symlinks into the Nix store
 | App | Kept here because |
 | --- | --- |
 | Zed | Installed via Homebrew, not `programs.zed-editor` — the nixpkgs build compiles from source often enough that upgrades cost real time. Zed also rewrites `settings.json` itself whenever settings change through the UI, and its schema moves between releases. |
+| Claude Code | `/config` and in-session toggles (theme, model, plugins, notification channel) rewrite `settings.json`, so home-manager can't own it. Everything else is managed, in `home/programs/claude/`. Both accounts run identical settings, so a single copy is kept here for both. |
 
 ## Syncing
 
@@ -18,6 +19,11 @@ These are copies, so they drift. Check and refresh manually:
 diff -u dotfiles/zed/settings.json ~/.config/zed/settings.json   # what changed
 cp ~/.config/zed/{settings,keymap}.json dotfiles/zed/            # pull live -> repo
 cp dotfiles/zed/{settings,keymap}.json ~/.config/zed/            # push repo -> live
+
+diff -u dotfiles/claude/settings.json ~/.claude/settings.json       # what changed
+diff -u ~/.claude/settings.json ~/.claude-personal/settings.json    # have the accounts drifted?
+cp ~/.claude/settings.json dotfiles/claude/settings.json            # pull live -> repo
+cp dotfiles/claude/settings.json ~/.claude/settings.json            # push repo -> live
 ```
 
 ## Declarative middle ground
