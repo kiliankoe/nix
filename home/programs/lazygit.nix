@@ -15,7 +15,7 @@ _: {
         # Background fetch has no timeout, so instances left open on repos whose
         # remotes are only reachable via VPN burn CPU spinning until ssh gives up.
         # See https://github.com/jesseduffield/lazygit/issues/4734
-        autoFetch = false;
+        # autoFetch = false;
       };
 
       services = {
