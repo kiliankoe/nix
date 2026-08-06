@@ -15,6 +15,28 @@
       url = "https://github.com/kiliankoe.keys";
       flake = false;
     };
+    # Steel plugins (cogs) for steelix. Vendored as inputs so forge (steel's pm)
+    # never has to run
+    forest-hx = {
+      url = "github:Ra77a3l3-jar/forest.hx";
+      flake = false;
+    };
+    notify-hx = {
+      url = "github:chuwy/notify.hx";
+      flake = false;
+    };
+    glyph-hx = {
+      url = "github:Ra77a3l3-jar/glyph.hx";
+      flake = false;
+    };
+    oil-hx = {
+      url = "github:Ra77a3l3-jar/oil.hx";
+      flake = false;
+    };
+    showkeys-hx = {
+      url = "github:HeitorAugustoLN/showkeys.hx";
+      flake = false;
+    };
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
     angrr.url = "github:linyinfeng/angrr";

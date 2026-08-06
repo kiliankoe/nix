@@ -1,10 +1,32 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
 }:
 let
+  # Steel plugins for steelix, vendored from flake inputs so forge (steel's pm) never
+  # has to run. Steel resolves `(require "<cog>/<file>.scm")` under $STEEL_HOME/cogs,
+  # so each attr name has to match that cog's `package-name`. $STEEL_HOME itself
+  # (~/.steel) stays a real writable dir, since steel caches compiled modules there.
+  steelCogs = {
+    forest = inputs.forest-hx;
+    oil = inputs.oil-hx;
+    showkeys = inputs.showkeys-hx;
+    # dependencies, not required directly: notify by forest and oil, glyph by forest
+    notify = inputs.notify-hx;
+    glyph = inputs.glyph-hx;
+  };
+
+  # steelix calls its binary `hx` too, so rename it instead of letting the two shadow
+  # each other. Both read ~/.config/helix, which is why everything below is shared.
+  # only init.scm is steelix-only.
+  shx = pkgs.runCommand "steelix-shx" { } ''
+    mkdir -p $out/bin
+    ln -s ${lib.getExe pkgs.steelix} $out/bin/shx
+  '';
+
   # nixd evaluates real flake outputs, so the exprs below have to point at this repo.
   flake = "${config.home.homeDirectory}/nix";
 
@@ -31,16 +53,54 @@ let
     runtimeInputs = [ pkgs.tmux ];
     text = builtins.readFile ./scripts/hx-tig-blame.sh;
   };
-
-  hx-yazi = pkgs.writeShellApplication {
-    name = "hx-yazi";
-    # Only tmux is invoked by the script itself; yazi runs inside the popup and
-    # resolves from the interactive PATH there.
-    runtimeInputs = [ pkgs.tmux ];
-    text = builtins.readFile ./scripts/hx-yazi.sh;
-  };
 in
 {
+  home.packages = [ shx ];
+
+  home.file = lib.mapAttrs' (
+    name: src: lib.nameValuePair ".steel/cogs/${name}" { source = src; }
+  ) steelCogs;
+
+  # Only steelix reads these. Keybinds for plugin commands have to live here rather
+  # than in `settings.keys` below, otherwise they would be rejected by helix, which
+  # validates typed commands while parsing config.toml.
+  xdg.configFile = {
+    # Loaded before init.scm. steelix auto-creates it when absent; declaring it empty
+    # keeps the config dir fully managed.
+    "helix/helix.scm".text = "";
+
+    "helix/init.scm".text = ''
+      ;; `keymap` is a macro, so it has to be required before use or steel
+            ;; evaluates `(global)` as a call. forest.hx's README omits this line.
+            (require "helix/keymaps.scm")
+            (require "forest/forest.scm")
+            (require "oil/oil.scm")
+            (require "showkeys/showkeys.scm")
+
+            (forest-configure! 'left #:ignore (list ".git" "result" "target"))
+            (forest-set-style! 'snacks)
+
+            ;; oil.hx's README puts its bindings in config.toml, but that file is shared
+            ;; with plain hx, which rejects unknown typed commands while parsing it.
+            (keymap (global)
+                    (normal (space (e ":forest-open")
+                                   (K ":showkeys-toggle")
+                                   (o (o ":oil")
+                                      (e ":oil-enter")
+                                      (b ":oil-back")
+                                      (g ":oil-root")
+                                      (s ":oil-save")
+                                      (r ":oil-refresh")
+                                      (q ":oil-close")
+                                      (h ":oil-toggle-hidden")
+                                      (i ":oil-toggle-git-ignored")
+                                      (m (y ":oil-yank")
+                                         (x ":oil-cut")
+                                         (p ":oil-paste")
+                                         (c ":oil-clipboard-clear"))))))
+    '';
+  };
+
   programs.helix = {
     enable = true;
 
@@ -125,7 +185,6 @@ in
       keys.normal.space = {
         B = ":sh ${lib.getExe hx-tig-show} '%{buffer_name}' %{cursor_line}";
         L = ":sh ${lib.getExe hx-tig-blame} '%{buffer_name}' %{cursor_line}";
-        M = ":sh ${lib.getExe hx-yazi} '%{buffer_name}'";
       };
     };
 

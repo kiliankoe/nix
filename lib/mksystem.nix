@@ -33,6 +33,8 @@ systemFunc {
     sopsModule
     hmModule
     nixIndexModule
+    # home modules need the flake inputs too (helix.nix vendors steel cogs from them)
+    { home-manager.extraSpecialArgs = { inherit inputs; }; }
     (
       if darwin then
         {

@@ -97,6 +97,38 @@
         "type": "github"
       }
     },
+    "forest-hx": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1785695815,
+        "narHash": "sha256-b3O7+R5F9TQ0F5m8FYe6ka8mgCLq3IGw4d1Kdh+Y1l0=",
+        "owner": "Ra77a3l3-jar",
+        "repo": "forest.hx",
+        "rev": "c487956a8f002813fe44ae2a30fffe1859fcc206",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Ra77a3l3-jar",
+        "repo": "forest.hx",
+        "type": "github"
+      }
+    },
+    "glyph-hx": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1785493362,
+        "narHash": "sha256-TpYnGqROkKfoB9G+JTjADWvMtpRJbv4NVaTqiUfW1Eg=",
+        "owner": "Ra77a3l3-jar",
+        "repo": "glyph.hx",
+        "rev": "1e63ccbc8f17511543412c955879ba672f3f8ec1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Ra77a3l3-jar",
+        "repo": "glyph.hx",
+        "type": "github"
+      }
+    },
     "hister": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -267,10 +299,44 @@
         "type": "github"
       }
     },
+    "notify-hx": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774848700,
+        "narHash": "sha256-shKUVnJw2j0yYO+mTHsKie+d1VrJGWDTRul+PTpqlhs=",
+        "owner": "chuwy",
+        "repo": "notify.hx",
+        "rev": "0a328073e6d3e5041346374ae747c275ab8ce746",
+        "type": "github"
+      },
+      "original": {
+        "owner": "chuwy",
+        "repo": "notify.hx",
+        "type": "github"
+      }
+    },
+    "oil-hx": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1785341631,
+        "narHash": "sha256-cMpKLYVh5RkrbmKbigYdAjrF8J1wq6KxOfXoZ4AHLeE=",
+        "owner": "Ra77a3l3-jar",
+        "repo": "oil.hx",
+        "rev": "fdd38520dc041d4314a7c5bc13520195b7f06cfa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Ra77a3l3-jar",
+        "repo": "oil.hx",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "angrr": "angrr",
         "deploy-rs": "deploy-rs",
+        "forest-hx": "forest-hx",
+        "glyph-hx": "glyph-hx",
         "hister": "hister",
         "home-manager": "home-manager",
         "miniqdb": "miniqdb",
@@ -278,9 +344,28 @@
         "nix-flatpak": "nix-flatpak",
         "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs",
+        "notify-hx": "notify-hx",
+        "oil-hx": "oil-hx",
+        "showkeys-hx": "showkeys-hx",
         "sops-nix": "sops-nix",
         "ssh-keys": "ssh-keys",
         "zen-browser": "zen-browser"
+      }
+    },
+    "showkeys-hx": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1758398598,
+        "narHash": "sha256-9oLpZKJ6ZStwr4ijRI2XlUP8fvlR2Boy3qVPW4+YIgQ=",
+        "owner": "HeitorAugustoLN",
+        "repo": "showkeys.hx",
+        "rev": "5996e1ab8df03ac5a708bc569a4bed3791af60bf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "HeitorAugustoLN",
+        "repo": "showkeys.hx",
+        "type": "github"
       }
     },
     "sops-nix": {
