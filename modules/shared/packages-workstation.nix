@@ -27,6 +27,7 @@
       openapi-tui
       pi-coding-agent
       ripgrep-all
+      somafm-cli
       tealdeer
       tokei
       typst
