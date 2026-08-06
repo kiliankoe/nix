@@ -4,7 +4,10 @@
   ...
 }:
 {
-  imports = [ ./programs/ghostty.nix ];
+  imports = [
+    ./programs/eilmeldung.nix
+    ./programs/ghostty.nix
+  ];
 
   home.sessionVariables = {
     # macOS uses 'open' for default browser
