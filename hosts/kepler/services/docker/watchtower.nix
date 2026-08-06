@@ -18,7 +18,7 @@ lib.recursiveUpdate
     compose = {
       services.watchtower = {
         # renovate
-        image = "nickfedor/watchtower:1.19.0@sha256:c1dfdf27fe805dcfefe1cf048cee6960a511c097a99aa355b0bc4be6e6bb3bdf";
+        image = "nickfedor/watchtower:1.20.2@sha256:696a5fb17b9a2e5e04a4e56daedcf88cc4e4fb95c673b8937063f493e2f63ad4";
         container_name = "watchtower";
         restart = "unless-stopped";
         volumes = [
