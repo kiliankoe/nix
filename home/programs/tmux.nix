@@ -69,6 +69,12 @@ in
       unbind-key l
       bind-key l select-pane -R
 
+      # Swap panes with Shift+H/J/K/L
+      bind-key H swap-pane -s '{left-of}'
+      bind-key J swap-pane -s '{down-of}'
+      bind-key K swap-pane -s '{up-of}'
+      bind-key L swap-pane -s '{right-of}'
+
       # Set terminal titles. automatic-rename stays on so the auto format below
       # is used by default; a manual rename (prefix+,) turns it off for that
       # window and the manual name wins.
