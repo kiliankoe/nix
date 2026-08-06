@@ -5,6 +5,7 @@
 }:
 {
   imports = [
+    ./programs/aerc.nix
     ./programs/eilmeldung.nix
     ./programs/ghostty.nix
   ];
