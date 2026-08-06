@@ -1,6 +1,46 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.k.claude;
+
+  # PreToolUse hook for Bash calls. The permission rules in settings.json match a
+  # literal command prefix, so `Bash(rm -rf:*)` sees `rm -rf` and misses `rm -fr`,
+  # `rm -r -f` and `sudo rm -rf`. This parses the command into tokens instead, so
+  # flag spelling and order stop mattering, and it splits on shell operators so a
+  # command hiding behind `&&` is judged on its own.
+  #
+  # It answers "ask", never "deny": a false positive costs one keystroke, a false
+  # deny costs a wedged session. Nothing is given up by that — Claude Code still
+  # evaluates the deny rules in settings.json regardless of what a hook returns,
+  # so those stay the hard backstop underneath.
+  commandGuard = pkgs.writeShellApplication {
+    name = "claude-command-guard";
+    runtimeInputs = [ pkgs.jq ];
+
+    # A jq failure (malformed payload, a jq upgrade breaking a construct) must
+    # not break the session, so it exits 0 with no decision and lets the normal
+    # permission flow take over.
+    text = ''
+      jq -c -f ${./claude/command-guard.jq} || exit 0
+    '';
+
+    derivationArgs = {
+      nativeBuildInputs = [ pkgs.jq ];
+      # Runs as part of the build's check phase, so a rule that stops matching
+      # fails the build rather than surfacing as a hook that quietly stopped
+      # prompting. The `pass` half of the suite is what keeps it from prompting
+      # on ordinary work and getting clicked through on reflex.
+      postCheck = ''
+        sh ${./claude/command-guard-test.sh} \
+          ${./claude/command-guard.jq} \
+          ${./claude/command-guard-tests.txt}
+      '';
+    };
+  };
 
   # Claude Code runs under two accounts that only differ by CLAUDE_CONFIG_DIR.
   # Everything below is meant to be identical for both, so it's generated from
@@ -43,6 +83,12 @@ in
   };
 
   config = {
+    # settings.json points the hook at this by absolute path, so it has to be
+    # installed anywhere claude.nix is. A missing hook binary exits 127, which
+    # Claude Code treats as a non-blocking error, i.e. the guard would fail open
+    # silently on any host that had settings.json but not this.
+    home.packages = [ commandGuard ];
+
     home.file = lib.listToAttrs (
       lib.concatMap (
         dir: lib.mapAttrsToList (path: attrs: lib.nameValuePair "${dir}/${path}" attrs) sharedFiles

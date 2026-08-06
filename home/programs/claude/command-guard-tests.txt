@@ -1,0 +1,110 @@
+# Cases for command-guard.jq. One per line: `ask` or `pass`, then the command.
+# `ask` means the guard must return a decision; `pass` means it must stay silent
+# and let the normal permission flow handle the call.
+#
+# The `pass` half is the important half. A guard that prompts on everything gets
+# clicked through on reflex, which is worse than no guard at all.
+
+# --- rm, every flag spelling the prefix rules in settings.json miss -----------
+ask	rm -rf dist
+ask	rm -fr dist
+ask	rm -Rf dist
+ask	rm -r -f node_modules
+ask	rm --recursive --force out
+ask	rm -rfv build
+ask	sudo rm -rf /var/lib/thing
+ask	FORCE=1 rm -rf tmp
+ask	npm run build && rm -rf dist
+ask	rm -rf ~/Downloads
+ask	rm -rf /
+ask	rm -rf /etc
+pass	rm file.txt
+pass	rm -f stale.lock
+pass	rm -i old.log
+pass	grep -rf patterns.txt src/
+pass	rmdir empty-dir
+
+# --- git, the operations that destroy uncommitted or unpushed work ------------
+ask	git reset --hard
+ask	git reset --hard HEAD~3
+ask	git -C /tmp/repo reset --hard
+ask	git clean -fdx
+ask	git clean -fd
+ask	git checkout -- .
+ask	git restore .
+ask	git push --force origin main
+ask	git push origin main --force
+ask	git push -f origin main
+ask	git branch -D feature
+ask	git stash clear
+ask	git stash drop
+ask	git filter-branch --tree-filter true HEAD
+pass	git status
+pass	git checkout -b feature
+pass	git checkout main
+pass	git push origin main
+pass	git push --force-with-lease origin feature
+pass	git clean -n
+pass	git stash list
+pass	git branch -d merged-feature
+
+# --- containers ---------------------------------------------------------------
+ask	docker system prune -af
+ask	docker volume rm immich_data
+ask	docker volume prune -f
+ask	docker compose down -v
+ask	podman system prune --all
+pass	docker ps
+pass	docker compose up -d
+pass	docker compose down
+pass	docker logs --tail=50 linkding
+
+# --- backups and databases ----------------------------------------------------
+ask	restic forget --prune --keep-daily 7
+ask	restic prune
+ask	dropdb paperless
+ask	psql -c "DROP DATABASE paperless"
+ask	sudo -u postgres psql -c "TRUNCATE TABLE documents"
+pass	restic snapshots
+pass	restic check
+pass	backup-restore verify
+pass	psql -c "SELECT count(*) FROM documents"
+
+# --- disks and devices --------------------------------------------------------
+ask	dd if=/dev/zero of=/dev/disk2 bs=1m
+ask	mkfs.ext4 /dev/sda1
+ask	diskutil eraseDisk JHFS+ Untitled /dev/disk2
+ask	shred -u secrets.env
+pass	dd if=/dev/zero of=./testfile bs=1m count=10
+pass	diskutil list
+
+# --- find with a delete action ------------------------------------------------
+ask	find . -name '*.tmp' -delete
+ask	find . -type f -exec rm {} +
+pass	find . -name '*.tmp'
+pass	find . -type f -name '*.nix'
+
+# --- commands carried inside another command ----------------------------------
+# ssh and `sh -c` take a command as an argument, so the payload has to be
+# unwrapped and re-checked. Everything else that merely mentions a dangerous
+# string is left alone, which is why the `pass` cases below matter.
+ask	ssh kepler 'rm -rf /var/lib/paperless'
+ask	ssh kepler "sudo rm -rf /mnt/media/tmp"
+ask	ssh -p 2222 cubesat 'rm -rf /var/lib/pangolin'
+ask	bash -c 'rm -rf build'
+ask	sh -c "git reset --hard"
+ask	docker exec -it linkding rm -rf /data
+pass	echo "rm -rf /" >> notes.txt
+pass	rg 'rm -rf' --files-with-matches
+pass	ssh kepler 'systemctl status linkding'
+
+# --- ordinary work must stay silent -------------------------------------------
+pass	ls -la
+pass	nixfmt **/*.nix
+pass	statix check .
+pass	deadnix --fail
+pass	nix flake check --no-build
+pass	nh darwin build -H voyager
+pass	cargo test
+pass	systemctl status linkding
+pass	journalctl -u linkding --since '1 hour ago'
