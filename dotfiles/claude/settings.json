@@ -73,11 +73,13 @@
       "Bash(glab repo delete:*)",
       "Bash(glab release delete:*)",
       "Bash(gh repo delete:*)",
-      "Bash(gh release delete:*)"
+      "Bash(gh release delete:*)",
+      "Bash(rm -rf:*)"
     ],
     "ask": [
       "Bash(git push:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(rm:*)"
     ],
     "defaultMode": "auto"
   },
