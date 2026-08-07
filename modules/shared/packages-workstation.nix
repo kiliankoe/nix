@@ -9,6 +9,9 @@
       typescript-language-server
       vscode-langservers-extracted # json/html/css/eslint
 
+      # formatters
+      prettier # markdown
+
       bun
       # nodejs
       rustup

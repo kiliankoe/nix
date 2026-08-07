@@ -211,6 +211,18 @@ in
             command = "nixfmt";
           };
         }
+        {
+          name = "markdown";
+          # Keeping auto-format disabled for now since auto-save.focus-lost is enabled
+          # auto-format = true;
+          formatter = {
+            command = "prettier";
+            args = [
+              "--parser"
+              "markdown"
+            ];
+          };
+        }
       ];
     };
   };
