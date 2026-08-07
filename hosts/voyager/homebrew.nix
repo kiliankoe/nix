@@ -10,6 +10,7 @@ _: {
       "handbrake-app"
       "mullvad-vpn"
       "musicbrainz-picard"
+      "orbstack"
       "tor-browser"
       "transmission"
       # "wacom-tablet" # install when necessary

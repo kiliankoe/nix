@@ -204,3 +204,20 @@ To add new services:
 - `allowUnfree = true` is set globally
 - Packages are organized by host in separate `.nix` files
 - macOS systems use Homebrew cask for GUI applications via `modules/darwin/homebrew.nix` and host specific installations via `hosts/<hostname>/homebrew.nix`.
+
+#### Container Runtime on macOS
+
+The two macOS hosts deliberately run different docker daemons, because the licensing differs and only one of them is a work machine. The `docker` and `docker-compose` CLIs are the same on both, from `modules/shared/packages-docker.nix` (also imported by kepler, which is why nothing macOS-specific belongs in that file).
+
+- **voyager** (personal): OrbStack, cask in `hosts/voyager/homebrew.nix`. It used to live in the shared `modules/darwin/homebrew.nix`; it was moved out precisely so cassini stops inheriting it.
+- **cassini** (work): colima, via `modules/darwin/colima.nix`, imported only from `hosts/cassini/default.nix`.
+
+Docker Desktop and OrbStack are both free for personal use only and need a paid plan for commercial use, so neither is licensable on cassini. colima is MIT, headless, and speaks the same socket, so everything downstream (`dive`, the `dockerpwd` alias in `home/programs/zsh.nix`) is unaffected. Details worth not re-deriving:
+
+- The `launchd.user.agents.colima` command needs `--foreground`. Without it `colima start` daemonises and returns, and launchd reaps the job the moment it does.
+- The agent's `path` is only the system dirs. colima's nixpkgs wrapper already prepends limactl/docker/qemu/krunkit, but lima reaches the VM over `ssh`, which a launchd agent won't otherwise find. Its `EnvironmentVariables.PATH` replaces the inherited PATH rather than extending it, so dropping those breaks the VM start rather than colima itself.
+- `KeepAlive.SuccessfulExit = false` restarts colima if it crashes while leaving a deliberate `colima stop` stopped.
+- colima defaults to `--vm-type=vz` (Apple Virtualization), so there is no qemu in the running path despite qemu being on the wrapper's PATH.
+- Resource limits are not set in nix on purpose. colima defaults to 2 CPU / 2 GiB / 60 GiB; `colima start --cpu 4 --memory 8` persists to `~/.colima/default/colima.yaml` (`--save-config` defaults true), so tuning survives without the flags entering the module.
+- colima sets itself as the active Docker context on start. The old `desktop-linux` and `orbstack` contexts in `~/.docker/contexts/` are user state that nix does not manage and were removed by hand.
+- Logs land in `~/Library/Logs/colima.log`.

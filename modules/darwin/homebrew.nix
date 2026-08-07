@@ -75,7 +75,6 @@ _: {
       "ogdesign-eagle"
       "ollama-app"
       "openscad@snapshot"
-      "orbstack"
       "orion"
       "pictogram"
       "proxyman"

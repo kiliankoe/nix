@@ -9,7 +9,6 @@ _: {
     ];
 
     casks = [
-      # "docker-desktop"
       "figma"
       "font-open-sans"
       "microsoft-auto-update"
