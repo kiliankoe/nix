@@ -20,7 +20,14 @@ in
     enable = true;
     # Not in nixpkgs; take the package from its own flake rather than pulling in
     # the overlay just to satisfy the module's `pkgs.eilmeldung` default.
-    package = inputs.eilmeldung.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    # `eilmeldung-git` rather than `default`: both are the same derivation apart
+    # from `src`, but `default` re-fetches the release tarball with
+    # fetchFromGitHub, and `cargoLock.lockFile = "${src}/Cargo.lock"` then reads a
+    # file out of that derivation at eval time. That IFD makes evaluating this
+    # config require *building* an aarch64-darwin path, which the Linux CI runner
+    # cannot do. `eilmeldung-git` uses the flake input's own source tree, which is
+    # already a store path, so evaluation stays pure.
+    package = inputs.eilmeldung.packages.${pkgs.stdenv.hostPlatform.system}.eilmeldung-git;
 
     settings = {
       # FreshRSS is reached over its Google Reader API. The password is the
