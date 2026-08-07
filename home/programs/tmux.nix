@@ -130,6 +130,11 @@ in
       set -g extended-keys on
       set -s extended-keys-format csi-u
 
+      # Clear the pane and its scrollback. -R resets the pane's terminal state
+      # C-l makes the shell redraw its prompt, and clear-history then discards
+      # everything. The order matters.
+      bind C-k send-keys -R \; send-keys C-l \; clear-history
+
       # Copy last command's output to clipboard (detects the starship prompt glyph)
       bind y run-shell "~/.local/bin/tmux-copy-last-output" \; display-message "Last output copied"
 
