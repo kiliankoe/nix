@@ -118,7 +118,7 @@ in
       editor = {
         line-number = "relative";
         mouse = true;
-        scrolloff = 5;
+        scrolloff = 12;
         trim-trailing-whitespace = true;
         shell = [
           "zsh"
