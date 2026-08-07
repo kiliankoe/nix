@@ -186,6 +186,19 @@
           # Functions
           function mkcd() { mkdir -p "$1" && cd "$1"; }
 
+          soma() {
+            if (( $# )); then
+              somafm play --quality=highest "$@"
+              return
+            fi
+
+            local channel
+            # No `local channel=$(...)`: `local` always exits 0, which would
+            # swallow fzf's 130 on Esc and play whatever `$\{channel%% *}` is.
+            channel=$(somafm ls | fzf --height=40% --reverse) || return
+            somafm play --quality=highest "''${channel%% *}"
+          }
+
           # atuin initialization
           if command -v atuin >/dev/null 2>&1; then
             eval "$(atuin init zsh --disable-up-arrow)"
