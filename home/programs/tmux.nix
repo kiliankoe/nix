@@ -32,12 +32,14 @@ in
     baseIndex = 1;
     clock24 = true;
 
-    # These are taken care of by tmux-sensible, verify though before removing.
-    # escapeTime = 0;
-    # terminal = "screen-256color";
-    # aggressiveResize = true;
-    # historyLimit = 10000;
-    # keyMode = "emacs"; # Default, but explicit
+    # tmux's own terminfo entry rather than screen's. sensible would otherwise
+    # set screen-256color, which has no italics, reports standout as italic,
+    # advertises ^H for backspace tmux sends DEL, and lacks E3 (drop scrollback).
+    # sensible only upgrades the value when it's exactly home-manager's "screen"
+    # default, so setting it here takes precedence.
+    # This however needs ncurses 6.x wherever TERM is exported to. Fine on my
+    # machines, but maybe a slim container would need TERM=xterm-256color.
+    terminal = "tmux-256color";
 
     extraConfig = ''
       # Explicitly set and bind the prefix for nested sessions,
