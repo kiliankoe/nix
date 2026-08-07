@@ -17,10 +17,11 @@
       rustup
 
       ddate
+      delta
+      devenv
       dive
       ffmpeg
       genact
-      gping
       heh
       hyperfine
       lucky-commit
@@ -36,7 +37,6 @@
       typst
       yazi
       yt-dlp
-      zola
     ]
     ++ lib.optionals (!pkgs.stdenv.isDarwin) [
       # claude is installed via homebrew on darwin hosts because that's faster to receive updates

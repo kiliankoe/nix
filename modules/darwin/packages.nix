@@ -11,7 +11,5 @@
 
     inputs.hister.packages.${pkgs.stdenv.hostPlatform.system}.default
     inputs.miniqdb.packages.${pkgs.stdenv.hostPlatform.system}.mqdb
-
-    # inputs.npr.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }
