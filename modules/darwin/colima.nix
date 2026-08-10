@@ -1,6 +1,10 @@
 { config, pkgs, ... }:
 {
-  environment.systemPackages = [ pkgs.colima ];
+  environment.systemPackages = [
+    pkgs.colima
+    # Docker Desktop/OrbStack bundled this, colima doesn't.
+    pkgs.docker-credential-helpers
+  ];
 
   launchd.user.agents.colima = {
     # --foreground is required, without it `colima start` daemonises and returns and
