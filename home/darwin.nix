@@ -31,9 +31,6 @@
     initContent = ''
       alias brewout="brew outdated"
       alias brewup="brew upgrade && brew cleanup"
-      # BSD ls flags
-      alias ls='ls -G'
-      alias l='ls -lAhG'
 
       # Homebrew
       eval "$(/opt/homebrew/bin/brew shellenv)"

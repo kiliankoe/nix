@@ -81,6 +81,7 @@
       '';
 
     shellAliases = {
+      l = "eza -la";
       ta = "tmux attach || tmux new";
       df = "df -H";
       du = "du -ch";
