@@ -95,7 +95,6 @@
       "...." = "cd ../../../";
       "....." = "cd ../../../../";
       dockerpwd = "docker run --rm -it -v $(PWD):/src";
-      zshreload = "exec zsh -l";
       # One confirmation for a recursive delete or >3 files, instead of -i's
       # per-file nagging that just trains reflexive `y`. BSD rm honours -I even
       # when -f follows, so `rm -rf` still prompts on darwin; GNU rm lets the
@@ -186,6 +185,22 @@
 
           # Functions
           function mkcd() { mkdir -p "$1" && cd "$1"; }
+
+          # A function rather than an alias, because `exec` replaces the shell
+          # and the job table lives in that process image: anything suspended
+          # (usually a C-z'd editor) survives as an orphan still parented to
+          # this PID, but unreachable by `fg` and holding no shell's attention.
+          # zsh/parameter is loaded here rather than at rc time so a shell that
+          # never reloads doesn't pay for it.
+          zshreload() {
+            zmodload zsh/parameter
+            if (( $#jobstates )); then
+              print -u2 "zshreload: refusing, these jobs would be orphaned:"
+              jobs -l >&2
+              return 1
+            fi
+            exec zsh -l
+          }
 
           soma() {
             if (( $# )); then
