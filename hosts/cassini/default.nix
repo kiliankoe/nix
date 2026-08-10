@@ -28,6 +28,14 @@
     # The only host where the primary Claude Code account isn't the personal one.
     k.claude.personalConfigDir = ".claude-personal";
 
+    programs.sesh.settings.session = [
+      {
+        name = "nova";
+        path = "~/dev/nova";
+        startup_command = "lswt";
+      }
+    ];
+
     programs.git.settings.user.email = "kilian.koeltzsch@wandelbots.com";
 
     programs.git.includes = [

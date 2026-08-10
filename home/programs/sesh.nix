@@ -22,11 +22,30 @@
     settings = {
       default_session.startup_command = "eza";
 
+      # Windows need to be declared separately from sessions, otherwise sesh
+      # fails with "window <x> is not defined in config".
+      # window = [
+      #   {
+      #     name = "foobar";
+      #     startup_script = "echo 'hello world'";
+      #   }
+      # ];
+
+      # These are not auto-created, but created lazily when accessed.
+      # The upsides to having them here are:
+      # - custom name if it doesn't match the directory
+      # - custom startup_commands, icons, aliases, windows
+      # - shows up in sesh's config picker ^g
       session = [
         {
           name = "nix";
           path = "~/nix";
-          startup_command = "hx";
+          # windows = [ foobar barfoo ]
+        }
+        {
+          name = "btop";
+          path = "~";
+          startup_command = "btop";
         }
       ];
 
