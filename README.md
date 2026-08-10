@@ -45,7 +45,7 @@ sops secrets/secrets.yaml
 
 ## Unmanaged Dotfiles
 
-`dotfiles/` holds reference copies of config files home-manager deliberately doesn't own, currently Zed's. They're snapshots, not evaluated by the flake, so they drift and need manual syncing. See `dotfiles/README.md` for why each app is there and how to sync it.
+`dotfiles/` holds config files home-manager deliberately doesn't own the contents of, because the apps (Zed, Claude Code) rewrite them at runtime. They aren't evaluated by the flake, but they are linked into place with `mkOutOfStoreSymlink`, so the live path is the file in this repo and there's nothing to sync manually. See `dotfiles/README.md` for why each app is there.
 
 ## Services
 

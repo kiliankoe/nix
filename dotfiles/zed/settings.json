@@ -1,4 +1,5 @@
 {
+  "helix_mode": true,
   "cli_default_open_behavior": "new_window",
   "project_panel": {
     "dock": "right"
