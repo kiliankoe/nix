@@ -195,6 +195,17 @@ in
           inlay-hints-length-limit = 40;
         };
 
+        # Diagnostics render in the buffer instead of the top-right corner, where a
+        # long message was unreadable. The cursor line gets the full wrapped block
+        # below it, every other line gets only its most severe diagnostic appended
+        # after the line text. Helix suppresses the end-of-line copy of anything the
+        # inline filter already caught, so no message shows up twice.
+        # `other-lines` stays at its default of "disable": a block per diagnostic
+        # across the whole file pushes the code apart faster than it explains
+        # anything.
+        end-of-line-diagnostics = "hint";
+        inline-diagnostics.cursor-line = "hint";
+
         soft-wrap = {
           enable = true;
         };
