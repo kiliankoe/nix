@@ -214,6 +214,13 @@ in
           };
         }
         {
+          # Helix auto-configures the lsp, only the formatter is missing here.
+          name = "just";
+          formatter = {
+            command = "just-formatter";
+          };
+        }
+        {
           name = "markdown";
           # Keeping auto-format disabled for now since auto-save.focus-lost is enabled
           # auto-format = true;

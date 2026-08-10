@@ -4,12 +4,16 @@
     with pkgs;
     [
       # language servers
+      just-lsp
       marksman # markdown
       nixd
       typescript-language-server
       vscode-langservers-extracted # json/html/css/eslint
 
       # formatters
+      # just's own --fmt overwrites in place and is behind --unstable, so it can't
+      # serve as helix's formatter, which pipes stdin to stdout.
+      just-formatter
       prettier # markdown
 
       bun
@@ -24,6 +28,7 @@
       genact
       heh
       hyperfine
+      just
       lucky-commit
       lychee
       # mitmproxy
@@ -35,6 +40,7 @@
       tealdeer
       tokei
       typst
+      watchexec
       yazi
       yt-dlp
     ]
