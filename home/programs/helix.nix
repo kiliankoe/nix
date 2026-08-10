@@ -53,6 +53,35 @@ let
     runtimeInputs = [ pkgs.tmux ];
     text = builtins.readFile ./scripts/hx-tig-blame.sh;
   };
+
+  hx-biome-format = pkgs.writeShellApplication {
+    name = "hx-biome-format";
+    runtimeInputs = [ pkgs.biome ];
+    text = builtins.readFile ./scripts/hx-biome-format.sh;
+  };
+
+  # One binary formats all of these, so the entries only differ by name. biome
+  # needs a filename to pick its parser, and helix expands command-line variables
+  # in formatter args; the bare basename is enough, since helix already runs the
+  # formatter with the document's directory as cwd. Passing %{buffer_name} whole
+  # would break instead: it is relative to helix's cwd, not the formatter's.
+  biomeLanguages =
+    map
+      (name: {
+        inherit name;
+        formatter = {
+          command = lib.getExe hx-biome-format;
+          args = [ "%sh{basename %{buffer_name}}" ];
+        };
+      })
+      [
+        "javascript"
+        "json"
+        "jsonc"
+        "jsx"
+        "typescript"
+        "tsx"
+      ];
 in
 {
   home.packages = [ shx ];
@@ -232,7 +261,10 @@ in
             ];
           };
         }
-      ];
+      ]
+      # biome covers everything prettier would here except markdown, which it
+      # doesn't support, so prettier stays for that one.
+      ++ biomeLanguages;
     };
   };
 }

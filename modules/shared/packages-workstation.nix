@@ -11,6 +11,7 @@
       vscode-langservers-extracted # json/html/css/eslint
 
       # formatters
+      biome # js/ts/json, driven by hx-biome-format in home/programs/helix.nix
       # just's own --fmt overwrites in place and is behind --unstable, so it can't
       # serve as helix's formatter, which pipes stdin to stdout.
       just-formatter
