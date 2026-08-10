@@ -5,8 +5,12 @@
     "docker:pinDigests"
   ],
   "enabledManagers": [
-    "custom.regex"
+    "custom.regex",
+    "nix"
   ],
+  "nix": {
+    "enabled": true
+  },
   "prHourlyLimit": 0,
   "minimumReleaseAge": "7 days",
   "customManagers": [
@@ -22,6 +26,12 @@
     }
   ],
   "packageRules": [
+    {
+      "description": "Flake inputs: list on the dashboard only, PRs on demand via checkbox; manual `nix flake update` stays the primary flow",
+      "matchManagers": ["nix"],
+      "dependencyDashboardApproval": true,
+      "minimumReleaseAge": "0 days"
+    },
     {
       "description": "Keep immich server and machine-learning bumped together",
       "matchDatasources": ["docker"],

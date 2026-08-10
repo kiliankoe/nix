@@ -143,6 +143,14 @@ Two mechanisms keep Docker images current; each service uses exactly one.
 
 To place an image under Renovate: set `auto_update = false`, pin the image to `repo:tag@sha256:digest`, and add a `# renovate` comment line directly above the `image =` line. `renovate.json` (repo root) has a customManager that only matches `image =` lines carrying that marker, so it is opt-in per image. Renovate itself runs as the hosted [Mend Renovate](https://github.com/apps/renovate) GitHub App, event-driven on the App's own schedule — there is no in-repo workflow or App secret to maintain. Database images (postgres, clickhouse, valkey) are pinned to a major line — Renovate will not auto-propose major bumps.
 
+#### Flake Input Updates
+
+Renovate's `nix` manager is enabled but gated behind `dependencyDashboardApproval`: flake input bumps only appear as checkboxes on the Dependency Dashboard issue and never become PRs unattended. Manual `nix flake update` plus a local `nh build` is deliberately the primary flow — it builds the closure and shows the diff, which the eval-only PR checks can't — so the dashboard exists for the away-from-keyboard case and doubles as a staleness view (entries vanish on the run after a manual update lands on main). Details worth not re-deriving:
+
+- `minimumReleaseAge` is zeroed for the nix manager in `renovate.json`; the global 7-day gate is meant for Docker releases and would only make dashboard entries lag upstream.
+- Renovate extracts every root input of `flake.lock` (github/gitlab/git/sourcehut/tarball types), not just nixpkgs — verified in the 43.214 source. The `ssh-keys` file input carries no `rev` and is skipped; only a manual `nix flake update` refreshes it.
+- Ticking a checkbox makes the App run `nix flake update <input>` in its tool container to regenerate the lock (it needs the `nix` tool on Mend's runners — unverified until the first ticked box; if the PR never appears, that's where to look).
+
 #### NAS Mounts on kepler (`hosts/kepler/systemd.nix`)
 
 kepler mounts CIFS shares from the Synology NAS (`marvin`, reached over Tailscale) for media and photos. These are the project's historically flakiest piece, so the wiring is centralized in `mkCifsMount`, which builds three things per share: the mount unit, a 5-minute health watchdog that remounts a stale/dropped share, and the dependency edges to every consuming service.
