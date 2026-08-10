@@ -151,6 +151,8 @@ in
         auto-save = {
           focus-lost = true;
         };
+
+        bufferline = "always";
       }
       // lib.optionalAttrs pkgs.stdenv.isDarwin {
         # A mouse selection is auto-yanked to the primary register (`*`), but both
