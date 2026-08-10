@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 {
   imports = [
     ./programs/claude.nix
@@ -27,5 +32,11 @@
   # Common environment variables
   home.sessionVariables = {
     EDITOR = lib.mkDefault "hx";
+    # Pin <nixpkgs> to the rev this system was built from. Without it, comma
+    # resolves <nixpkgs> to the channel fallback and downloads/evaluates
+    # nixpkgs-unstable from scratch. Set here rather than via nix.nixPath
+    # because Determinate manages nix on darwin (nix.enable = false), which
+    # leaves nix-darwin's nix.* options inert.
+    NIX_PATH = "nixpkgs=${inputs.nixpkgs}";
   };
 }

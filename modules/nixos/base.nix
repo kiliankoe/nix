@@ -9,6 +9,10 @@
     "nix-command"
     "flakes"
   ];
+  # `nix run nixpkgs#...` etc. use the system's nixpkgs rev instead of
+  # fetching the registry's unstable tarball (complements the NIX_PATH pin
+  # in home/common.nix, which covers channel-style <nixpkgs> lookups).
+  nix.registry.nixpkgs.flake = inputs.nixpkgs;
 
   networking.networkmanager.enable = true;
 
