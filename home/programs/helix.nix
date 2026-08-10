@@ -30,6 +30,24 @@ let
   # nixd evaluates real flake outputs, so the exprs below have to point at this repo.
   flake = "${config.home.homeDirectory}/nix";
 
+  # Helix's bundled languages.toml turns on every typescript-language-server inlay
+  # hint at full verbosity, which buries the code it annotates: a parameter name on
+  # every argument plus a fully expanded structural type on every binding and every
+  # callback parameter. typescript-language-server's own defaults are all off, so
+  # this verbosity is helix's choice, not the server's.
+  # Return types and callback parameter types are the two that cost lines without
+  # saying anything the signature doesn't; "literals" keeps the parameter names that
+  # disambiguate a bare `0` or `"B"` and drops the ones on already-named arguments.
+  tsInlayHints = {
+    includeInlayEnumMemberValueHints = true;
+    includeInlayFunctionLikeReturnTypeHints = false;
+    includeInlayFunctionParameterTypeHints = false;
+    includeInlayParameterNameHints = "literals";
+    includeInlayParameterNameHintsWhenArgumentMatchesName = false;
+    includeInlayPropertyDeclarationTypeHints = true;
+    includeInlayVariableTypeHints = true;
+  };
+
   # Helix has no inline blame yet (https://github.com/helix-editor/helix/pull/13133).
   # Space B opens tig show for the commit that last touched the cursor line: full
   # diff, author, and message.
@@ -171,6 +189,10 @@ in
 
         lsp = {
           display-inlay-hints = true;
+          # A TS structural type runs to hundreds of characters, and with soft-wrap on
+          # a single hint becomes three lines. Truncate it instead; the full type is
+          # still one `space k` away. Global across servers, so it clips nixd too.
+          inlay-hints-length-limit = 40;
         };
 
         soft-wrap = {
@@ -215,6 +237,10 @@ in
 
       keys.normal.space = {
         B = ":sh ${lib.getExe hx-tig-show} '%{buffer_name}' %{cursor_line}";
+        # Helix has no per-kind inlay hint filter, so the trimmed-down set in
+        # `tsInlayHints` is a permanent choice; this gets the full picture back for
+        # the moments it's actually wanted.
+        I = ":toggle lsp.display-inlay-hints";
         L = ":sh ${lib.getExe hx-tig-blame} '%{buffer_name}' %{cursor_line}";
       };
     };
@@ -232,6 +258,18 @@ in
           nixos.expr = ''(builtins.getFlake "${flake}").nixosConfigurations.kepler.options'';
           home-manager.expr = ''(builtins.getFlake "${flake}").darwinConfigurations.cassini.options.home-manager.users.type.getSubOptions [ ]'';
         };
+      };
+
+      # Helix folds the user languages.toml onto its bundled one with
+      # merge_toml_values(default, user, 3), and the depth runs out exactly at
+      # `config` (root → language-server → <name> → config), so this table replaces
+      # the bundled one rather than merging into it. Hence hostInfo and the
+      # javascript half being restated: anything omitted here falls back to the
+      # server's own default (every hint off), not to helix's `true`.
+      language-server.typescript-language-server.config = {
+        hostInfo = "helix";
+        typescript.inlayHints = tsInlayHints;
+        javascript.inlayHints = tsInlayHints;
       };
 
       language = [
