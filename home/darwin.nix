@@ -8,6 +8,7 @@
     ./programs/aerc.nix
     ./programs/eilmeldung.nix
     ./programs/ghostty.nix
+    ./programs/sesh.nix
   ];
 
   home.sessionVariables = {

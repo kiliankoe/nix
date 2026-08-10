@@ -71,11 +71,25 @@ in
       unbind-key l
       bind-key l select-pane -R
 
-      # Swap panes with Shift+H/J/K/L
+      # Swap panes with Shift+H/J/K/L. L displaces stock tmux's
+      # switch-client -l, which moved to prefix+Tab below.
       bind-key H swap-pane -s '{left-of}'
       bind-key J swap-pane -s '{down-of}'
       bind-key K swap-pane -s '{up-of}'
       bind-key L swap-pane -s '{right-of}'
+
+      # Prefix-less pane navigation and zoom. Root-table bindings take these
+      # keys away from every app in every pane, which is affordable here:
+      # helix leaves Alt+hjkl/z unbound and in zsh only M-h (run-help) and
+      # M-l (down-case-word) are shadowed. ghostty has macos-option-as-alt
+      # = "right", so right Option sends Alt and left Option still types
+      # umlauts. Caveat: ssh'd from local tmux into a remote one, the outer
+      # server consumes these before the inner sees them (as with C-S-arrows).
+      bind-key -n M-h select-pane -L
+      bind-key -n M-j select-pane -D
+      bind-key -n M-k select-pane -U
+      bind-key -n M-l select-pane -R
+      bind-key -n M-z resize-pane -Z
 
       # Set terminal titles. automatic-rename stays on so the auto format below
       # is used by default; a manual rename (prefix+,) turns it off for that
@@ -143,6 +157,28 @@ in
       # Quick window switcher (prefix + f): fuzzy-matches window labels and,
       # additionally, the text currently visible in each window's panes
       bind-key f display-popup -E -w 80% -h 60% "${lib.getExe tmux-window-search}"
+
+      # Session-per-project, see home/programs/sesh.nix for the picker itself.
+      # Killing a session jumps to another one instead of detaching to a bare
+      # shell.
+      set -g detach-on-destroy off
+      # Toggle to the previously used session. Stock tmux puts this on
+      # prefix+L, which swap-pane took above.
+      bind-key Tab switch-client -l
+
+      # lazygit over whatever pane was active, on its repo. Fresh process per
+      # invocation (which is what you want for lazygit), q quits, no layout
+      # disturbance.
+      bind-key g display-popup -E -w 95% -h 95% -d '#{pane_current_path}' lazygit
+
+      # Scratchpad toggle. tmux doesn't set $TMUX inside a popup, so the
+      # nested attach isn't refused: this is a second client of the same
+      # server attached to a `scratch` session (-A = attach-or-create).
+      # Pressing the key from inside detaches that client and closes the
+      # popup while the session keeps running, so half-typed commands
+      # survive. Being a real session, resurrect snapshots it too — and it's
+      # blacklisted in sesh.nix so it stays out of the session picker.
+      bind-key S if -F '#{==:#{session_name},scratch}' { detach } { display-popup -E -w 80% -h 75% "tmux new -A -s scratch" }
     '';
 
     plugins = with pkgs.tmuxPlugins; [
