@@ -102,6 +102,10 @@ in
       set-hook -g after-rename-window 'if -F "#{==:#{window_name},}" "setw automatic-rename on"'
 
       # Styling
+      # Stock status-left-length is 10, and it caps the whole expanded
+      # status-left ("[#S] "), so session names lose everything past 7 chars.
+      # Project-named sessions regularly exceed that.
+      set -g status-left-length 20
       set -g status-bg magenta
       set -g status-fg black
       set -g pane-active-border-style bg=default,fg=magenta
@@ -118,8 +122,10 @@ in
       # Format for inactive windows: same logic as active
       set-window-option -g window-status-format " #I:${windowTitle} "
 
-      # Set terminal window title to reflect current window
-      set-option -g set-titles-string "#I:${windowTitle}"
+      # Terminal window title: session, then the same window label as above.
+      # Session-per-project means the ghostty tab is often the only place the
+      # session is visible when the status bar is off-screen or scrolled past.
+      set-option -g set-titles-string "#S:#I:${windowTitle}"
 
       # Reload config on prefix-r - is this even still necessary with nix/home-manager?
       bind r source-file ~/.config/tmux/tmux.conf \; display-message "Reloaded config..."
