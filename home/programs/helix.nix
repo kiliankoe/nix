@@ -341,6 +341,8 @@ in
         }
         {
           name = "markdown";
+          # disabled so as not to mess with every table;
+          # manually running this for the time being
           auto-format = false;
           formatter = {
             command = "prettier";
@@ -349,6 +351,11 @@ in
               "markdown"
             ];
           };
+        }
+        {
+          name = "yaml";
+          auto-format = true;
+          language-servers = [ "yaml-language-server" ];
         }
       ]
       # biome covers everything prettier would here except markdown, which it

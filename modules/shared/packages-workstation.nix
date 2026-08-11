@@ -9,6 +9,7 @@
       nixd
       typescript-language-server
       vscode-langservers-extracted # json/html/css/eslint
+      yaml-language-server
 
       # formatters
       biome # js/ts/json, driven by hx-biome-format in home/programs/helix.nix
