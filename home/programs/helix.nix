@@ -168,6 +168,14 @@ in
     settings = {
       theme = "kilko";
 
+      # Try to unlearn old habits
+      keys.normal = {
+        up = "no_op";
+        down = "no_op";
+        left = "no_op";
+        right = "no_op";
+      };
+
       editor = {
         line-number = "relative";
         mouse = true;
