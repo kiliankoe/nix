@@ -86,6 +86,7 @@ let
   # relative to helix's cwd, not the formatter's.
   biomeLanguages = lib.mapAttrsToList (name: stockServers: {
     inherit name;
+    auto-format = true;
     # `language-servers` replaces helix's bundled list rather than extending it, so
     # each language's stock server has to be named again alongside biome. biome is
     # here for its lint diagnostics, which nothing else surfaces — tsserver doesn't
@@ -317,9 +318,14 @@ in
         javascript.inlayHints = tsInlayHints;
       };
 
+      # `auto-format` is per-language and defaults to false, so every entry below
+      # has to opt in by hand; `editor.auto-format` is only a global kill switch
+      # for the flag, not a way to turn it on everywhere. Helix's bundled config
+      # sets it for a few dozen languages, none of which are configured here.
       language = [
         {
           name = "nix";
+          auto-format = true;
           language-servers = [ "nixd" ];
           formatter = {
             command = "nixfmt";
@@ -328,14 +334,14 @@ in
         {
           # Helix auto-configures the lsp, only the formatter is missing here.
           name = "just";
+          auto-format = true;
           formatter = {
             command = "just-formatter";
           };
         }
         {
           name = "markdown";
-          # Keeping auto-format disabled for now since auto-save.focus-lost is enabled
-          # auto-format = true;
+          auto-format = false;
           formatter = {
             command = "prettier";
             args = [
