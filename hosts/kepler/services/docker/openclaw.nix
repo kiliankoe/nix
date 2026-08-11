@@ -25,7 +25,7 @@ dockerService.mkDockerComposeService {
   compose = {
     services.openclaw = {
       container_name = "openclaw";
-      # renovate
+      # change this comment to just `renovate` to re-enable auto version bumps in the future
       image = "ghcr.io/openclaw/openclaw:2026.6.11@sha256:3814fb1f62f9cfc5944de088c5817c68c88b5d721feebe36420b666a90a61ce7";
       restart = "unless-stopped";
       # Mirrors upstream docker-compose.yml; "lan" binds beyond loopback so
