@@ -21,6 +21,7 @@
       # nodejs
       rustup
 
+      chafa
       ddate
       delta
       devenv
