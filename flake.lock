@@ -389,6 +389,7 @@
         "showkeys-hx": "showkeys-hx",
         "sops-nix": "sops-nix",
         "ssh-keys": "ssh-keys",
+        "terminalist": "terminalist",
         "zen-browser": "zen-browser"
       }
     },
@@ -482,6 +483,22 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "terminalist": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784889486,
+        "narHash": "sha256-vzuAfzIg64xoy8GiYwasZZcW589c0UQRKdUUZ/ivbzI=",
+        "owner": "romaintb",
+        "repo": "terminalist",
+        "rev": "92399c586d8061cfa0fc9a78b07372938e20c66e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "romaintb",
+        "repo": "terminalist",
         "type": "github"
       }
     },

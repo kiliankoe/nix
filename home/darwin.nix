@@ -9,6 +9,7 @@
     ./programs/eilmeldung.nix
     ./programs/ghostty.nix
     ./programs/sesh.nix
+    ./programs/terminalist.nix
     ./programs/zed.nix
   ];
 

@@ -47,6 +47,11 @@
     miniqdb.inputs.nixpkgs.follows = "nixpkgs";
     eilmeldung.url = "github:christo-auer/eilmeldung";
     eilmeldung.inputs.nixpkgs.follows = "nixpkgs";
+    # not in nixpkgs unfortunately and homebrew tap is stale
+    terminalist = {
+      url = "github:romaintb/terminalist";
+      flake = false;
+    };
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
     nix-flatpak.url = "github:gmodena/nix-flatpak";
     # npr.url = "github:faukah/npr";
