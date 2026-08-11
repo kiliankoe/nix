@@ -78,28 +78,42 @@ let
     text = builtins.readFile ./scripts/hx-biome-format.sh;
   };
 
-  # One binary formats all of these, so the entries only differ by name. biome
-  # needs a filename to pick its parser, and helix expands command-line variables
-  # in formatter args; the bare basename is enough, since helix already runs the
-  # formatter with the document's directory as cwd. Passing %{buffer_name} whole
-  # would break instead: it is relative to helix's cwd, not the formatter's.
-  biomeLanguages =
-    map
-      (name: {
-        inherit name;
-        formatter = {
-          command = lib.getExe hx-biome-format;
-          args = [ "%sh{basename %{buffer_name}}" ];
-        };
-      })
-      [
-        "javascript"
-        "json"
-        "jsonc"
-        "jsx"
-        "typescript"
-        "tsx"
-      ];
+  # One binary formats all of these, so the entries only differ by name and by the
+  # stock language server they have to restate. biome needs a filename to pick its
+  # parser, and helix expands command-line variables in formatter args; the bare
+  # basename is enough, since helix already runs the formatter with the document's
+  # directory as cwd. Passing %{buffer_name} whole would break instead: it is
+  # relative to helix's cwd, not the formatter's.
+  biomeLanguages = lib.mapAttrsToList (name: stockServers: {
+    inherit name;
+    # `language-servers` replaces helix's bundled list rather than extending it, so
+    # each language's stock server has to be named again alongside biome. biome is
+    # here for its lint diagnostics, which nothing else surfaces — tsserver doesn't
+    # know the rules and the formatter can't report them. It stays quiet in projects
+    # without a biome config, so this costs nothing outside repos that opted in.
+    language-servers = stockServers ++ [
+      {
+        name = "biome";
+        # Formatting goes through the wrapper, which supplies the house style in
+        # projects that have no biome config; the LSP would silently fall back to
+        # biome's own tabs there.
+        except-features = [ "format" ];
+      }
+    ];
+    formatter = {
+      command = lib.getExe hx-biome-format;
+      args = [ "%{buffer_name}" ];
+    };
+  }) tsLanguages;
+
+  tsLanguages = {
+    javascript = [ "typescript-language-server" ];
+    json = [ "vscode-json-language-server" ];
+    jsonc = [ "vscode-json-language-server" ];
+    jsx = [ "typescript-language-server" ];
+    typescript = [ "typescript-language-server" ];
+    tsx = [ "typescript-language-server" ];
+  };
 in
 {
   home.packages = [ shx ];
@@ -283,6 +297,12 @@ in
           nixos.expr = ''(builtins.getFlake "${flake}").nixosConfigurations.kepler.options'';
           home-manager.expr = ''(builtins.getFlake "${flake}").darwinConfigurations.cassini.options.home-manager.users.type.getSubOptions [ ]'';
         };
+      };
+
+      # lsp-proxy talks LSP over stdio and brokers a shared biome daemon behind it.
+      language-server.biome = {
+        command = lib.getExe pkgs.biome;
+        args = [ "lsp-proxy" ];
       };
 
       # Helix folds the user languages.toml onto its bundled one with
