@@ -157,6 +157,12 @@ in
       "ui.text.directory" = {
         fg = "sky_blue";
       };
+      "diagnostic.error" = {
+        underline = {
+          style = "curl";
+          color = "red";
+        };
+      };
     };
 
     settings = {
