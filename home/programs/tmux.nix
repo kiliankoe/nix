@@ -105,7 +105,7 @@ in
       # Stock status-left-length is 10, and it caps the whole expanded
       # status-left ("[#S] "), so session names lose everything past 7 chars.
       # Project-named sessions regularly exceed that.
-      set -g status-left-length 20
+      set -g status-left-length 30
       set -g status-bg magenta
       set -g status-fg black
       set -g pane-active-border-style bg=default,fg=magenta
