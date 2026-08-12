@@ -209,6 +209,9 @@ in
           ":write-all"
           ":new"
           ":insert-output lazygit"
+          # hint helix into restarting mouse-mode
+          ":set mouse false"
+          ":set mouse true"
           ":buffer-close!"
           ":redraw"
           ":reload-all"
