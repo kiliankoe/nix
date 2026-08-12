@@ -1,6 +1,6 @@
 # nix
 
-> **This is a living document.** Keep it updated as the project evolves: document new features, record _why_ decisions were made (not just what), and remove or revise anything that becomes outdated. The goal is that anyone (or any AI) can read this file cold and fully understand the project's current state, architecture, and the reasoning behind it.
+> **This is a living document.** Keep it updated as the project evolves: document new features, record _why_ decisions were made (not just what), and remove or revise anything that becomes outdated. Prefer referencing the source location instead of repeating ground truth here to make it easier for the document to stay up-to-date. The goal is that anyone (or any AI) can read this file cold and fully understand the project's current state, architecture, and the reasoning behind it.
 
 This is a unified Nix flake configuration managing multiple systems across macOS and NixOS platforms.
 
@@ -36,6 +36,7 @@ All hosts are reachable directly by their hostname (e.g. `ssh kepler`) over Tail
 
 - macOS hosts: `darwin-rebuild switch --flake .#<host>`
 - NixOS hosts: deploy-rs (`deploy .#<host>`), configured with `remoteBuild` so the x86_64 closure builds on the target; activation prints an nvd package diff
+  - currently not using colmena since it has no magic rollback canary mechanism
 - `./scripts/deploy-with-backup.sh <host>` creates a tagged restic snapshot before deploying
 
 ### CI
