@@ -108,16 +108,6 @@ backup-restore shell                     # Interactive restic shell
 - **Kepler** backs up all services (native NixOS + Docker) daily at 4 AM.
 - **Cubesat** backs up pangolin data (`/var/lib/pangolin`) and uptime-kuma daily at 3 AM.
 
-#### Deploy with Backup
-
-Use the deploy script to automatically create a pre-upgrade backup before deploying:
-
-```bash
-./scripts/deploy-with-backup.sh cubesat
-```
-
-This creates a tagged snapshot that can be used for rollback if needed.
-
 ### Verifying Backups Work
 
 `backup-restore verify` runs a full round-trip check without touching any
@@ -139,3 +129,33 @@ want confidence backups are actually restorable, on either host, the same way.
 ### Notifications
 
 Backup failures are reported via healthchecks.io. Configure `<host>_backup/healthcheck_url` in sops secrets to enable.
+
+## Deploying
+
+Deploy-rs is configured with kepler and cubesat as remote builds, so they'll build their own config. [Determinate's native linux builders for macOS](https://docs.determinate.systems/determinate-nix/linux-builder/) might become an alternative for that at some point.
+
+Currently there's two options for deploying, with or without a full pre-upgrade restic snapshot.
+
+### Deploy with Backup
+
+Use the deploy script to automatically create a pre-upgrade backup before deploying:
+
+```bash
+./scripts/deploy-with-backup.sh          # backup and deploy to all hosts sequentially
+./scripts/deploy-with-backup.sh cubesat  # just cubesat
+```
+
+This creates a tagged snapshot that can be used for rollback if needed.
+
+Note: A single deploy is a transaction, meaning that a deploy failure on one rolls back the other.
+
+### Deploy without Backup
+
+Just use deploy directly, e.g.
+
+```bash
+deploy .#kepler                       # deploy directly to kepler
+deploy -s .#kepler --dry-activate     # skip checks and dry run that only reports changes
+deploy .                              # deploy to all hosts sequentially
+deploy --targets .#kepler .#cubesat   # same as above, but explicit
+```
