@@ -52,7 +52,7 @@ echo ""
 
 # Deploy using deploy-rs
 echo "=== Deploying to $HOST ==="
-nix run github:serokell/deploy-rs -- ".#$HOST"
+deploy --skip-checks ".#$HOST"
 
 echo ""
 echo "=== Deployment complete ==="

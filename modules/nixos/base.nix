@@ -1,4 +1,9 @@
-{ pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 {
   imports = [ ./nix-gc.nix ];
 
@@ -105,6 +110,16 @@
   # compinit invalidates the ~/.zcompdump cache on every shell start (see
   # modules/darwin/base.nix for the full story).
   programs.zsh.enableCompletion = false;
+
+  # print package diff during activation, streamed back via deploy-rs on a
+  # remote deploy.
+  system.activationScripts.diff = {
+    # support `deploy .#host --dry-activate` without switching
+    supportsDryActivation = true;
+    text = ''
+      ${pkgs.nvd}/bin/nvd --nix-bin-dir ${config.nix.package}/bin diff /run/current-system "$systemConfig"
+    '';
+  };
 
   # Used for backwards compatibility, don't touch.
   system.stateVersion = "24.11";

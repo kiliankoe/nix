@@ -105,6 +105,7 @@
           fastConnection = true;
           autoRollback = true;
           magicRollback = true;
+          remoteBuild = true;
 
           profiles.system = {
             user = "root";
@@ -118,6 +119,7 @@
           fastConnection = true;
           autoRollback = true;
           magicRollback = true;
+          remoteBuild = true;
 
           profiles.system = {
             user = "root";
@@ -126,6 +128,8 @@
         };
       };
 
-      checks = builtins.mapAttrs (_system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+      # deploy-activate depends on the nodes' x86_64-linux closures, so the check is only
+      # buildable on linux.
+      checks.x86_64-linux = deploy-rs.lib.x86_64-linux.deployChecks self.deploy;
     };
 }
