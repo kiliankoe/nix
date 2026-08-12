@@ -183,12 +183,13 @@ in
     settings = {
       theme = "kilko";
 
-      # Try to unlearn old habits
       keys.normal = {
+        # Try to unlearn old habits
         up = "no_op";
         down = "no_op";
         left = "no_op";
         right = "no_op";
+
         "C-g" = [
           ":write-all"
           ":new"
