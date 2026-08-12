@@ -107,6 +107,21 @@ let
     };
   }) tsLanguages;
 
+  # Helix only continues *line* comment tokens on newline, so `/** ... */` doc blocks
+  # get no leading `*`. Listing it explicitly as a second token makes Enter/o/O continue
+  # one.
+  # The key has to be the deprecated singular `comment-token`, helix merges this table
+  # onto its bundled one, `comment-tokens` is a serde alias for the same field and with
+  # both present it errors on the duplicate and falls back to its *entire* default lang
+  # config...
+  docCommentLanguages = lib.forEach [ "javascript" "jsx" "typescript" "tsx" ] (name: {
+    inherit name;
+    comment-token = [
+      "//"
+      "*"
+    ];
+  });
+
   tsLanguages = {
     javascript = [ "typescript-language-server" ];
     json = [ "vscode-json-language-server" ];
@@ -367,9 +382,8 @@ in
           language-servers = [ "yaml-language-server" ];
         }
       ]
-      # biome covers everything prettier would here except markdown, which it
-      # doesn't support, so prettier stays for that one.
-      ++ biomeLanguages;
+      ++ biomeLanguages
+      ++ docCommentLanguages;
     };
   };
 }
