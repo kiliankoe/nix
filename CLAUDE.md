@@ -4,7 +4,9 @@
 
 This is a unified Nix flake configuration managing multiple systems across macOS and NixOS platforms.
 
-See @README.md for the directory structure and host definitions.
+See @README.md for the directory structure, host definitions, service management commands, and the backup/restore runbook.
+
+Most modules explain themselves: the "why" behind non-obvious wiring lives as comments next to the code (`home/programs/helix.nix`, `hosts/kepler/systemd.nix`, `hosts/cubesat/services/pangolin.nix` are good examples). Read those before changing a module, and put new reasoning there rather than here. This file covers only what spans multiple files or can't be seen from the code.
 
 ## Build Commands
 
@@ -30,223 +32,78 @@ nix flake check --no-build
 
 ## Deployment
 
-All hosts are reachable directly by their hostname (e.g. `ssh kepler`) over Tailscale — no IP addresses or `.local` suffixes needed. mosh is also available everywhere (`mosh kepler`); its UDP range is opened on `tailscale0` only, since cubesat is WAN-exposed.
+All hosts are reachable directly by their hostname (e.g. `ssh kepler`) over Tailscale, no IP addresses or `.local` suffixes needed. mosh works everywhere too (`mosh kepler`); its UDP range is opened on `tailscale0` only, since cubesat is WAN-exposed.
 
-- **macOS hosts**: `darwin-rebuild switch --flake .#<host>`
-- **NixOS hosts**: `deploy-rs` is configured for remote deployment to kepler and cubesat
-- **Deploy with backup**: `./scripts/deploy-with-backup.sh <host>` creates a tagged restic snapshot before deploying
+- macOS hosts: `darwin-rebuild switch --flake .#<host>`
+- NixOS hosts: deploy-rs (`deploy .#<host>`), configured with `remoteBuild` so the x86_64 closure builds on the target; activation prints an nvd package diff
+- `./scripts/deploy-with-backup.sh <host>` creates a tagged restic snapshot before deploying
 
 ### CI
 
-GitHub Actions (`.github/workflows/`):
+GitHub Actions (`.github/workflows/`): `check.yml` (flake check, statix, nixfmt, deadnix) and `ci.yml` (evaluates all darwin and nixos configurations), both on push to main and PRs.
 
-- `check.yml`: flake check, statix lint, nixfmt format check, deadnix — on push to main and PRs
-- `ci.yml`: evaluates all darwin and nixos configurations — on push to main and PRs
+`ci.yml` evaluates the darwin configs on a Linux runner on purpose (a macOS runner bills 10x for no added coverage). Consequence: evaluation must never require building a darwin store path, i.e. no IFD (see the `eilmeldung-git` comment in `home/programs/eilmeldung.nix` for the incident that taught this). `nix eval --no-allow-import-from-derivation '.#darwinConfigurations.voyager.config.system.build.toplevel.outPath'` reproduces the failure locally.
 
-Dependency updates are handled by the hosted [Mend Renovate](https://github.com/apps/renovate) GitHub App (see [Docker Image Updates](#docker-image-updates) below) — no in-repo workflow.
+## Architecture
 
-## Architecture Overview
+Each host imports only the modules it needs. Shared functionality is in `modules/shared/`, platform-specific code in `modules/darwin/` and `modules/nixos/`.
 
-### Key Design Patterns
+### Port Registry & Service Registration (`modules/shared/k.nix`)
 
-#### Modular Configuration
+`k.nix` defines the `k` option namespace: `k.ports` (all service ports in one place, to prevent conflicts), `k.monitoring` (services self-register HTTP endpoints, Docker containers, and systemd units for Prometheus), and `k.backup` (Docker volume patterns to include in backups). Reference ports via `config.k.ports.<name>`, never hardcode them.
 
-Each host imports only the modules it needs. Shared functionality is in `modules/shared/`, platform-specific code is separated into `modules/darwin/` and `modules/nixos/`.
+### Home Manager
 
-#### Central Port Registry & Service Registration (`modules/shared/k.nix`)
+User-level programs live in `home/programs/`, one file per tool, imported from `home/darwin.nix` / `home/nixos.nix`; per-host customizations (e.g. git email) live with each host. Things worth knowing that the individual files can't tell you:
 
-`k.nix` defines the `k` option namespace with three purposes:
+- `claude.nix` generates the Claude Code config for both accounts (work `claude`, personal `pcl`) from one source so they can't drift; `settings.json` is an out-of-store symlink into `dotfiles/` (see `dotfiles/README.md`). `claude/command-guard.jq` is a PreToolUse hook that prompts (never denies) on destructive Bash commands; its test suite runs in the build's check phase, so a rule that stops matching fails the build instead of silently no longer prompting. The off-the-shelf alternative [destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard) was evaluated and passed on: it packages fine but is heavy and new.
+- `zed.nix` manages only Zed's config, not the package (Homebrew cask); both settings files are out-of-store symlinks into `dotfiles/`. If `~/.config/zed/settings.json` ever becomes a regular file again, Zed has regressed to replacing the link on write ([zed#4469](https://github.com/zed-industries/zed/issues/4469)) and the repo copy is silently going stale.
+- `helix.nix` routes js/ts/json formatting through `hx-biome-format` (`home/programs/scripts/hx-biome-format.sh`), which supplies a house style only when the project has no biome or editorconfig opinion. The script header documents the precedence chain and the silent-failure traps around stdin formatting; the nix comments cover the language-server wiring and why every language opts into `auto-format` itself.
+- `eilmeldung.nix` (RSS, syncs against freshrss on kepler over the Google Reader API) and `aerc.nix` (mail, fastmail over JMAP; work mail deliberately stays in Outlook) are darwin-only. Packaging and credential gotchas are commented in the files; credentials live in sops under `freshrss/` and `fastmail/`. Alternatives already evaluated for RSS: newsboat (syncs fine but bypasses the home-manager module's structured options) and nom (doesn't sync read/starred state back at all).
 
-1. **Port registry** (`k.ports`): all service ports in one place (8380–8402 range + plex at 32400) to prevent conflicts
-2. **Monitoring registration** (`k.monitoring`): services self-register their HTTP endpoints, Docker containers, and systemd units for Prometheus monitoring
-3. **Backup registration** (`k.backup`): services declare Docker volume patterns to include in backups
+### Services
 
-Services reference ports via `config.k.ports.<name>` rather than hardcoding values to prevent accidental collisions.
+kepler's services live under `hosts/kepler/services/`: native NixOS services at the top level, Docker services in `docker/`, the monitoring stack in `monitoring/`, retired ones in `archived/`.
 
-#### Home Manager Integration
+cubesat runs pangolin and uptime-kuma under `hosts/cubesat/services/`. Pangolin runs in "tailnet mode": a single local site whose resource targets are tailnet hostnames (`kepler:<port>` from the `k.ports` registry, `homeassistant:8123`, ...), so traefik on cubesat reaches backends directly over Tailscale instead of newt/WireGuard tunnels. This is deliberate, don't break it; `pangolin.nix` explains what it makes inert. Not visible from the config: the enterprise license is activated in the dashboard, and the Authentication/Admin Action/Network log pages are gated by per-org Log Retention settings (Org Settings → General → Security; retention 0 = logging disabled).
 
-User-level configurations are managed through Home Manager:
+Adding a service:
 
-- Programs (zsh, tmux, git, ghostty, helix, k9s, lazygit, zed, starship, direnv, zoxide, sops-env, claude, eilmeldung, aerc) in `home/programs/`
-- `claude.nix` writes the account-independent Claude Code config (CLAUDE.md, commands, skills) from one source into every config dir the host has, so the two accounts can't drift. `settings.json` is the one out-of-store entry: Claude Code rewrites it itself, so it's an `mkOutOfStoreSymlink` at `dotfiles/claude/settings.json` and in-session changes land directly in git. This works because Claude Code passes `allowSymlink: true` for _user_ settings specifically (project/local settings get `false` and refuse to write through a link) — if an upgrade changes that, writes fail loudly with "Refusing to write through symlink" and it has to revert to a copy. Details worth not re-deriving:
-  - `~/.claude` is always the host's _primary_ account, never an unused placeholder. Shell aliases only exist in interactive zsh, so a bare `claude` from a script, editor extension, or launchd job has to land somewhere logged in. It's also a special case in Claude Code itself: the default dir keeps its state in `~/.claude.json` and its credentials under the bare `Claude Code-credentials` keychain entry, while every other dir gets `<dir>/.claude.json` and a keychain entry suffixed with a hash of its path. Renaming it therefore costs a re-login.
-  - Hosts whose primary account isn't the personal one set `k.claude.personalConfigDir` (only cassini, the work machine). Everywhere else the personal account _is_ `~/.claude` and `pcl` passes through to plain `claude`, so `pcl` means "the personal account" on every host and can never open an unauthenticated dir.
-  - `--manual` is a zsh global alias, so it composes with either entry point (`claude --manual`, `pcl --manual`) rather than needing a variant of each. It denies the edit tools via `--settings` and appends `claude/manual-mode.md` to the system prompt, for sessions where every change should be shown rather than applied.
-  - `claude/command-guard.jq` is a `PreToolUse` hook for Bash calls, registered in `settings.json` and installed by `claude.nix` as `claude-command-guard`. It exists because permission rules match a literal command prefix: `Bash(rm -rf:*)` catches `rm -rf` and misses `rm -fr`, `rm -r -f`, and `sudo rm -rf`. The hook parses the command into tokens instead, splits on shell operators so a command behind `&&` is judged on its own, and recurses into carriers (`ssh host …`, `sh -c …`) that take a command as an argument. Details worth not re-deriving:
-    - It answers `ask`, never `deny`. A false positive costs one keystroke; a false deny costs a wedged session and a config edit. Nothing is given up by that — Claude Code evaluates the `deny` rules in `settings.json` regardless of what a hook returns, so those stay the hard backstop underneath.
-    - `command-guard-tests.txt` runs in the derivation's check phase, so a rule that stops matching fails the build instead of silently no longer prompting. The `pass` half of the suite is the load-bearing half: a guard that prompts on ordinary work gets clicked through on reflex.
-    - `settings.json` names the hook by absolute path (`/etc/profiles/per-user/kilian/bin/…`) rather than relying on PATH, because Claude Code launched outside an interactive shell (editor extension, launchd) may not have the profile on PATH. That path is stable across generations because `mksystem.nix` sets `useUserPackages`. It also means the guard has to be installed on every host that gets `settings.json` — a missing hook binary exits 127, which Claude Code treats as a non-blocking error, so it would fail open silently.
-    - Wrappers that take positional arguments of their own (`timeout`, `xargs`, `nice`) are deliberately not unwrapped; skipping their operands correctly needs a real parser, and guessing wrong reads the operand as the command. Those fall through to the `settings.json` rules.
-    - The off-the-shelf option here is [destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard), which does the same job far more thoroughly. It packages fine under nix (checked: builds against nixpkgs' stable rustc despite the nightly pin in `rust-toolchain.toml`), but it's heavy and new, our own solution is fine for now.
-    - Platform-specific adaptations in `home/darwin.nix` and `home/nixos.nix`
-- `zed.nix` manages only Zed's config, not the package (Homebrew cask, because the nixpkgs build compiles from source). Both `settings.json` and `keymap.json` are `mkOutOfStoreSymlink`s to `dotfiles/zed/`, for the same reason as Claude Code's: Zed rewrites them itself when settings change through the UI, so a store path would be read-only. They were plain copies until August 2026 and had already drifted. Details worth not re-deriving:
-  - Zed replacing the symlink with a regular file on write was real ([zed#4469](https://github.com/zed-industries/zed/issues/4469)) and is fixed as of February 2024. Unlike Claude Code's `allowSymlink`, a regression here fails _silently_ rather than erroring, so the symptom to watch for is `~/.config/zed/settings.json` becoming a regular file again while the repo copy goes stale.
-  - The accepted cost is [zed#54888](https://github.com/zed-industries/zed/issues/54888), open: JSON schema autocomplete doesn't work while editing either file inside Zed, because the schema's `fileMatch` is tested against the resolved path. Settings still load and apply.
-  - Uses `xdg.configFile`, which writes to `~/.config` regardless of `xdg.enable` (off here) and is what `helix.nix` and `tig.nix` already use.
-- `eilmeldung.nix` is the TUI RSS reader, imported from `home/darwin.nix` so it lands on both macOS hosts. It syncs against freshrss on kepler over the Google Reader API (`https://rss.kilko.de/api/greader.php/`), which is why the whole read/starred state lives on the server and this config is disposable. Details worth not re-deriving:
-  - It is not in nixpkgs. Upstream ships its own flake, so the input provides both the package and the home-manager module (`inputs.eilmeldung.homeManager.default`, note the attr is `homeManager`, not `homeManagerModules`). The module's `package` default is `pkgs.eilmeldung`, which only exists via upstream's overlay; setting `package` from `inputs.eilmeldung.packages.<system>.<attr>` gets the same derivation without applying an overlay globally.
-  - That attr must be `eilmeldung-git`, not `default`. The two build identically and differ only in `src`: `default` re-fetches the tagged release with `fetchFromGitHub`, and upstream's `cargoLock.lockFile = "${src}/Cargo.lock"` then reads a file out of that derivation, which is IFD. Evaluating the darwin configs therefore had to _build_ an `aarch64-darwin` path, and `ci.yml` evaluates them on a Linux runner on purpose (a macOS runner bills 10x for no added coverage), so CI failed with `platform mismatch`. `eilmeldung-git` takes the flake input's own source tree, already a store path, so nothing is realised during eval. Consequence: the packaged version follows the input's locked rev (`nix flake update eilmeldung`) rather than upstream's release tag, and the derivation is named after the short rev instead of a version number. Guard against a regression here with `nix eval --no-allow-import-from-derivation '.#darwinConfigurations.voyager.config.system.build.toplevel.outPath'`, which reproduces the CI failure locally on darwin.
-  - The freshrss credential is the _API password_ from the freshrss profile, a separate value from the account password, and API access has to be enabled in freshrss's authentication settings. It lives in sops as `freshrss/api_password`.
-  - Secrets marked `cmd:` are run through `Command::new`, not a shell, so `SOPS_AGE_KEY_FILE=… sops …` would be read as a binary name. Hence the `writeShellScript` wrapper that exports the variable and then execs sops. The generated config only ever contains that store path, never the password.
-  - Alternatives evaluated: newsboat syncs correctly too and is in nixpkgs, but with `urls-source "freshrss"` the home-manager module's structured `urls`/`queries` options go unused and everything ends up in `extraConfig`. nom was rejected outright: its freshrss "backend" only calls `ClientLogin` and `subscription/list` to import the feed list, then fetches feeds from the origin and keeps read/starred state in local SQLite, so nothing syncs back.
-- `aerc.nix` is the terminal mail client, imported from `home/darwin.nix` so it lands on both macOS hosts. It talks to fastmail over JMAP rather than IMAP, which is what fastmail itself recommends and what lets `outgoing = jmap://` reuse the incoming connection, so one API token covers both directions. Work mail deliberately stays in Outlook. Details worth not re-deriving:
-  - `withNotmuch` (the package default) has to be turned off. It pulls in notmuch → emacs → mailutils, and mailutils 3.21 fails to link on aarch64-darwin (undefined `mu_url_*` symbols). The upstream binary cache does not carry aerc for darwin at every nixpkgs bump either, so this is a real local build, not a substituted one. Nothing is lost: JMAP searches server-side, so the notmuch backend would be dead weight. If notmuch is ever wanted, `notmuch.override { withEmacs = false; }` avoids the same chain.
-  - `general.unsafe-accounts-conf = true` is mandatory, not a shortcut. aerc refuses to read an `accounts.conf` that isn't 0600, and home-manager writes it into the store at 0444. It stays safe because both credentials come from `source-cred-cmd`/`carddav-source-cred-cmd`, so the file holds store paths of scripts, never a token.
-  - Two separate fastmail credentials, both in sops under `fastmail/`: `api_token` is an API token with mail scope (created at app.fastmail.com/settings/security/tokens), `carddav_password` is an app password limited to CardDAV. They are different credential types and cannot be shared.
-  - `address-book-cmd` passes `-c` explicitly because `carddav-query` hardcodes `~/.config/aerc/accounts.conf`, while home-manager's aerc module writes to `~/Library/Preferences/aerc` on darwin whenever `xdg.enable` is false (which is also where aerc itself looks, so only carddav-query needs telling).
-  - `cache-blobs` stays off. It caches message bodies and attachments indefinitely and upstream expects a cron job to prune it; `cache-state` (metadata) is on and self-managing.
-  - The `[filters]` block is copied verbatim from the package's `share/aerc/aerc.conf` and has to stay. aerc reads the first `aerc.conf` it finds and does not merge, so home-manager writing one shadows the shipped file, and filters are the only settings in it that aren't compiled-in defaults. Drop them and every message part shows "No filter configured for this mimetype". Filter order is first-match-wins while home-manager sorts keys alphabetically, so adding a wildcard (`text/*`) would sort ahead of `text/calendar`, `text/html` and `text/plain` and swallow them.
-  - home-manager's `accounts.email` integration is not used: its aerc generator only emits notmuch, maildir, imap and smtp sources, so a JMAP account has to go through `programs.aerc.extraAccounts` as raw INI anyway.
-- `helix.nix` formats js/jsx/ts/tsx/json/jsonc with biome through the `hx-biome-format` wrapper (`scripts/hx-biome-format.sh`), and markdown with prettier because biome doesn't support it. The same six languages also get `biome lsp-proxy` as a second language server. The wrapper exists to impose a house style without overriding projects that decided otherwise. Details worth not re-deriving:
-  - biome indents with **tabs** by default and has no user-level config file. `--config-path` replaces project discovery rather than layering beneath it, and a `~/.editorconfig` is useless because biome's upward search starts at the working directory. So the only place a personal default can live is a wrapper.
-  - The wrapper cannot just pass `--indent-style=space` unconditionally: CLI flags outrank `biome.json`, so a project that deliberately picked tabs would be silently reformatted. It walks up from `$PWD` instead and supplies the flag only when neither `biome.json`/`biome.jsonc` nor `.editorconfig` is found, giving `biome.json` > `.editorconfig` > house style > biome's built-in defaults. `.editorconfig` needs `--use-editorconfig=true` to be read at all (it defaults off), and `biome.json` still wins over it.
-  - The wrapper runs `biome check --write`, not `biome format`. Sorting imports is an _assist_ action and `format` only formats, so under `format` a project that enables `assist.actions.source.organizeImports` reports "Sort these imports" forever and `:fmt` never fixes it. `--write` is safe despite the name: with `--stdin-file-path` biome writes to stdout and leaves the file on disk alone (verified by hashing it either side of a run).
-  - That pass carries `--linter-enabled=false`, so `:fmt` is formatting plus assists and never applies lint autofixes. Without it, `:fmt` would rewrite code rather than reflow it — novacloud's `useConsistentArrayType` would turn every `Array<T>` into `T[]` on a keystroke meant for formatting. Dropping the flag is the way to opt into safe fixes, which is what VS Code's `source.fixAll` does on save there.
-  - The house style is only `--indent-style=space`. 2-space width, double quotes and always-on semicolons are wanted too, but biome already defaults to all three (verified by formatting with no config present), so passing them would restate defaults for no gain. Indentation being the whole scope is also why the `.editorconfig` branch adds nothing on top: that file covers indentation and nothing else.
-  - biome's lint rules are the reason for the LSP entry: nothing else surfaces them, since typescript-language-server doesn't know them and a formatter can't report them. Verified against a repo whose `biome.jsonc` enables `useConsistentArrayType`/`useConsistentTypeDefinitions` — both arrive as diagnostics, and path-scoped `overrides` are honoured. In a project with no biome config it registers but publishes nothing, so it costs no noise elsewhere.
-  - The biome LSP entry carries `except-features = ["format"]`. biome dynamically registers `textDocument/formatting`, and routing formatting there would bypass the wrapper and silently restore biome's tabs in config-less projects.
-  - Setting `language-servers` on a language **replaces** helix's bundled list rather than extending it, which is why each entry restates its stock server (`typescript-language-server`, or `vscode-json-language-server` for json/jsonc) alongside biome.
-  - Searching from `$PWD` is correct because helix runs formatters with the _document's_ directory as cwd, which is exactly where biome starts its own upward search. Verified by pointing helix's formatter at a script that logged `$PWD`.
-  - The formatter arg is `%{buffer_name}`, and the wrapper reduces it to a basename itself. biome must not receive the path whole: `buffer_name` is relative to helix's cwd while the formatter runs in the document's directory, so it resolves to a doubled path, and when that reaches into a subtree owning its own `biome.json` biome aborts with "Found a nested root configuration" (exit 1, empty stdout). The basename still lets biome pick the parser and match `files.includes`.
-  - Taking that basename with helix's `%sh{basename %{buffer_name}}` was the original approach and is **wrong**: the expansion is spliced into a shell command unquoted, so any path component that is shell syntax kills it. Next.js route dirs are exactly that — `(main)` is a syntax error and `[lng]` is a glob — which broke formatting for every file under `frontend/src/app/` in novacloud. The failure is silent, not loud: the dead `%sh{}` yields an empty argument, and `biome format --stdin-file-path=""` warns on _stderr_ but echoes stdin back on stdout and exits 0, so helix replaces the buffer with identical text and reports success. Passing `%{buffer_name}` as a plain arg avoids a shell entirely (helix hands formatter args straight to the process), so no path can be misparsed.
-  - Format-on-save is on for every language this file configures except markdown, and each `[[language]]` entry has to say so itself — prose is left alone because prettier's markdown output churns list markers and emphasis characters on files that are fine as written. There are two `auto-format` settings and only the per-language one decides: `Document::auto_format()` returns `None` unless the language config sets it, and that field is `#[serde(default)]`, i.e. false. `editor.auto-format` (global, defaults **true**) is only a kill switch ANDed on top, so it can turn format-on-save off everywhere but never on. helix's bundled `languages.toml` opts in a few dozen languages (rust, go, …); nix, markdown and the js/ts family are not among them, which is why nothing formatted on `:w` before. `:fmt` calls `format()` directly and ignores the flag entirely — that asymmetry is the symptom to recognise.
-    - Consequence to keep in mind: `editor.auto-save.focus-lost` is on, so leaving the terminal now reformats the buffer as well. That combination is why format-on-save was deliberately off until August 2026; if it becomes annoying, drop `auto-format` from the individual entries rather than flipping the global switch, which would also disable `.helix/languages.toml` opt-ins per project.
-    - A project can still override per language with a `.helix/languages.toml` in the workspace root holding `[[language]]` / `name = "tsx"` / `auto-format = false` — verified working, and it merges over this config rather than replacing the formatter.
-  - `just-formatter` is a separate package because `just --fmt` overwrites in place and sits behind `--unstable`, while helix formatters must read stdin and write stdout. helix's bundled `languages.toml` has the same entry commented out, pointing at helix issue 9703.
-- Per-host customizations (e.g., git email) configured in each host
+- Docker: use `mkDockerComposeService` from `lib/docker-service.nix` (options documented in the file), following `hosts/kepler/services/docker/linkding.nix`. It generates `compose.yml`/`.env` under `/etc/docker-compose/<name>/`, auto-declares sops secrets from `{ secret = "name"; }` environment values, registers monitoring and backups in `k.*`, and sets `restartTriggers` so a deploy that changes the compose file actually restarts the service.
+- Native: follow `hosts/kepler/services/freshrss.nix` or `paperless.nix`.
+- If it touches a NAS path (`/mnt/media`, `/mnt/photos/immich`): add its systemd unit name to the mount's `consumers` list in `hosts/kepler/systemd.nix` (for Docker services that's the `serviceName`). `mkCifsMount` derives all mount/service ordering from that one list; the comments there explain each dependency edge. Never hand-write mount ordering elsewhere — a service writing to `/mnt/media` with no mount dependency is exactly the drift that motivated the helper.
 
-#### Service Management
+### Docker Image Updates
 
-Services on kepler live under `hosts/kepler/services/`:
+Each Docker service uses exactly one of two mechanisms:
 
-- **Native NixOS services**: freshrss, paperless, uptime-kuma
-- **Docker services**: actual, changedetection, immich, jobfinder, lehmuese, linkding, mato, newsdiff, openclaw, pinchflat, plausible, rustypaste, swiftdebot, watchtower, wbbash, yamtrack
-- **Monitoring stack** (`services/monitoring/`): Prometheus, Grafana, AlertManager, exporters (node, PostgreSQL, Redis, systemd, blackbox), cAdvisor
-- Secrets managed through sops-nix integration
+- watchtower (`auto_update = true`): auto-pulls new images for labelled containers. Used for the first-party `kiliankoe/*` images plus linkding. watchtower itself must stay `auto_update = false`: updating its own container can cancel an in-flight update batch and leave other containers stopped.
+- Renovate (`auto_update = false`): third-party images are pinned to `repo:tag@sha256:digest` and bumped via PRs. Opt-in per image: add a `# renovate` comment line directly above the `image =` line; the customManager in `renovate.json` only matches marked lines. Database images (postgres, clickhouse, valkey) are excluded from automatic major bumps.
 
-Services on cubesat live under `hosts/cubesat/services/`:
+Renovate runs as the hosted [Mend Renovate](https://github.com/apps/renovate) GitHub App, event-driven on its own schedule; there is no in-repo workflow or secret to maintain.
 
-- **Pangolin**: reverse proxy / tunnel dashboard (enterprise edition; license is activated in the dashboard, not in nix). Runs in "tailnet mode" instead of pangolin's own newt/WireGuard site tunnels: a single local site ("Tailnet") holds all resources, and each target points at a tailnet hostname (`kepler:<port>` from the `k.ports` registry, `homeassistant:8123`, ...), so traefik on cubesat reaches backends directly over Tailscale. This is deliberate and should not be broken. Consequences:
-  - Newt-dependent features are inert: `acme_cert_sync` is disabled via `privateConfig.yml` (it would only spam EACCES warnings), and the dashboard's "Network Logs" stay empty (they record newt connection sessions).
-  - Authentication/Admin Action/Network log pages are gated by per-org Log Retention settings (Org Settings → General → Security, stored in the DB); retention 0 = logging disabled.
-  - If migrating to newt-based sites later, revisit both points above.
+### Flake Input Updates
 
-#### Docker Service Helper (`lib/docker-service.nix`)
+Renovate's `nix` manager is enabled but gated behind `dependencyDashboardApproval`: input bumps only appear as checkboxes on the Dependency Dashboard issue, never as unattended PRs. Manual `nix flake update` plus a local `nh build` is deliberately the primary flow, because it builds the closure and shows the diff, which the eval-only PR checks can't; the dashboard covers the away-from-keyboard case and doubles as a staleness view. `minimumReleaseAge` is zeroed for the nix manager (the global 7-day gate is meant for Docker releases). The `ssh-keys` file input carries no `rev` and is skipped by Renovate; only a manual `nix flake update` refreshes it. Ticking a checkbox makes the App run `nix flake update <input>` on Mend's runners — unverified until the first ticked box; if the PR never appears, that's where to look.
 
-`mkDockerComposeService` standardizes Docker Compose services. Key features:
+### Secrets
 
-- Generates `compose.yml` and `.env` files in `/etc/docker-compose/<name>/`
-- `environment`: per-container env vars; use `{ secret = "sops_key"; }` for secrets (auto-declares `sops.secrets`)
-- `monitoring`: auto-registers containers, systemd units, and optional HTTP endpoints in `k.monitoring`
-- `backupVolumes`: registers Docker volume patterns in `k.backup`
-- `auto_update`: when `true`, adds watchtower labels to all containers; when `false`, the image should be Renovate-pinned (see Docker Image Updates)
-- Sets `restartTriggers` on the systemd unit, so a deploy that changes the compose file or env scripts restarts the service and actually applies the change (an image bump without this only rewrites the file on disk)
+Encrypted in `secrets/secrets.yaml` via sops-nix, edited with `sops secrets/secrets.yaml` (age key at `~/.config/sops/age.key`). sops-nix populates `/run/secrets/` during activation, not via a systemd service — there is no `sops-nix.service` to depend on.
 
-Follow patterns in `hosts/kepler/services/docker/linkding.nix` when adding new Docker services.
+### Monitoring
 
-#### Docker Image Updates
+Prometheus (30-day retention) scrapes everything registered through `k.monitoring`; Grafana dashboards and AlertManager email alerts are provisioned in `hosts/kepler/services/monitoring/`, alongside the node/PostgreSQL/Redis/systemd/blackbox exporters and cAdvisor.
 
-Two mechanisms keep Docker images current; each service uses exactly one.
+When registering `httpEndpoints`, use `0.0.0.0` or `127.0.0.1` in the probe URL, never `localhost`: the blackbox exporter's http prober prefers IPv6, `localhost` resolves to `::1`, the services only listen on IPv4, and `EndpointDown` fires for a service that is actually healthy. `ip_protocol_fallback` only covers DNS resolution, not a refused connection.
 
-- **watchtower** (`auto_update = true`): watchtower auto-pulls new images for labelled containers. Used for first-party `kiliankoe/*` images (swiftdebot, newsdiff, lehmuese, wbbash, mato, jobfinder). watchtower's own service must stay `auto_update = false` — if it updates its own container it can cancel an in-flight update batch and leave other containers stopped.
-- **Renovate** (`auto_update = false` + pinned image): third-party images are pinned to `repo:tag@sha256:digest` and bumped via PRs. Renovate-managed services: changedetection, pinchflat, actual, rustypaste, immich, plausible, watchtower, openclaw.
+### Backups
 
-To place an image under Renovate: set `auto_update = false`, pin the image to `repo:tag@sha256:digest`, and add a `# renovate` comment line directly above the `image =` line. `renovate.json` (repo root) has a customManager that only matches `image =` lines carrying that marker, so it is opt-in per image. Renovate itself runs as the hosted [Mend Renovate](https://github.com/apps/renovate) GitHub App, event-driven on the App's own schedule — there is no in-repo workflow or App secret to maintain. Database images (postgres, clickhouse, valkey) are pinned to a major line — Renovate will not auto-propose major bumps.
-
-#### Flake Input Updates
-
-Renovate's `nix` manager is enabled but gated behind `dependencyDashboardApproval`: flake input bumps only appear as checkboxes on the Dependency Dashboard issue and never become PRs unattended. Manual `nix flake update` plus a local `nh build` is deliberately the primary flow — it builds the closure and shows the diff, which the eval-only PR checks can't — so the dashboard exists for the away-from-keyboard case and doubles as a staleness view (entries vanish on the run after a manual update lands on main). Details worth not re-deriving:
-
-- `minimumReleaseAge` is zeroed for the nix manager in `renovate.json`; the global 7-day gate is meant for Docker releases and would only make dashboard entries lag upstream.
-- Renovate extracts every root input of `flake.lock` (github/gitlab/git/sourcehut/tarball types), not just nixpkgs — verified in the 43.214 source. The `ssh-keys` file input carries no `rev` and is skipped; only a manual `nix flake update` refreshes it.
-- Ticking a checkbox makes the App run `nix flake update <input>` in its tool container to regenerate the lock (it needs the `nix` tool on Mend's runners — unverified until the first ticked box; if the PR never appears, that's where to look).
-
-#### NAS Mounts on kepler (`hosts/kepler/systemd.nix`)
-
-kepler mounts CIFS shares from the Synology NAS (`marvin`, reached over Tailscale) for media and photos. These are the project's historically flakiest piece, so the wiring is centralized in `mkCifsMount`, which builds three things per share: the mount unit, a 5-minute health watchdog that remounts a stale/dropped share, and the dependency edges to every consuming service.
-
-**Adding a service that reads or writes a NAS path: just add its systemd unit name to the mount's `consumers` list** (`mediaMount` for `/mnt/media`, `immichMount` for `/mnt/photos/immich`). Do not hand-write `after`/`bindsTo`/`wants` on the service — `mkCifsMount` derives all of it from that one list. For Docker services the unit name is the `serviceName` passed to `mkDockerComposeService`; the generated `after`/`bindsTo` merge with the helper's `after = docker.service`.
-
-The reasoning the list encodes, so it isn't re-broken:
-
-- **consumer → mount** (`after` + `bindsTo`): the service is ordered after the mount and stopped if the mount drops, so nothing ever writes into an unmounted directory. This matters most for Docker bind mounts — a container started before the share is mounted captures the empty local dir and stays blind to the share even after it mounts (downloads silently land on the system disk).
-- **mount → consumer** (`upholds`): while the mount is active systemd keeps the consumers started, so the watchdog remounting a dropped share auto-restarts them. `bindsTo` only propagates _stop_, not _start_ — without `upholds`, a transient NAS/Tailscale blip left consumers dead until the next switch (and a switch could need running twice).
-- **Tailscale reachability gate**: the mount's `ExecStart` pings `nasHost` (up to 60s) before `mount.cifs`. `After=tailscaled.service` only orders after the daemon _starts_, not after the tunnel reconverges, so a Tailscale package bump in the same switch otherwise races the mount and fails the first attempt.
-
-A single `consumers` list is the source of truth — there is intentionally no second list to keep in sync. If you find yourself adding mount ordering anywhere outside `mkCifsMount`, that's the smell that caused the original drift (a service writing to `/mnt/media` with no mount dependency at all).
-
-#### Secrets Management
-
-- Legacy host-specific secrets stored in `~/.config/secrets/env`
-- New secrets managed through `secrets/secrets.yaml` with sops-nix
-  - Contains encrypted secrets for services and hosts
-  - **Note**: sops-nix populates secrets during activation, not via a systemd service. There is no `sops-nix.service` to depend on - secrets in `/run/secrets/` are available after activation completes.
-
-#### Monitoring
-
-Prometheus + Grafana + AlertManager stack in `hosts/kepler/services/monitoring/`:
-
-- **Prometheus**: scrapes all registered targets (from `k.monitoring`), 30-day retention
-- **Grafana**: pre-provisioned dashboards, Prometheus data source
-- **AlertManager**: email notifications for service failures
-- **Exporters**: node, PostgreSQL, Redis, systemd, blackbox (HTTP probing)
-- **cAdvisor**: Docker container resource metrics
-
-When registering a service's `httpEndpoints` in `k.monitoring`, use `0.0.0.0` or `127.0.0.1` in the probe URL — never `localhost`. The blackbox exporter's `http` prober prefers IPv6, so `localhost` resolves to `::1`; since nginx and the native services only listen on IPv4, the blackbox connection is refused and the `EndpointDown` alert fires for a service that is actually healthy. `ip_protocol_fallback` only covers DNS resolution, not a failed connection, so it does not rescue this case.
-
-#### Backups
-
-See @README.md for full backup and restore documentation.
-
-- Shared tooling in `lib/restic-backup.nix` (`mkResticBackupService`) drives both hosts identically: `systemd.services.restic-backup`/`restic-backup-preupgrade`/`restic-backup-failure`, `systemd.timers.restic-backup`, and the `backup-restore` CLI (including `backup-restore verify` for a non-destructive restore check) — same names on kepler and cubesat, only the per-host paths/databases passed into the function differ.
-- **Kepler**: daily restic backup at 4 AM — native services, Docker volumes (from `k.backup`), PostgreSQL dumps.
-- **Cubesat**: daily restic backup at 3 AM — Pangolin data.
-- Both use SFTP backend, healthchecks.io failure notifications, 7 daily / 4 weekly / 6 monthly retention
-
-### Service Development on kepler
-
-```bash
-# Service control (on kepler via SSH)
-sudo systemctl start $serviceName
-sudo systemctl stop $serviceName
-sudo systemctl restart $serviceName
-sudo systemctl status $serviceName
-
-# View logs (systemd)
-journalctl -u $serviceName -f
-journalctl -u $serviceName --since "1 hour ago"
-
-# View logs (Docker container)
-cd /etc/docker-compose/$serviceName
-sudo docker-compose logs -f
-```
-
-To add new services:
-
-- For Docker services: Use `lib/docker-service.nix` helper, following patterns in `hosts/kepler/services/docker/linkding.nix`
-- For native NixOS services: Follow patterns in `hosts/kepler/services/freshrss.nix` or `hosts/kepler/services/paperless.nix`
-- If the service touches a NAS path (`/mnt/media`, `/mnt/photos/immich`): add its unit name to the relevant `consumers` list in `hosts/kepler/systemd.nix` — see [NAS Mounts on kepler](#nas-mounts-on-kepler-hostskeplersystemdnix). Don't hand-wire mount ordering.
+`lib/restic-backup.nix` (`mkResticBackupService`) drives both hosts identically: same systemd units, timers, and `backup-restore` CLI on kepler (daily 4 AM: native services, Docker volumes from `k.backup`, PostgreSQL dumps) and cubesat (daily 3 AM: pangolin and uptime-kuma). SFTP backend, healthchecks.io failure notifications, 7 daily / 4 weekly / 6 monthly retention. Usage, restore workflow, and `backup-restore verify` are documented in @README.md.
 
 ### Package Management
 
-- `allowUnfree = true` is set globally
-- Packages are organized by host in separate `.nix` files
-- macOS systems use Homebrew cask for GUI applications via `modules/darwin/homebrew.nix` and host specific installations via `hosts/<hostname>/homebrew.nix`.
+`allowUnfree = true` globally. Packages are organized per host; macOS GUI apps are Homebrew casks (`modules/darwin/homebrew.nix` shared, `hosts/<hostname>/homebrew.nix` per host).
 
 #### Container Runtime on macOS
 
-The two macOS hosts deliberately run different docker daemons, because the licensing differs and only one of them is a work machine. The `docker` and `docker-compose` CLIs are the same on both, from `modules/shared/packages-docker.nix` (also imported by kepler, which is why nothing macOS-specific belongs in that file).
-
-- **voyager** (personal): OrbStack, cask in `hosts/voyager/homebrew.nix`. It used to live in the shared `modules/darwin/homebrew.nix`; it was moved out precisely so cassini stops inheriting it.
-- **cassini** (work): colima, via `modules/darwin/colima.nix`, imported only from `hosts/cassini/default.nix`.
-
-Docker Desktop and OrbStack are both free for personal use only and need a paid plan for commercial use, so neither is licensable on cassini. colima is MIT, headless, and speaks the same socket, so everything downstream (`dive`, the `dockerpwd` alias in `home/programs/zsh.nix`) is unaffected. Details worth not re-deriving:
-
-- The `launchd.user.agents.colima` command needs `--foreground`. Without it `colima start` daemonises and returns, and launchd reaps the job the moment it does.
-- The agent's `path` is only the system dirs. colima's nixpkgs wrapper already prepends limactl/docker/qemu/krunkit, but lima reaches the VM over `ssh`, which a launchd agent won't otherwise find. Its `EnvironmentVariables.PATH` replaces the inherited PATH rather than extending it, so dropping those breaks the VM start rather than colima itself.
-- `KeepAlive.SuccessfulExit = false` restarts colima if it crashes while leaving a deliberate `colima stop` stopped.
-- colima defaults to `--vm-type=vz` (Apple Virtualization), so there is no qemu in the running path despite qemu being on the wrapper's PATH.
-- Resource limits are not set in nix on purpose. colima defaults to 2 CPU / 2 GiB / 60 GiB; `colima start --cpu 4 --memory 8` persists to `~/.colima/default/colima.yaml` (`--save-config` defaults true), so tuning survives without the flags entering the module.
-- colima sets itself as the active Docker context on start. The old `desktop-linux` and `orbstack` contexts in `~/.docker/contexts/` are user state that nix does not manage and were removed by hand.
-- Logs land in `~/Library/Logs/colima.log`.
-- `pkgs.docker-credential-helpers` ships alongside colima for the same reason: `~/.docker/config.json` carries `"credsStore": "osxkeychain"` from the Docker Desktop/OrbStack days, and the docker CLI shells out to `docker-credential-osxkeychain` for private registry auth (e.g. `pnpm docker:up` pulling from an ACR). Docker Desktop and OrbStack both bundled that helper; colima doesn't, so removing them left the config pointing at a binary that no longer existed.
+Both macOS hosts share the docker CLIs (`modules/shared/packages-docker.nix`, also imported by kepler, so nothing macOS-specific belongs in that file) but deliberately run different daemons: voyager (personal) uses OrbStack (cask in `hosts/voyager/homebrew.nix`), cassini (work) uses colima (`modules/darwin/colima.nix`), because OrbStack and Docker Desktop are free for personal use only while colima is MIT and speaks the same socket. The launchd quirks are commented in `colima.nix`. Not visible from the config: resource limits are tuned imperatively (`colima start --cpu 4 --memory 8` persists to `~/.colima/default/colima.yaml`), logs land in `~/Library/Logs/colima.log`, and `docker-credential-helpers` is packaged because the unmanaged `~/.docker/config.json` still says `"credsStore": "osxkeychain"` from the OrbStack days and the docker CLI shells out to that helper for private registry auth.
