@@ -198,24 +198,32 @@ in
     settings = {
       theme = "kilko";
 
-      keys.normal = {
-        # Try to unlearn old habits
-        up = "no_op";
-        down = "no_op";
-        left = "no_op";
-        right = "no_op";
+      keys = {
+        insert = {
+          "A-ret" = [
+            "goto_line_end_newline"
+            "insert_newline"
+          ];
+        };
+        normal = {
+          # Try to unlearn old habits
+          up = "no_op";
+          down = "no_op";
+          left = "no_op";
+          right = "no_op";
 
-        "C-g" = [
-          ":write-all"
-          ":new"
-          ":insert-output lazygit"
-          # hint helix into restarting mouse-mode
-          ":set mouse false"
-          ":set mouse true"
-          ":buffer-close!"
-          ":redraw"
-          ":reload-all"
-        ];
+          "C-g" = [
+            ":write-all"
+            ":new"
+            ":insert-output lazygit"
+            # hint helix into restarting mouse-mode
+            ":set mouse false"
+            ":set mouse true"
+            ":buffer-close!"
+            ":redraw"
+            ":reload-all"
+          ];
+        };
       };
 
       editor = {
