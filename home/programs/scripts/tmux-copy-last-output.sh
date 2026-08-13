@@ -6,13 +6,13 @@ set -euo pipefail
 
 # Capture pane content (without escape sequences for cleaner parsing)
 content=$(tmux capture-pane -p -S -10000 2>/dev/null) || {
-    echo "Failed to capture pane" >&2
-    exit 1
+  echo "Failed to capture pane" >&2
+  exit 1
 }
 
 if [[ -z "$content" ]]; then
-    echo "No pane content" >&2
-    exit 1
+  echo "No pane content" >&2
+  exit 1
 fi
 
 # Find the last command's output by looking for prompt markers
@@ -49,19 +49,19 @@ output=$(echo "$content" | awk '
 ')
 
 if [[ -n "$output" ]]; then
-    # Copy to clipboard (macOS, X11, Wayland)
-    if command -v pbcopy >/dev/null 2>&1; then
-        printf '%s' "$output" | pbcopy
-    elif command -v xclip >/dev/null 2>&1; then
-        printf '%s' "$output" | xclip -selection clipboard
-    elif command -v wl-copy >/dev/null 2>&1; then
-        printf '%s' "$output" | wl-copy
-    else
-        # OSC 52 fallback: sends clipboard data through the terminal escape sequence,
-        # which works over SSH when tmux allow-passthrough is enabled
-        printf '\033]52;c;%s\a' "$(printf '%s' "$output" | base64)" > /dev/tty
-    fi
+  # Copy to clipboard (macOS, X11, Wayland)
+  if command -v pbcopy >/dev/null 2>&1; then
+    printf '%s' "$output" | pbcopy
+  elif command -v xclip >/dev/null 2>&1; then
+    printf '%s' "$output" | xclip -selection clipboard
+  elif command -v wl-copy >/dev/null 2>&1; then
+    printf '%s' "$output" | wl-copy
+  else
+    # OSC 52 fallback: sends clipboard data through the terminal escape sequence,
+    # which works over SSH when tmux allow-passthrough is enabled
+    printf '\033]52;c;%s\a' "$(printf '%s' "$output" | base64)" >/dev/tty
+  fi
 else
-    echo "No output found between prompts" >&2
-    exit 1
+  echo "No output found between prompts" >&2
+  exit 1
 fi

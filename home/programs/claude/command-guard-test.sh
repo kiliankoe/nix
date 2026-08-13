@@ -37,7 +37,7 @@ while IFS= read -r line; do
       failures=$((failures + 1))
       ;;
   esac
-done < "$tests"
+done <"$tests"
 
 if [ "$failures" -gt 0 ]; then
   printf '\n%d command-guard case(s) failed\n' "$failures"
