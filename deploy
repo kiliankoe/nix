@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+# Deploy NixOS hosts via deploy-rs, with a pre-upgrade restic snapshot by default
+#
+# With no hostname given, all NixOS hosts are backed up and deployed; a
+# failed deploy then rolls back the successful ones too.
+
+set -euo pipefail
+
+# Keep in sync with deploy.nodes in flake.nix
+ALL_HOSTS=(kepler cubesat)
+
+usage() {
+  echo "Usage: $0 [--dry-run] [--no-backup] [hostname]"
+  echo ""
+  echo "  --dry-run    build on the target(s) and print the nvd diff without"
+  echo "               switching (implies --no-backup)"
+  echo "  --no-backup  skip the pre-upgrade restic snapshot"
+  echo ""
+  echo "Without a hostname, all NixOS hosts (${ALL_HOSTS[*]}) are targeted."
+}
+
+DRY_RUN=false
+BACKUP=true
+HOST=""
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --dry-run) DRY_RUN=true ;;
+    --no-backup) BACKUP=false ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    -*)
+      echo "Unknown option: $1"
+      usage
+      exit 1
+      ;;
+    *)
+      if [ -n "$HOST" ]; then
+        echo "Only one hostname supported"
+        usage
+        exit 1
+      fi
+      HOST="$1"
+      ;;
+  esac
+  shift
+done
+
+# A dry run changes nothing on the hosts, so there is nothing to snapshot
+if $DRY_RUN; then
+  BACKUP=false
+fi
+
+if [ -n "$HOST" ]; then
+  HOSTS=("$HOST")
+  TARGET=".#$HOST"
+else
+  HOSTS=("${ALL_HOSTS[@]}")
+  TARGET="."
+fi
+
+backup_host() {
+  local host="$1"
+
+  echo "=== Pre-deployment backup for $host ==="
+
+  # Start the pre-upgrade backup
+  echo "Starting pre-upgrade backup..."
+  ssh "$host" "sudo systemctl start restic-backup-preupgrade"
+
+  # Wait for backup to complete and check status
+  echo "Waiting for backup to complete..."
+  if ssh "$host" "sudo systemctl is-active --quiet restic-backup-preupgrade 2>/dev/null"; then
+    # Service is still running, wait for it
+    ssh "$host" "journalctl -u restic-backup-preupgrade -f --since 'now'" &
+    JOURNAL_PID=$!
+
+    # Wait for service to finish
+    while ssh "$host" "sudo systemctl is-active --quiet restic-backup-preupgrade 2>/dev/null"; do
+      sleep 2
+    done
+
+    kill $JOURNAL_PID 2>/dev/null || true
+  fi
+
+  # Check if backup succeeded
+  RESULT=$(ssh "$host" "sudo systemctl show restic-backup-preupgrade --property=Result --value")
+  if [ "$RESULT" != "success" ]; then
+    echo "ERROR: Pre-upgrade backup failed!"
+    echo "Check logs: ssh $host 'journalctl -u restic-backup-preupgrade'"
+    exit 1
+  fi
+
+  echo "Pre-upgrade backup completed successfully."
+  echo ""
+}
+
+if $BACKUP; then
+  for host in "${HOSTS[@]}"; do
+    backup_host "$host"
+  done
+fi
+
+DEPLOY_ARGS=(--skip-checks)
+if $DRY_RUN; then
+  DEPLOY_ARGS+=(--dry-activate)
+fi
+
+echo "=== Deploying to ${HOSTS[*]} ==="
+deploy "${DEPLOY_ARGS[@]}" "$TARGET"
+
+if $DRY_RUN; then
+  echo ""
+  echo "=== Dry run complete, nothing was activated ==="
+  exit 0
+fi
+
+echo ""
+echo "=== Deployment complete ==="
+if $BACKUP; then
+  echo "Pre-upgrade snapshots are tagged with 'pre-upgrade' for easy rollback."
+  echo "To list snapshots: ssh <host> 'sudo backup-restore list'"
+fi

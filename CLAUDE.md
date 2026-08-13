@@ -37,7 +37,7 @@ All hosts are reachable directly by their hostname (e.g. `ssh kepler`) over Tail
 - macOS hosts: `darwin-rebuild switch --flake .#<host>`
 - NixOS hosts: deploy-rs (`deploy .#<host>`), configured with `remoteBuild` so the x86_64 closure builds on the target; activation prints an nvd package diff
   - currently not using colmena since it has no magic rollback canary mechanism
-- `./scripts/deploy-with-backup.sh <host>` creates a tagged restic snapshot before deploying
+- `./deploy [--dry-run] [--no-backup] [host]` snapshot by default, all hosts when no host is given
 
 ### CI
 
