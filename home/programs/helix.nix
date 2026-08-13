@@ -304,11 +304,9 @@ in
 
       keys.normal.space = {
         B = ":sh ${lib.getExe hx-tig-show} '%{buffer_name}' %{cursor_line}";
-        # Helix has no per-kind inlay hint filter, so the trimmed-down set in
-        # `tsInlayHints` is a permanent choice; this gets the full picture back for
-        # the moments it's actually wanted.
-        I = ":toggle lsp.display-inlay-hints";
         L = ":sh ${lib.getExe hx-tig-blame} '%{buffer_name}' %{cursor_line}";
+        # Type hints are in the way sometimes, this allows quick and easy toggling.
+        I = ":toggle lsp.display-inlay-hints";
       };
     };
 
