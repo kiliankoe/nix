@@ -240,7 +240,7 @@ in
 
         indent-guides = {
           render = true;
-          character = ".";
+          character = "·";
         };
 
         lsp = {
