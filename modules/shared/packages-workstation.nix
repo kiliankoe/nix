@@ -4,6 +4,7 @@
     with pkgs;
     [
       # language servers
+      bash-language-server
       just-lsp
       marksman # markdown
       nixd
@@ -17,6 +18,9 @@
       # serve as helix's formatter, which pipes stdin to stdout.
       just-formatter
       prettier # markdown
+      # shfmt is spawned by bash-language-server, not by helix, so it only needs to
+      # be on PATH; there is no formatter entry for bash in home/programs/helix.nix.
+      shfmt
 
       bun
       # nodejs

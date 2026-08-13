@@ -331,6 +331,14 @@ in
         args = [ "lsp-proxy" ];
       };
 
+      # bash-language-server shells out to shfmt for formatting, whose default
+      # de-indents case branches; -ci keeps the style the scripts here are written
+      # in. Indentation itself isn't set here: the server takes it from the
+      # formatting request, which helix fills from the language's `indent`.
+      # A project .editorconfig carrying any shfmt property replaces this table
+      # wholesale rather than merging with it, which is the server's own rule.
+      language-server.bash-language-server.config.bashIde.shfmt.caseIndent = true;
+
       # Helix folds the user languages.toml onto its bundled one with
       # merge_toml_values(default, user, 3), and the depth runs out exactly at
       # `config` (root → language-server → <name> → config), so this table replaces
@@ -355,6 +363,12 @@ in
           formatter = {
             command = "nixfmt";
           };
+        }
+        {
+          # Helix auto-configures the lsp, and formatting goes through it (the
+          # server drives shfmt), so there is no formatter block to add.
+          name = "bash";
+          auto-format = true;
         }
         {
           # Helix auto-configures the lsp, only the formatter is missing here.
