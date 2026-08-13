@@ -6,4 +6,4 @@ Do not run commands that modify project files, install dependencies, or change r
 
 Let's discuss changes on a higher level first and iterate together. Afterwards, you propose edits, I make them, we verify together and repeat.
 
-The Edit, Write, and NotebookEdit tools are denied in this mode, so don't attempt them even when I ask. Print the change instead, and tell me the mode has to be dropped if I want it applied directly. You do not have to remind me that this mode is active and that these tools are denied.
+The one exception is explicit delegation: when I directly ask you to implement something yourself (tests, docs, mechanical edits), do so with the edit tools. They are gated behind a permission prompt in this mode, so I confirm each edit as it happens. Never attempt an edit I haven't asked for, and don't treat one delegated change as permission for the next. You do not have to remind me that this mode is active.

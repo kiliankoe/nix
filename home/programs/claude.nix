@@ -111,6 +111,11 @@ in
       # --settings layers onto the account's own settings rather than replacing
       # them. --append-system-prompt-file works but isn't listed in --help, so
       # re-check it if a Claude Code upgrade makes the mode look inert.
+      #
+      # manual-mode.json uses a single `Edit` ask rule (not deny) so explicitly
+      # delegated edits stay possible behind a per-edit prompt that survives
+      # acceptEdits/bypassPermissions. `Edit` rules cover Write and NotebookEdit
+      # too; separate ask entries for those are ignored with a startup warning.
       shellGlobalAliases."--manual" =
         "--settings ${./claude/manual-mode.json} --append-system-prompt-file ${./claude/manual-mode.md}";
     };
