@@ -12,8 +12,16 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
+    # Fork PRs can't see the deploy key for the private flake input.
+    # Skip them instead of failing.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: actions/checkout@v4
+
+      # Read-only deploy key so nix can fetch the private flake input
+      - uses: webfactory/ssh-agent@v0.10.0
+        with:
+          ssh-private-key: ${{ secrets.NIX_PRIVATE_DEPLOY_KEY }}
 
       - uses: DeterminateSystems/nix-installer-action@v19
 

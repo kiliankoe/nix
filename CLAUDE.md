@@ -49,6 +49,11 @@ GitHub Actions (`.github/workflows/`): `check.yml` (flake check, statix, nixfmt,
 
 Each host imports only the modules it needs. Shared functionality is in `modules/shared/`, platform-specific code in `modules/darwin/` and `modules/nixos/`.
 
+### Private modules (`nix-private` input)
+
+Some service modules live in a private companion repo (`git+ssh://git@github.com/kiliankoe/nix-private`), because their mere existence (hostnames, service names) shouldn't be public.
+`lib/mksystem.nix` includes `nixosModules.<host>` from that input for any host that has one — adding content for a new host there needs no change here. Private modules self-register through the appendable registries (`k.ports`, `k.nas.mediaConsumers`, `k.nas.mediaShare`, `k.backup.paths`), so public files hold no private names. CI fetches the input via a read-only deploy key (`NIX_PRIVATE_DEPLOY_KEY` Actions secret); fork PRs skip the nix jobs since they can't see it. Hostname-bearing config belongs in that repo, not here.
+
 ### Port Registry & Service Registration (`modules/shared/k.nix`)
 
 `k.nix` defines the `k` option namespace: `k.ports` (all service ports in one place, to prevent conflicts), `k.monitoring` (services self-register HTTP endpoints, Docker containers, and systemd units for Prometheus), and `k.backup` (Docker volume patterns to include in backups). Reference ports via `config.k.ports.<name>`, never hardcode them.

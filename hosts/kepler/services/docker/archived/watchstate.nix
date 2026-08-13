@@ -31,8 +31,7 @@ lib.mkMerge [
         volumes = [ "watchstate-config:/config" ];
         ports = [ "${toString config.k.ports.watchstate_http}:8080" ];
         # Resolve host.docker.internal to the host's bridge IP so watchstate
-        # can reach kepler's host services (jellyfin via the nginx proxy on
-        # config.k.ports.jellyfin_http) from inside the container.
+        # can reach kepler's host services from inside the container.
         extra_hosts = [ "host.docker.internal:host-gateway" ];
       };
       volumes.watchstate-config = { };

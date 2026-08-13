@@ -4,15 +4,9 @@
     # Native NixOS services
     ./freshrss.nix
     ./hister.nix
-    ./jellyfin.nix
-    ./lidarr.nix
     ./mediawiki-personal.nix
     ./mediawiki-family.nix
     ./paperless.nix
-    ./qbittorrent.nix
-    ./radarr.nix
-    ./sabnzbd.nix
-    ./sonarr.nix
 
     # Unified backup for all services
     ./backup.nix
@@ -25,6 +19,5 @@
 
     # Docker-based services
     ./docker
-
   ];
 }

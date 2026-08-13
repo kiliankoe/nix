@@ -49,5 +49,8 @@ systemFunc {
         }
     )
   ]
-  ++ nixpkgs.lib.optionals (!darwin) [ inputs.angrr.nixosModules.angrr ];
+  ++ nixpkgs.lib.optionals (!darwin) [ inputs.angrr.nixosModules.angrr ]
+  ++ nixpkgs.lib.optionals (!darwin && inputs.nix-private.nixosModules ? ${name}) [
+    inputs.nix-private.nixosModules.${name}
+  ];
 }

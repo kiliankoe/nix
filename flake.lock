@@ -306,6 +306,21 @@
         "type": "github"
       }
     },
+    "nix-private": {
+      "locked": {
+        "lastModified": 1786650669,
+        "narHash": "sha256-brLyIzpO6GSpTghQ3pi2kUIg5ZJIDU4rzblvVrn1Q7U=",
+        "ref": "refs/heads/main",
+        "rev": "6ea4df580515c34bc5dbe17e35a111222a688718",
+        "revCount": 2,
+        "type": "git",
+        "url": "ssh://git@github.com/kiliankoe/nix-private"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/kiliankoe/nix-private"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1786862985,
@@ -383,6 +398,7 @@
         "nix-darwin": "nix-darwin",
         "nix-flatpak": "nix-flatpak",
         "nix-index-database": "nix-index-database",
+        "nix-private": "nix-private",
         "nixpkgs": "nixpkgs",
         "notify-hx": "notify-hx",
         "oil-hx": "oil-hx",

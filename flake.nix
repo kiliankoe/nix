@@ -15,6 +15,7 @@
       url = "https://github.com/kiliankoe.keys";
       flake = false;
     };
+    nix-private.url = "git+ssh://git@github.com/kiliankoe/nix-private";
     # Steel plugins (cogs) for steelix. Vendored as inputs so forge (steel's pm)
     # never has to run
     forest-hx = {

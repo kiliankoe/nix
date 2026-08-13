@@ -24,9 +24,15 @@ jobs:
     # never builds it, which is platform-independent. A macOS runner bills at
     # 10x the Linux rate for no added coverage.
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Read-only deploy key so nix can fetch the private flake input
+      - uses: webfactory/ssh-agent@v0.10.0
+        with:
+          ssh-private-key: ${{ secrets.NIX_PRIVATE_DEPLOY_KEY }}
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v19
@@ -46,9 +52,15 @@ jobs:
   eval-check-linux:
     name: eval linux
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Read-only deploy key so nix can fetch the private flake input
+      - uses: webfactory/ssh-agent@v0.10.0
+        with:
+          ssh-private-key: ${{ secrets.NIX_PRIVATE_DEPLOY_KEY }}
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v19

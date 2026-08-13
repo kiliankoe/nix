@@ -3,56 +3,14 @@
   options.k = {
     ports = lib.mkOption {
       type = lib.types.attrsOf lib.types.int;
-      default = {
-        changedetection_http = 8380;
-        factorio_udp = 34197;
-        forgejo_http = 8381;
-        forgejo_ssh = 10022;
-        freshrss_http = 8382;
-        linkding_http = 8383;
-        mato_http = 8384;
-        paperless_http = 8385;
-        rssbridge_http = 8386;
-        uptime_kuma_http = 8387;
-        wbbash_http = 8388;
-        lehmuese-ics_http = 8389;
-        foundry-vtt_http = 8390;
-        cockpit_http = 8391;
-        newsdiff_http = 8392;
-        speedtest_tracker_http = 8393;
-        lehmuese_http = 8394;
-        prometheus_http = 8395;
-        grafana_http = 8396;
-        alertmanager_http = 8397;
-        immich_http = 8398;
-        plausible_http = 8399;
-        fredy_http = 8400;
-        rustypaste_http = 8401;
-        actual_http = 8402;
-        jobfinder_http = 8403;
-        sabnzbd_http = 8404;
-        sonarr_http = 8405;
-        radarr_http = 8406;
-        qbittorrent_http = 8407;
-        mediawiki_personal_http = 8408;
-        mediawiki_family_http = 8409;
-        pinchflat_http = 8410;
-        lidarr_http = 8411;
-        jellyfin_http = 8412;
-        watchstate_http = 8413;
-        yamtrack_http = 8414;
-        openclaw_http = 8415;
-        hister_http = 8416;
-
-        plex_http = 32400;
-      };
+      default = { };
       description = ''
-        Central registry for service port assignments to avoid conflicts and
-        keep them discoverable.
+        Central registry for service port assignments to avoid conflicts and keep
+        them discoverable.
       '';
     };
 
-    # Monitoring configuration - services register themselves here
+    # Monitoring config, services register themselves here.
     monitoring = {
       httpEndpoints = lib.mkOption {
         type = lib.types.listOf (
@@ -86,13 +44,70 @@
       };
     };
 
-    # Backup configuration - services register their backup sources here
+    # Backup config, services register their backup sources here.
     backup = {
       dockerVolumes = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [ ];
         description = "Docker volume name patterns to include in backups";
       };
+
+      paths = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = "Static filesystem paths to include in backups";
+      };
     };
+
+    nas = {
+      mediaConsumers = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = "systemd units consuming the /mnt/media NAS mount";
+      };
+
+      mediaShare = lib.mkOption {
+        type = lib.types.str;
+        description = "CIFS share path for the media NAS mount";
+      };
+    };
+  };
+
+  # Gaps in the numbering are used by other services, don't reuse them.
+  # Use last in the list + 1 instead.
+  config.k.ports = {
+    changedetection_http = 8380;
+    factorio_udp = 34197;
+    forgejo_http = 8381;
+    forgejo_ssh = 10022;
+    freshrss_http = 8382;
+    linkding_http = 8383;
+    mato_http = 8384;
+    paperless_http = 8385;
+    rssbridge_http = 8386;
+    uptime_kuma_http = 8387;
+    wbbash_http = 8388;
+    lehmuese-ics_http = 8389;
+    foundry-vtt_http = 8390;
+    cockpit_http = 8391;
+    newsdiff_http = 8392;
+    speedtest_tracker_http = 8393;
+    lehmuese_http = 8394;
+    prometheus_http = 8395;
+    grafana_http = 8396;
+    alertmanager_http = 8397;
+    immich_http = 8398;
+    plausible_http = 8399;
+    fredy_http = 8400;
+    rustypaste_http = 8401;
+    actual_http = 8402;
+    jobfinder_http = 8403;
+    mediawiki_personal_http = 8408;
+    mediawiki_family_http = 8409;
+    pinchflat_http = 8410;
+    watchstate_http = 8413;
+    yamtrack_http = 8414;
+    openclaw_http = 8415;
+    hister_http = 8416;
   };
 }

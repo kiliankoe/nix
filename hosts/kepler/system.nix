@@ -24,12 +24,9 @@
     "synology/smb_password" = { };
   };
 
-  # Shared group for media services (sabnzbd, sonarr, radarr) to access NAS mount
+  # Shared group for NAS-mount access. Consuming services register their
+  # own membership in their modules.
   users.groups.media.gid = 984;
-  users.users.sabnzbd.extraGroups = [ "media" ];
-  users.users.sonarr.extraGroups = [ "media" ];
-  users.users.radarr.extraGroups = [ "media" ];
-  users.users.qbittorrent.extraGroups = [ "media" ];
 
   # Disable power management (server)
   powerManagement.enable = false;

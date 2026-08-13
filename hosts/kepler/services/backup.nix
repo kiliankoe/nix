@@ -21,19 +21,11 @@ resticBackup.mkResticBackupService {
 
   staticPaths = [
     "/var/lib/hister"
-    "/var/lib/jellyfin/config"
-    "/var/lib/jellyfin/data"
-    "/var/lib/jellyfin/plugins"
-    "/var/lib/jellyfin/root"
-    "/var/lib/lidarr/.config/Lidarr"
     "/var/lib/mediawiki-personal"
     "/var/lib/mediawiki-family"
     "/var/lib/paperless"
-    "/var/lib/qBittorrent"
-    "/var/lib/radarr/.config/Radarr"
-    "/var/lib/sabnzbd"
-    "/var/lib/sonarr/.config/NzbDrone"
-  ];
+  ]
+  ++ config.k.backup.paths;
 
   # Docker volume name patterns collected from service modules, matched
   # against `docker volume ls --filter "name=..."`.

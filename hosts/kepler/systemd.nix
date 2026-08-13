@@ -166,18 +166,10 @@ let
   mediaMount = mkCifsMount {
     name = "media-mount";
     description = "Mount Synology NAS for media services";
-    share = "//marvin/Plex";
+    share = config.k.nas.mediaShare;
     mountPoint = "/mnt/media";
     mountOpts = "vers=2.0,uid=0,gid=${toString config.users.groups.media.gid},file_mode=0775,dir_mode=0775";
-    consumers = [
-      "jellyfin"
-      "lidarr"
-      "pinchflat"
-      "qbittorrent"
-      "radarr"
-      "sabnzbd"
-      "sonarr"
-    ];
+    consumers = [ "pinchflat" ] ++ config.k.nas.mediaConsumers;
     postMount = "mkdir -p /mnt/media/download/complete /mnt/media/download/incomplete /mnt/media/YouTube";
   };
 
