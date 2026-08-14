@@ -108,7 +108,11 @@ if $DRY_RUN; then
   DEPLOY_ARGS+=(--dry-activate)
 fi
 
-echo "=== Deploying to ${HOSTS[*]} ==="
+if $DRY_RUN; then
+  echo "=== Dry run: building for ${HOSTS[*]}, nothing will be activated ==="
+else
+  echo "=== Deploying to ${HOSTS[*]} ==="
+fi
 deploy "${DEPLOY_ARGS[@]}" "$TARGET"
 
 if $DRY_RUN; then
