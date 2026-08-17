@@ -11,6 +11,9 @@
     # Unified backup for all services
     ./backup.nix
 
+    # TLS for local split-horizon proxy
+    ./acme.nix
+
     # Periodic cleanup
     ./docker-prune.nix
 
