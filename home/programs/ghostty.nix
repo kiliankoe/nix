@@ -17,6 +17,11 @@
 
       # Right opt as default, left opt for input
       macos-option-as-alt = "right";
+
+      # follow system theme
+      theme = "dark: Monokai Pro,light: Monokai Pro Light";
+      # theme = "dark: Tinacious Design Dark,light: Tinacious Design Light";
+      # theme = "dark: Tomorrow Night,light: Tomorrow";
     };
   };
 }

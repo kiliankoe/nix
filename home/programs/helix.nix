@@ -181,9 +181,10 @@ in
   programs.helix = {
     enable = true;
 
-    # ao is great, but show directories and files in the explorer in different colors
+    # show directories and files in the explorer in different colors
     themes.kilko = {
-      inherits = "ao";
+      # ghostty follows my system theme, this allows for helix to follow along directly
+      inherits = "base16_transparent";
       "ui.text.directory" = {
         fg = "sky_blue";
       };
