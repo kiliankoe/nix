@@ -198,6 +198,11 @@ in
     settings = {
       theme = "kilko";
 
+      # how long before completion is shown, default is 250ms
+      completionTimeout = 50;
+      # how many characters are needed before completion is triggered
+      completionTriggerLen = 1;
+
       keys = {
         insert = {
           "A-ret" = [
