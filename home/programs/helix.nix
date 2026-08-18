@@ -199,11 +199,6 @@ in
     settings = {
       theme = "kilko";
 
-      # how long before completion is shown, default is 250ms
-      completionTimeout = 50;
-      # how many characters are needed before completion is triggered
-      completionTriggerLen = 1;
-
       keys = {
         insert = {
           "A-ret" = [
@@ -241,6 +236,11 @@ in
           "zsh"
           "-c"
         ];
+
+        # how long before completion is shown, default is 250ms
+        completion-timeout = 50;
+        # how many characters are needed before completion is triggered
+        completion-trigger-len = 1;
 
         cursor-shape = {
           insert = "bar";
