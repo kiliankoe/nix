@@ -186,6 +186,21 @@
           # Functions
           function mkcd() { mkdir -p "$1" && cd "$1"; }
 
+          # Ctrl-Z as a toggle: the tty suspends a foreground job on Ctrl-Z,
+          # this makes the same key at the prompt resume it, keeping me from
+          # having to type `fg` (yeah, big gain, I know).
+          # This also allows temporary stashing typed input into the prompt.
+          ctrl-z-toggle() {
+            if [[ -z $BUFFER ]]; then
+              BUFFER="fg"
+              zle accept-line
+            else
+              zle push-input
+            fi
+          }
+          zle -N ctrl-z-toggle
+          bindkey '^Z' ctrl-z-toggle
+
           # A function rather than an alias, because `exec` replaces the shell
           # and the job table lives in that process image: anything suspended
           # (usually a C-z'd editor) survives as an orphan still parented to
