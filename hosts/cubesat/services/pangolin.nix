@@ -53,6 +53,12 @@ in
     config.sops.templates."traefik-env".path
   ];
 
+  # Traefik verifies upstream certs by default and would reject kanidm's
+  # self-signed loopback cert. Pangolin's own distribution ships this exact
+  # setting in its stock traefik config; the nixpkgs module omits it. Global,
+  # but kanidm is currently the only https target.
+  services.traefik.staticConfigOptions.serversTransport.insecureSkipVerify = true;
+
   services.geoipupdate = {
     enable = true;
     interval = "weekly";

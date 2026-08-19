@@ -19,6 +19,7 @@ resticBackup.mkResticBackupService {
   staticPaths = [
     "/var/lib/pangolin/config"
     "/var/lib/uptime-kuma"
+    "/var/lib/kanidm/backups"
   ];
 
   restoreHints = [

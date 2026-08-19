@@ -109,5 +109,10 @@
     yamtrack_http = 8414;
     openclaw_http = 8415;
     hister_http = 8416;
+
+    # cubesat, loopback-only (kanidm serves its own TLS behind traefik). Not
+    # kanidm's conventional 8443, since gerbil binds *:8443, and a wildcard bind
+    # excludes any other bind of the port, loopback included.
+    kanidm_https = 8417;
   };
 }
