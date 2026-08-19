@@ -87,7 +87,10 @@ in
       persons.kilian = {
         displayName = "Kilian";
         mailAddresses = [ "me@kilko.de" ];
-        groups = [ "grafana.access" ];
+        groups = [
+          "grafana.access"
+          "pangolin.access"
+        ];
       };
 
       groups."grafana.access" = { };
@@ -104,6 +107,24 @@ in
         ];
         preferShortUsername = true;
       };
+
+      groups."pangolin.access" = { };
+
+      systems.oauth2.pangolin = {
+        displayName = "Pangolin";
+        # Callback of the OAuth2/OIDC IdP (id 1) in pangolin's server admin.
+        originUrl = "https://tunnel.kilko.de/auth/idp/1/oidc/callback";
+        originLanding = "https://tunnel.kilko.de/";
+        basicSecretFile = config.sops.secrets."kanidm/oauth2/pangolin_secret".path;
+        # role mapping keys on it.
+        scopeMaps."pangolin.access" = [
+          "openid"
+          "profile"
+          "email"
+          "groups"
+        ];
+        preferShortUsername = true;
+      };
     };
   };
 
@@ -115,6 +136,9 @@ in
       owner = "kanidm";
     };
     "kanidm/oauth2/grafana_secret" = {
+      owner = "kanidm";
+    };
+    "kanidm/oauth2/pangolin_secret" = {
       owner = "kanidm";
     };
   };
