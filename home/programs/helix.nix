@@ -183,7 +183,9 @@ in
 
     # show directories and files in the explorer in different colors
     themes.kilko = {
-      # ghostty follows my system theme, this allows for helix to follow along directly
+      # ghostty follows my system theme, this allows for helix to follow along directly;
+      # after updating helix past 25.07, it should support setting themes separately for
+      # light and dark mode, use that instead of base16_transparent.
       inherits = "base16_transparent";
       "ui.text.directory" = {
         fg = "sky_blue";
@@ -193,6 +195,27 @@ in
           style = "curl";
           color = "red";
         };
+      };
+      # Inherited styling only sets bg, so syntax colors survive into the
+      # selection, making things hard to read.
+      "ui.selection" = {
+        fg = "white";
+        bg = "gray";
+      };
+      "ui.virtual.inlay-hint" = {
+        fg = "gray";
+        modifiers = [ "italic" ];
+      };
+      "ui.virtual.inlay-hint.parameter" = {
+        fg = "gray";
+        modifiers = [ "italic" ];
+      };
+      "ui.virtual.inlay-hint.type" = {
+        fg = "gray";
+        modifiers = [ "italic" ];
+      };
+      palette = {
+        sky_blue = "#7dcfff";
       };
     };
 
@@ -236,6 +259,10 @@ in
           "zsh"
           "-c"
         ];
+
+        # using this as a workaround for not being able to distinguish
+        # completion menus with my current theming choices
+        popup-border = "all";
 
         # how long before completion is shown, default is 250ms
         completion-timeout = 50;
