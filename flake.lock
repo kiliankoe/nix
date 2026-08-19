@@ -308,11 +308,11 @@
     },
     "nix-private": {
       "locked": {
-        "lastModified": 1787160227,
-        "narHash": "sha256-oXA+rKutXFWmy4BREbtJWVt/Fy3LWIMmSV0TbDBn2DU=",
+        "lastModified": 1787173397,
+        "narHash": "sha256-YVgkl2SK/udgH/9TkkiuiRsn6NGBFbVkgDUTJ1/0K6I=",
         "ref": "refs/heads/main",
-        "rev": "c0e4da01ecd1a7fd61cdc9dd81285e91343d45f7",
-        "revCount": 9,
+        "rev": "c5a94830c3c01f3a118c1fba4c0521a5602c037c",
+        "revCount": 10,
         "type": "git",
         "url": "ssh://git@github.com/kiliankoe/nix-private"
       },
