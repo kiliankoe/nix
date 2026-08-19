@@ -682,7 +682,7 @@ in
       # (kanidm discovery is per-client).
       "auth.generic_oauth" = {
         enabled = true;
-        name = "Kanidm";
+        name = "K-ID";
         client_id = "grafana";
         client_secret = "$__file{${config.sops.secrets."kanidm/oauth2/grafana_secret".path}}";
         scopes = "openid email profile";
