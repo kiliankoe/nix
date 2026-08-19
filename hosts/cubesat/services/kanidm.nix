@@ -88,11 +88,13 @@ in
         displayName = "Kilian";
         mailAddresses = [ "me@kilko.de" ];
         groups = [
-          "grafana.access"
           "pangolin.access"
+          "pangolin.admins"
+          "grafana.access"
         ];
       };
 
+      groups."pangolin.admins" = { };
       groups."grafana.access" = { };
 
       systems.oauth2.grafana = {
