@@ -9,7 +9,7 @@
     # as the ~/Library/Application Support/com.mitchellh.ghostty/config path.
     settings = {
       font-size = 10;
-      window-decoration = false;
+      window-decoration = true;
       # The shell integration's cursor feature makes zsh switch to a blinking
       # bar at the prompt, overriding cursor-style. Omitted features keep their
       # default, so this only turns off the cursor part.
