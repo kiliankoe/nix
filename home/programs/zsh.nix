@@ -167,6 +167,25 @@
             glab ci trace -p "$pipeline_id" "$job_name"
           }
 
+          jira() {
+            if (( $# < 2 )); then
+              print -u2 "Usage: jira <project> <text> [acli flags...]"
+              return 1
+            fi
+
+            local project=''${1:u} text=$2
+            shift 2
+
+            # JQL string literals take backslash escapes; an unescaped quote in
+            # the search term ends the literal early and yields a parse error.
+            text=''${text//\\/\\\\}
+            text=''${text//\"/\\\"}
+
+            acli jira workitem search \
+              --jql "project = $project AND text ~ \"$text\" ORDER BY created DESC" \
+              "$@"
+          }
+
         ''
         + lib.optionalString pkgs.stdenv.isDarwin ''
           export ICLOUD_DRIVE="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
