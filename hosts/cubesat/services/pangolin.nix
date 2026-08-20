@@ -59,6 +59,14 @@ in
   # but kanidm is currently the only https target.
   services.traefik.staticConfigOptions.serversTransport.insecureSkipVerify = true;
 
+  # The module's openFirewall covers TCP 80/443 + UDP 51820, but gerbil
+  # accepts newt WireGuard traffic on its own userspace socket, UDP 21820
+  # (pangolin's reference docker-compose publishes both). Without this, newt
+  # sites show "online" (websocket control) while all proxied traffic dies in
+  # the firewall – Gateway Timeout on every blueprint resource.
+  # Is this a nixpkgs module bug? Maybe worth an upstream issue/PR someday.
+  networking.firewall.allowedUDPPorts = [ 21820 ];
+
   services.geoipupdate = {
     enable = true;
     interval = "weekly";
@@ -143,6 +151,12 @@ in
         };
         maxmind_db_path = "${dataDir}/config/GeoLite2-Country.mmdb";
       };
+
+      # Pangolin's default WG pools live in 100.64.0.0/10 (CGNAT) – the range
+      # tailscale anti-spoofs: its ts-input chain drops any packet sourced from
+      # there that doesn't arrive on tailscale0, which silently kills all newt
+      # tunnel traffic on a host that runs both (handshake up, data dead).
+      gerbil.subnet_group = "10.89.137.0/20";
 
       email = {
         smtp_host = "@SMTP_HOST@";
