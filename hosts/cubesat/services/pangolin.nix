@@ -173,6 +173,8 @@ in
         disable_user_create_org = false;
         allow_raw_resources = true;
         allow_base_domain_resources = true;
+        # Integration API on 127.0.0.1:3003 only (not routed by traefik)
+        enable_integration_api = true;
       };
     };
   };
