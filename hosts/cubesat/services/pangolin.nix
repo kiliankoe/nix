@@ -1,9 +1,10 @@
-# Pangolin runs in "tailnet mode": no newt/WireGuard site tunnels. The
-# dashboard has a single local site ("Tailnet") and all resource targets are
-# tailnet hostnames (kepler:<port>, homeassistant:8123, ...), so traefik on
-# cubesat reaches backends directly over Tailscale. Newt-dependent features
-# (site tunnels, cert push, Network Logs) are inert in this mode.
-# Revisit them if ever migrating to newt-based sites.
+# Pangolin fronts all public resources. Resources/sites are declaratively
+# managed via the newt blueprint on kepler (nix-private repo, see its README for
+# semantics and the role architecture); the dashboard is effectively read-only
+# for managed resources. Kanidm (kanidm.nix) is the IdP behind the SSO wall
+# (identity provider "K-ID", id 1, configured in the dashboard0). Version
+# coupling: fosrl-pangolin here is unpinned; after flake bumps check `journalctl
+# -u newt` on kepler – newt and pangolin move in loose lockstep.
 {
   config,
   lib,
@@ -16,10 +17,10 @@ let
   domain = "kilko.de";
   dashboardDomain = "tunnel.${domain}";
   # Enterprise-only settings live in privateConfig.yml, which the NixOS module
-  # doesn't manage. acme_cert_sync imports traefik's acme.json to push certs to
-  # newt site agents — this tunnels over Tailscale instead of newt, so the sync
-  # is useless here and only spams the journal every 5s with EACCES warnings
-  # (traefik's letsencrypt dir is 0700, unreadable for the pangolin user).
+  # doesn't manage. acme_cert_sync pushes traefik's certs to newt agents for
+  # TLS termination at the site – we terminate centrally on cubesat, so the sync
+  # stays off (it would also spam EACCES: traefik's letsencrypt dir is 0700,
+  # unreadable for the pangolin user).
   privateConfig = (pkgs.formats.yaml { }).generate "privateConfig.yml" {
     flags.enable_acme_cert_sync = false;
   };
