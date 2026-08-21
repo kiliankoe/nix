@@ -322,12 +322,12 @@ in
         # Darwin only — the Linux hosts have no pbcopy and their autodetected
         # provider (tmux/OSC 52) is the one that gets text back to this machine.
         # Note the naming: `yank` reads the clipboard, `paste` writes to it.
-        clipboard-provider.custom = {
-          yank.command = "pbpaste";
-          paste.command = "pbcopy";
-          yank-primary.command = "pbpaste";
-          paste-primary.command = "pbcopy";
-        };
+        # clipboard-provider.custom = {
+        #   yank.command = "pbpaste";
+        #   paste.command = "pbcopy";
+        #   yank-primary.command = "pbpaste";
+        #   paste-primary.command = "pbcopy";
+        # };
       };
 
       keys.normal = {
