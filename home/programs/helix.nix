@@ -236,6 +236,7 @@ in
           left = "no_op";
           right = "no_op";
 
+          # taken from https://github.com/helix-editor/helix/discussions/12045
           "C-g" = [
             ":write-all"
             ":new"
