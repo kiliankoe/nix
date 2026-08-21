@@ -7,6 +7,15 @@ let
   yaml = pkgs.formats.yaml { };
 in
 {
+  # k9s only ever reads skins from its own config dir. The 35 skins nixpkgs
+  # ships in $out/share/k9s/skins are invisible to it, and a `skin` naming one
+  # of them silently falls back to the built-in default. recursive so
+  # hand-written skins can live alongside them.
+  home.file."Library/Application Support/k9s/skins" = {
+    source = "${pkgs.k9s}/share/k9s/skins";
+    recursive = true;
+  };
+
   home.file."Library/Application Support/k9s/config.yaml".source = yaml.generate "k9s-config" {
     k9s = {
       liveViewAutoRefresh = false;
@@ -28,7 +37,7 @@ in
         noIcons = false;
         defaultsToFullScreen = false;
         useFullGVRTitle = false;
-        skin = "nord";
+        skin = "transparent";
       };
       skipLatestRevCheck = false;
       disablePodCounting = false;
